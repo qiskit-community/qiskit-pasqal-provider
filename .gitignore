@@ -2,6 +2,7 @@
 __pycache__
 .DS_Store
 
+.venv/
 venv/
 .idea/
 .vscode/
@@ -51,3 +52,7 @@ ENV/
 # Sphinx documentation
 docs/_build/
 docs/stubs/
+
+# Emacs
+*~
+.\#*

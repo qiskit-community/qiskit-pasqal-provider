@@ -19,7 +19,8 @@ dependencies = [
     "qiskit-aer>=0.14.0",
     "qiskit>=1.0, <2",
     "pulser-core>=1.0, <2",
-    "pasqal-cloud~=12.5",
+    "pulser-simulation>=1.0, <2",
+    "pasqal-cloud~=0.12.5",
 ]
 
 [project.optional-dependencies]
@@ -40,7 +41,7 @@ dev = [
     "reno>=3.5.0",
     # Black's formatting rules can change between major versions, so we use
     # the ~= specifier for it.
-    "black[jupyter]~=24.11",
+    "black[jupyter]~=24.10",
 ]
 
 [project.urls]
