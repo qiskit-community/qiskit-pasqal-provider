@@ -4,18 +4,14 @@ import copy
 import logging
 import uuid
 from abc import ABC
-from collections import defaultdict, namedtuple
-from dataclasses import dataclass
-from typing import Dict, NamedTuple, Union
+from typing import Union
 
-import pulser
-import qiskit
 from pulser.devices import Device
 from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.circuit import Instruction
 from qiskit.providers import BackendV2, Options, QubitProperties
-from qiskit.pulse import Constant, Schedule, ScheduleBlock
+from qiskit.pulse import Schedule, ScheduleBlock
 from qiskit.pulse.instruction_schedule_map import InstructionScheduleMap
 from qiskit.transpiler import Target
 
