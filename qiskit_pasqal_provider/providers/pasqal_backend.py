@@ -144,13 +144,19 @@ class PasqalLocalBackend(PasqalBackend):
     def run(  # type: ignore
         self, run_input: Union[QuantumCircuit, Schedule, ScheduleBlock], **options
     ) -> PasqalJob:
+        """ Run a program on Pasqal backend
+        """
         if isinstance(run_input, QuantumCircuit):
             raise NotImplementedError(
                 "Conversion of QuantumCircuit to Pulses not implemented"
             )
         elif isinstance(run_input, ScheduleBlock):
             raise NotImplemented("ScheduleBlocks not yet supported")
+
         pulser_sequence = to_pulser(run_input)
+        # initialise the backend from sequence.
+        # In the sequence the register and device is encoded
+        # we can imagine moving that to the Qiskit Backend
         emulator = QutipEmulator.from_sequence(pulser_sequence)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
