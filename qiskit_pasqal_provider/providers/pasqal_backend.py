@@ -4,17 +4,22 @@ import copy
 import logging
 import uuid
 from abc import ABC
-from typing import Union
+from collections import defaultdict, namedtuple
+from dataclasses import dataclass
+from typing import Dict, NamedTuple, Union
 
 import pulser
+import qiskit
 from pulser.devices import Device
 from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.circuit import Instruction
 from qiskit.providers import BackendV2, Options, QubitProperties
-from qiskit.pulse import Schedule, ScheduleBlock
+from qiskit.pulse import Constant, Schedule, ScheduleBlock
 from qiskit.pulse.instruction_schedule_map import InstructionScheduleMap
 from qiskit.transpiler import Target
+
+from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
 
 from .pasqal_job import PasqalJob, PasqalLocalJob
 
@@ -154,15 +159,3 @@ class PasqalLocalBackend(PasqalBackend):
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
         return PasqalLocalJob(backend, job_id, emulator)
-
-
-def to_pulser(sched: Schedule) -> pulser.Sequence:
-    # TODO, convert from Schedule...
-    reg = pulser.Register.rectangle(1, 2, spacing=8, prefix="atom")
-    pulse = pulser.Pulse.ConstantPulse(200, 2, -10, 0)
-
-    seq = pulser.Sequence(reg, pulser.AnalogDevice)
-    seq.declare_channel("rydberg_global", "rydberg_global")
-    seq.add(pulse, "rydberg_global")
-
-    return seq
