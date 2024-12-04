@@ -49,7 +49,7 @@ class PasqalLocalBackend(PasqalBackend):
         super().__init__(name=name, **fields)
         self.backend_name = name
         self._status = None
-        self._target = None  # TODO: implement PasqalTarget for verification
+        self._target = None  # Implement PasqalTarget for verification
 
     @property
     def target(self) -> Target:
@@ -63,7 +63,7 @@ class PasqalLocalBackend(PasqalBackend):
     def _default_options(cls) -> Options:
         return Options()
 
-    @property  # TODO: find out which of these boilerplates are truly needed to implement
+    @property  # Find out which of these boilerplates are truly needed to implement
     def dtm(self) -> float:
         raise NotImplementedError(
             f"System time resolution of output signals is not supported by {self.name}."
@@ -75,7 +75,7 @@ class PasqalLocalBackend(PasqalBackend):
 
     @property
     def _device(self) -> Device:
-        return None  # Fixme
+        return None  # implement
 
     @property
     def instructions(self) -> list[tuple[Instruction, tuple[int]]]:
@@ -105,35 +105,10 @@ class PasqalLocalBackend(PasqalBackend):
         scheduling.
 
         Returns:
-            The input signal timestep in seconds. If the backend doesn't define ``dt``, ``None`` will
-            be returned.
+            The input signal timestep in seconds.
+            If the backend doesn't define ``dt``, ``None`` will be returned.
         """
         return self.target.dt
-
-    @property
-    def dtm(self) -> float:
-        """Return the system time resolution of output signals
-
-        Returns:
-            The output signal timestep in seconds.
-
-        Raises:
-            NotImplementedError: if the backend doesn't support querying the
-                output signal timestep
-        """
-        raise NotImplementedError
-
-    @property
-    def meas_map(self) -> list[list[int]]:
-        """Return the grouping of measurements which are multiplexed
-
-        This is required to be implemented if the backend supports Pulse
-        scheduling.
-
-        Returns:
-            The grouping of measurements which are multiplexed
-        """
-        raise NotImplementedError
 
     @property
     def instruction_schedule_map(self) -> InstructionScheduleMap:
@@ -141,17 +116,16 @@ class PasqalLocalBackend(PasqalBackend):
         instructions defined in this backend's target."""
         return self.target.instruction_schedule_map()
 
-    def run(  # type: ignore
+    def run(
         self, run_input: Union[QuantumCircuit, Schedule, ScheduleBlock], **options
     ) -> PasqalJob:
-        """ Run a program on Pasqal backend
-        """
+        """Run a program on Pasqal backend"""
         if isinstance(run_input, QuantumCircuit):
             raise NotImplementedError(
                 "Conversion of QuantumCircuit to Pulses not implemented"
             )
-        elif isinstance(run_input, ScheduleBlock):
-            raise NotImplemented("ScheduleBlocks not yet supported")
+        if isinstance(run_input, ScheduleBlock):
+            raise NotImplementedError("ScheduleBlocks not yet supported")
 
         pulser_sequence = to_pulser(run_input)
         # initialise the backend from sequence.

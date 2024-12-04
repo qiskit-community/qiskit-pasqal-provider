@@ -61,5 +61,5 @@ build-backend = "setuptools.build_meta"
 py-modules = []
 
 [tool.setuptools.packages.find]
-include = ['prototype_template*']
-exclude = ['prototype_template*tests']
+include = ['pasqal_qiskit_provider*']
+exclude = ['pasqal_qiskit_provider*tests']

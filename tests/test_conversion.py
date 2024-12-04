@@ -3,7 +3,7 @@
 from unittest import TestCase
 
 import pulser
-from qiskit.pulse import Constant, DriveChannel, Gaussian, Play, Schedule
+from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
 from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
 

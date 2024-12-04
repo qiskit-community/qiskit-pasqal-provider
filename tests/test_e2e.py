@@ -1,15 +1,13 @@
 """End to end tests running qiskit composed programs on Pasqal backends"""
 
 import pytest
-from qiskit.pulse import Constant, DriveChannel, Gaussian, Play, Schedule
+from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
 from qiskit_pasqal_provider.providers.pasqal_backend import PasqalLocalBackend
 
 
-@pytest.mark.parametrize(
-    ["duration", "amp", "det"], [(20, 2, -10), (100, 2, -10), (1000, 2, -10)]
-)
-def test_e2e(duration, amp, det) -> None:
+@pytest.mark.parametrize("duration", [20, 100, 1000])
+def test_e2e(duration: int) -> None:
     """Tests e2e the creation and execution of a pulse program on PasqalLocalBackend"""
     sched1 = Schedule()
 
