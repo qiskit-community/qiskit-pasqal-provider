@@ -4,7 +4,9 @@ from dataclasses import dataclass
 
 import pulser
 import qiskit
-from qiskit.pulse import Constant, Schedule
+from pulser.devices import Device
+
+from qiskit_pasqal_provider.providers.pasqal_schedule import PasqalSchedule
 
 
 @dataclass
@@ -20,20 +22,13 @@ class TwoPhotonPulse:
     phase: float = 0
 
 
-def to_pulser(sched: Schedule) -> pulser.Sequence:
+def to_pulser(sched: PasqalSchedule, device: Device) -> pulser.Sequence:
     """Utility function to convert a Qiskit Pulse Schedule into a Pulser Sequence."""
 
-    # Set up default register in here until we figure out how to expose this
-    # API in the Qiskit interface. A Register can take predefined shapes, or
-    # be defined from co-ordinates.
-    # Here we define 4 atoms on a line 4 um apart
-    reg = pulser.Register.rectangle(1, 4, spacing=5, prefix="atom")
-
-    # Initialise the sequence and channel
-    seq = pulser.Sequence(reg, pulser.AnalogDevice)
+    reg = sched.register
+    seq = pulser.Sequence(reg, device)
+    # why is this needed by Pulser?
     seq.declare_channel("rydberg_global", "rydberg_global")
-
-    # Everything above this can perhaps be moved to the PasqalBackend?
 
     pulses: dict[int, TwoPhotonPulse] = {}
     for time, instruction in sched.instructions:
@@ -51,7 +46,7 @@ def to_pulser(sched: Schedule) -> pulser.Sequence:
         # channel = instruction.channel
         # qubit_index = channel.index
         name = instruction.name
-        if isinstance(_pulse, Constant):
+        if _pulse.pulse_type == "Constant":
             if name == "rabi":  # or use the channel 0 for amp, 1 for det e.g.
                 pulse.rabi = pulser.ConstantWaveform(_pulse.duration, _pulse.amp)
             elif name == "detuning":

@@ -6,15 +6,15 @@ import uuid
 from abc import ABC
 from typing import Union
 
+import pulser
 from pulser.devices import Device
 from pulser_simulation import QutipEmulator
-from qiskit import QuantumCircuit
 from qiskit.circuit import Instruction
 from qiskit.providers import BackendV2, Options, QubitProperties
-from qiskit.pulse import Schedule, ScheduleBlock
 from qiskit.pulse.instruction_schedule_map import InstructionScheduleMap
 from qiskit.transpiler import Target
 
+from qiskit_pasqal_provider.providers.pasqal_schedule import PasqalSchedule
 from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
 
 from .pasqal_job import PasqalJob, PasqalLocalJob
@@ -32,7 +32,7 @@ class PasqalBackend(BackendV2, ABC):
 class PasqalLocalBackend(PasqalBackend):
     """BraketLocalBackend."""
 
-    def __init__(self, name: str = "default", **fields):
+    def __init__(self, name: str = "default", **fields) -> None:
         """PasqalLocalBackend for executing circuits locally.
 
         Example:
@@ -48,6 +48,9 @@ class PasqalLocalBackend(PasqalBackend):
         """
         super().__init__(name=name, **fields)
         self.backend_name = name
+        # Initialise the sequence and channel
+        if self.backend_name in ["default", "AnalogDevice"]:
+            self.device = pulser.AnalogDevice
         self._status = None
         self._target = None  # Implement PasqalTarget for verification
 
@@ -116,21 +119,10 @@ class PasqalLocalBackend(PasqalBackend):
         instructions defined in this backend's target."""
         return self.target.instruction_schedule_map()
 
-    def run(
-        self, run_input: Union[QuantumCircuit, Schedule, ScheduleBlock], **options
-    ) -> PasqalJob:
+    def run(self, run_input: PasqalSchedule, **options) -> PasqalJob:
         """Run a program on Pasqal backend"""
-        if isinstance(run_input, QuantumCircuit):
-            raise NotImplementedError(
-                "Conversion of QuantumCircuit to Pulses not implemented"
-            )
-        if isinstance(run_input, ScheduleBlock):
-            raise NotImplementedError("ScheduleBlocks not yet supported")
 
-        pulser_sequence = to_pulser(run_input)
-        # initialise the backend from sequence.
-        # In the sequence the register and device is encoded
-        # we can imagine moving that to the Qiskit Backend
+        pulser_sequence = to_pulser(run_input, self.device)
         emulator = QutipEmulator.from_sequence(pulser_sequence)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
