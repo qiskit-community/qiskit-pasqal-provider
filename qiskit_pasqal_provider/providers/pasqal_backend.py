@@ -39,8 +39,7 @@ class PasqalLocalBackend(PasqalBackend):
             >>> device = PasqalLocalBackend()                    #Local State Vector Simulator
             >>> device = PasqalLocalBackend("default")           #Local State Vector Simulator
             >>> device = PasqalLocalBackend(name="default")      #Local State Vector Simulator
-            >>> device = PasqalLocalBackend(name="qutip_sv")     #Local State Vector Simulator
-            >>> device = PasqalLocalBackend(name="qutip_dm")     #Local Density Matrix Simulator
+            >>> device = PasqalLocalBackend(name="AnalogDevice") #Local State Vector Simulator
 
         Args:
             name: name of backend
@@ -51,6 +50,10 @@ class PasqalLocalBackend(PasqalBackend):
         # Initialise the sequence and channel
         if self.backend_name in ["default", "AnalogDevice"]:
             self.device = pulser.AnalogDevice
+        else:
+            raise NotImplementedError(
+                "Only default AnalogDevice is currently implemented"
+            )
         self._status = None
         self._target = None  # Implement PasqalTarget for verification
 
