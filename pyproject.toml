@@ -1,14 +1,14 @@
 # file pyproject.toml
 
 [project]
-name = "prototype_template"
+name = "qiskit_pasqal_provider"
 dynamic = [
     "version",
 ]
 readme = "README.md"
 requires-python = ">=3.9"
 license = {file = "LICENSE.txt"}
-description = "Repository for a quantum prototype"
+description = "Qiskit Pasqal provider."
 authors = [
    { name = "My Name", email = "my.email@email.net"},
 ]
@@ -61,5 +61,5 @@ build-backend = "setuptools.build_meta"
 py-modules = []
 
 [tool.setuptools.packages.find]
-include = ['pasqal_qiskit_provider*']
-exclude = ['pasqal_qiskit_provider*tests']
+include = ['qiskit_pasqal_provider*']
+exclude = ['qiskit_pasqal_provider*tests']
