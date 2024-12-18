@@ -21,14 +21,14 @@ from pathlib import Path
 
 from importlib_metadata import version as metadata_version
 
-project = "Template project"
-copyright = "2022"  # pylint: disable=redefined-builtin
+project = "Qiskit Pasqal Provider"
+copyright = "2025"  # pylint: disable=redefined-builtin
 author = ""
 
 _rootdir = Path(__file__).parent.parent
 
 # The full version, including alpha/beta/rc tags
-release = metadata_version("prototype_template")
+release = metadata_version("qiskit_pasqal_provider")
 # The short X.Y version
 version = ".".join(release.split(".")[:2])
 
