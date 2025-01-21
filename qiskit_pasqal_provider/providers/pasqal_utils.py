@@ -4,7 +4,9 @@ from dataclasses import dataclass
 
 import pulser
 import qiskit
-from qiskit.pulse import Constant, Schedule
+from qiskit.pulse import Constant, Schedule, Play
+from qiskit.pulse.channels import PulseChannel
+from qiskit.pulse.library.pulse import Pulse
 
 
 @dataclass
@@ -20,18 +22,38 @@ class TwoPhotonPulse:
     phase: float = 0
 
 
-def to_pulser(sched: Schedule) -> pulser.Sequence:
+class TwoPhotonSchedule(Schedule):
+    """
+    Schedule class that holds 2 pulses (rabi, detuning) suitable for Neutral Atom Analog devices.
+    """
+
+    def __init__(
+        self,
+        channel: PulseChannel,
+        rabi: Pulse | None = None,
+        detuning: Pulse | None = None,
+        name: str | None = None,
+        metadata: dict | None = None,
+    ):
+        schedules = [
+            Play(rabi, channel=channel, name=rabi.name or "rabi"),
+            Play(detuning, channel=channel, name=detuning.name or "detuning"),
+        ]
+        super().__init__(*schedules, name=name, metadata=metadata)
+
+
+def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
     """Utility function to convert a Qiskit Pulse Schedule into a Pulser Sequence."""
 
     # Set up default register in here until we figure out how to expose this
     # API in the Qiskit interface. A Register can take predefined shapes, or
     # be defined from co-ordinates.
     # Here we define 4 atoms on a line 4 um apart
-    reg = pulser.Register.rectangle(1, 4, spacing=5, prefix="atom")
+    # reg = pulser.Register.rectangle(1, 4, spacing=5, prefix="atom")
 
-    # Initialise the sequence and channel
-    seq = pulser.Sequence(reg, pulser.AnalogDevice)
-    seq.declare_channel("rydberg_global", "rydberg_global")
+    # # Initialise the sequence and channel
+    # seq = pulser.Sequence(reg, pulser.AnalogDevice)
+    # seq.declare_channel("rydberg_global", "rydberg_global")
 
     # Everything above this can perhaps be moved to the PasqalBackend?
 
@@ -44,6 +66,7 @@ def to_pulser(sched: Schedule) -> pulser.Sequence:
         pulse = pulses.get(
             time,
             TwoPhotonPulse(time=time, duration=_pulse.duration, phase=_pulse.angle),
+            # resolve how to get phase from qiskit.pulse.Play.Pulse object
         )
 
         # maybe a solution will be to implement specific channel for Neutral-Atoms
@@ -61,8 +84,10 @@ def to_pulser(sched: Schedule) -> pulser.Sequence:
         else:
             raise NotImplementedError("Currently only constant pulses")
         pulses[time] = pulse
-    for time, pulse in pulses.items():
-        # Form final Pulser pulse from the two constituents and the phase angle.
-        _pulse = pulser.Pulse(pulse.rabi, pulse.detuning, phase=pulse.phase)
-        seq.add(_pulse, "rydberg_global")
-    return seq
+
+    # Form final Pulser pulse from the two constituents and the phase angle.
+    pulser_pulses = [
+        (pulser.Pulse(pulse.rabi, pulse.detuning, phase=pulse.phase), "rydberg_global")
+        for time, pulse in pulses.items()
+    ]
+    return pulser_pulses

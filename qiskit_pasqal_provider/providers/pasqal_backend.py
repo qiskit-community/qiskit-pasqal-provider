@@ -4,10 +4,15 @@ import copy
 import logging
 import uuid
 from abc import ABC
-from typing import Union
+from typing import Union, Optional
 
-from pulser.devices import Device
-from pulser_simulation import QutipEmulator
+from pulser.devices import (
+    Device as PasqalDevice,
+    AnalogDevice as PasqalAnalogDevice,
+)
+from pulser.register import Register as PasqalRegister
+from pulser.sequence import Sequence as PasqalSequence
+from pulser_simulation import QutipEmulator as PasqalSolver
 from qiskit import QuantumCircuit
 from qiskit.circuit import Instruction
 from qiskit.providers import BackendV2, Options, QubitProperties
@@ -19,41 +24,82 @@ from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
 
 from .pasqal_job import PasqalJob, PasqalLocalJob
 
+
 logger = logging.getLogger(__name__)
 
 
 class PasqalBackend(BackendV2, ABC):
     """PasqaqlBackend."""
 
-    def __repr__(self) -> str:
-        return f"PasqalBackend[{self.name}]"
+    # not sure this below is needed; if so, should be rephrased as
+    # `PasqalLocalBackend` or `PasqalRemoteBackend`(?) instead
+    # def __repr__(self) -> str:
+    #     return f"PasqalBackend[{self.name}]"
 
 
 class PasqalLocalBackend(PasqalBackend):
-    """BraketLocalBackend."""
+    """PasqalLocalBackend."""
 
-    def __init__(self, name: str = "default", **fields):
-        """PasqalLocalBackend for executing circuits locally.
-
-        Example:
-            >>> device = PasqalLocalBackend()                    #Local State Vector Simulator
-            >>> device = PasqalLocalBackend("default")           #Local State Vector Simulator
-            >>> device = PasqalLocalBackend(name="default")      #Local State Vector Simulator
-            >>> device = PasqalLocalBackend(name="qutip_sv")     #Local State Vector Simulator
-            >>> device = PasqalLocalBackend(name="qutip_dm")     #Local Density Matrix Simulator
+    def __init__(
+        self,
+        register: PasqalRegister,
+        device: PasqalDevice = PasqalAnalogDevice,
+        solver: PasqalSolver = PasqalSolver,
+        target: Optional[Target] = None,
+        **options,
+    ):
+        """PasqalLocalBackend for executing pulses sequence locally.
 
         Args:
-            name: name of backend
-            **fields: extra fields
+            register: Pasqal `Register` instance.
+            device: Pasqal Device instance. Default is `AnalogDevice`.
+            solver: PasqalSolver instance configured for pulse simulation.
+                Default is Pulser's `QutipEmulator`.
+            target: `Target` object.
+            **options: Additional configuration options for the simulator.
         """
-        super().__init__(name=name, **fields)
-        self.backend_name = name
+        self.backend_name = self.__class__.__name__
+        super().__init__(name=self.backend_name, **options)
+        self._device = device
+        self._register = register
         self._status = None
-        self._target = None  # Implement PasqalTarget for verification
+        self._options.solver = None
+        self._options.subsystem_dims = None
+
+        if "subsystem_dims" not in options:
+            options["subsystem_dims"] = [solver.dim]
+
+        self.set_options(solver=solver, **options)
+
+        if target is None:
+            target = Target()
+        else:
+            target = copy.copy(target)
+
+        # rework on this whole section:
+        # add default simulator measure instructions
+        # measure_properties = {}
+        # instruction_schedule_map = target.instruction_schedule_map()
+        # for qubit in range(len(self.options.subsystem_dims)):
+        #     if not instruction_schedule_map.has(instruction="measure", qubits=qubit):
+        #         with pulse.build() as meas_sched:
+        #             pulse.acquire(
+        #                 duration=1, qubit_or_channel=qubit, register=pulse.MemorySlot(qubit)
+        #             )
+        #
+        #         measure_properties[(qubit,)] = InstructionProperties(calibration=meas_sched)
+        #
+        # if bool(measure_properties):
+        #     target.add_instruction(Measure(), measure_properties)
+
+        target.dt = None  # Should it be resolved directly by the QutipEmulator somehow?
+        # target.num_qubits = len(self.options.subsystem_dims)
+
+        self._target = target  # Implement PasqalTarget for verification?
 
     @property
     def target(self) -> Target:
-        return self.target
+        return self._target
 
     @property
     def max_circuits(self) -> None:
@@ -74,8 +120,8 @@ class PasqalLocalBackend(PasqalBackend):
         raise NotImplementedError(f"Measurement map is not supported by {self.name}.")
 
     @property
-    def _device(self) -> Device:
-        return None  # implement
+    def device(self) -> PasqalDevice:
+        return self._device
 
     @property
     def instructions(self) -> list[tuple[Instruction, tuple[int]]]:
@@ -108,7 +154,7 @@ class PasqalLocalBackend(PasqalBackend):
             The input signal timestep in seconds.
             If the backend doesn't define ``dt``, ``None`` will be returned.
         """
-        return self.target.dt
+        return self.target.dt if hasattr(self.target, "dt") else None
 
     @property
     def instruction_schedule_map(self) -> InstructionScheduleMap:
@@ -127,11 +173,17 @@ class PasqalLocalBackend(PasqalBackend):
         if isinstance(run_input, ScheduleBlock):
             raise NotImplementedError("ScheduleBlocks not yet supported")
 
-        pulser_sequence = to_pulser(run_input)
+        seq = PasqalSequence(self._register, PasqalAnalogDevice)
+        seq.declare_channel("rydberg_global", "rydberg_global")
+
+        pulser_pulses = to_pulser(run_input)
+        for pulse, channel in pulser_pulses:
+            seq.add(pulse, channel)
+
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend
-        emulator = QutipEmulator.from_sequence(pulser_sequence)
+        emulator = self._options.solver.from_sequence(seq)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
         return PasqalLocalJob(backend, job_id, emulator)

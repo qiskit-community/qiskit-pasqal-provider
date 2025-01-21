@@ -18,3 +18,5 @@ Template module classes and functions
 """
 
 from .pasqal_backend import PasqalLocalBackend
+
+__all__ = ["PasqalLocalBackend"]
