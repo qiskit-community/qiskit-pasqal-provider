@@ -1,7 +1,5 @@
 """Unit tests for converting Schedules to Pulser Sequences"""
 
-from unittest import TestCase
-
 import pulser
 from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
@@ -19,9 +17,7 @@ def test_schedule_conversion(
     # Units are nanoseconds and rad/us, phase
     # limit_amplitude=False, default is True -> limit norm to 1
     sched1 += Play(
-        Constant(
-            duration=200, amp=2, angle=1.57, name="rabi", limit_amplitude=False
-        ),
+        Constant(duration=200, amp=2, angle=1.57, name="rabi", limit_amplitude=False),
         DriveChannel(0),
     )
 

@@ -45,18 +45,6 @@ class TwoPhotonSchedule(Schedule):
 def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
     """Utility function to convert a Qiskit Pulse Schedule into a Pulser Sequence."""
 
-    # Set up default register in here until we figure out how to expose this
-    # API in the Qiskit interface. A Register can take predefined shapes, or
-    # be defined from co-ordinates.
-    # Here we define 4 atoms on a line 4 um apart
-    # reg = pulser.Register.rectangle(1, 4, spacing=5, prefix="atom")
-
-    # # Initialise the sequence and channel
-    # seq = pulser.Sequence(reg, pulser.AnalogDevice)
-    # seq.declare_channel("rydberg_global", "rydberg_global")
-
-    # Everything above this can perhaps be moved to the PasqalBackend?
-
     pulses: dict[int, TwoPhotonPulse] = {}
     for time, instruction in sched.instructions:
         if not isinstance(instruction, qiskit.pulse.Play):
