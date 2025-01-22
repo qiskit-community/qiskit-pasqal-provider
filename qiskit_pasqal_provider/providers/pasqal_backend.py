@@ -4,7 +4,7 @@ import copy
 import logging
 import uuid
 from abc import ABC
-from typing import Union, Optional
+from typing import Union, Optional, Callable
 
 from pulser.devices import (
     Device as PasqalDevice,
@@ -31,11 +31,6 @@ logger = logging.getLogger(__name__)
 class PasqalBackend(BackendV2, ABC):
     """PasqaqlBackend."""
 
-    # not sure this below is needed; if so, should be rephrased as
-    # `PasqalLocalBackend` or `PasqalRemoteBackend`(?) instead
-    # def __repr__(self) -> str:
-    #     return f"PasqalBackend[{self.name}]"
-
 
 class PasqalLocalBackend(PasqalBackend):
     """PasqalLocalBackend."""
@@ -44,7 +39,7 @@ class PasqalLocalBackend(PasqalBackend):
         self,
         register: PasqalRegister,
         device: PasqalDevice = PasqalAnalogDevice,
-        solver: PasqalSolver = PasqalSolver,
+        solver: Callable = PasqalSolver,
         target: Optional[Target] = None,
         **options,
     ):
@@ -65,9 +60,6 @@ class PasqalLocalBackend(PasqalBackend):
         self._status = None
         self._options.solver = None
         self._options.subsystem_dims = None
-
-        if "subsystem_dims" not in options:
-            options["subsystem_dims"] = [solver.dim]
 
         self.set_options(solver=solver, **options)
 

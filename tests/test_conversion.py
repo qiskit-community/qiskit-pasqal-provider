@@ -38,4 +38,4 @@ def test_schedule_conversion(
         seq.add(pulse, channel)
 
     assert seq.get_duration() == 200
-    assert seq.get_register()  # todo, program and validate
+    assert seq.get_register(True)  # todo, program and validate
