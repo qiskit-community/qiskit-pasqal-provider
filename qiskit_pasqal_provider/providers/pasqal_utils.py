@@ -29,6 +29,7 @@ class TwoPhotonSchedule(Schedule):
 
     def __init__(
         self,
+        *,
         channel: PulseChannel,
         rabi: Pulse | None = None,
         detuning: Pulse | None = None,

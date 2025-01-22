@@ -121,6 +121,9 @@ class PasqalLocalBackend(PasqalBackend):
 
     @property
     def device(self) -> PasqalDevice:
+        """
+        returns instance's device property (must be pulser device object).
+        """
         return self._device
 
     @property
