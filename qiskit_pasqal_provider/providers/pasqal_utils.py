@@ -55,7 +55,6 @@ def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
         pulse = pulses.get(
             time,
             TwoPhotonPulse(time=time, duration=_pulse.duration, phase=_pulse.angle),
-            # resolve how to get phase from qiskit.pulse.Play.Pulse object
         )
 
         # maybe a solution will be to implement specific channel for Neutral-Atoms
@@ -80,3 +79,11 @@ def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
         for time, pulse in pulses.items()
     ]
     return pulser_pulses
+
+
+class PasqalLayout:
+    pass
+
+
+class PasqalRegister:
+    pass

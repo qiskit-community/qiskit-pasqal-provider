@@ -10,7 +10,6 @@ from pulser.devices import (
     Device as PasqalDevice,
     AnalogDevice as PasqalAnalogDevice,
 )
-from pulser.register import Register as PasqalRegister
 from pulser.sequence import Sequence as PasqalSequence
 from pulser_simulation import QutipEmulator as PasqalSolver
 from qiskit import QuantumCircuit
@@ -23,7 +22,7 @@ from qiskit.transpiler import Target
 from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
 
 from .pasqal_job import PasqalJob, PasqalLocalJob
-
+from .pasqal_utils import PasqalRegister, PasqalLayout
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +36,9 @@ class PasqalLocalBackend(PasqalBackend):
 
     def __init__(
         self,
-        register: PasqalRegister,
+        layout: PasqalLayout,
         device: PasqalDevice = PasqalAnalogDevice,
-        solver: Callable = PasqalSolver,
+        solver: Optional[Callable] = PasqalSolver,
         target: Optional[Target] = None,
         **options,
     ):
@@ -56,7 +55,7 @@ class PasqalLocalBackend(PasqalBackend):
         self.backend_name = self.__class__.__name__
         super().__init__(name=self.backend_name, **options)
         self._device = device
-        self._register = register
+        self._layout = layout
         self._status = None
         self._options.solver = None
         self._options.subsystem_dims = None
@@ -158,7 +157,10 @@ class PasqalLocalBackend(PasqalBackend):
         return self.target.instruction_schedule_map()
 
     def run(
-        self, run_input: Union[QuantumCircuit, Schedule, ScheduleBlock], **options
+        self,
+        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
+        register: PasqalRegister = None,
+        **options
     ) -> PasqalJob:
         """Run a program on Pasqal backend"""
         if isinstance(run_input, QuantumCircuit):
