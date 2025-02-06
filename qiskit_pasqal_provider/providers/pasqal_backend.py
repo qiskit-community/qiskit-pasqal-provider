@@ -8,12 +8,11 @@ from enum import StrEnum
 from typing import Any, Union
 
 from pulser.sequence import Sequence as PasqalSequence
+from pulser.register import Register
 from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
-from qiskit.circuit import Instruction
-from qiskit.providers import BackendV2, Options, QubitProperties
+from qiskit.providers import BackendV2, Options
 from qiskit.pulse import Schedule, ScheduleBlock
-from qiskit.pulse.instruction_schedule_map import InstructionScheduleMap
 
 from .pasqal_job import PasqalJob, PasqalLocalJob
 from .pasqal_utils import PasqalRegister, to_pulser
@@ -47,45 +46,60 @@ class PasqalLocalBackend(PasqalBackend):
     """PasqalLocalBackend."""
 
     def __new__(
-        cls, target: PasqalTarget, backend: PasqalBackendType | str, **options: Any
+        cls,
+        target: PasqalTarget,
+        backend: PasqalBackendType | str | None = None,
+        **options: Any,
     ) -> Any:
+        """creates a proper backend instance."""
+
         match backend:
             case "qutip":
-                return QutipEmulatorBackend(target, **options)
+                return QutipEmulatorBackend(target=target, **options)
 
             case "emu-mps":
-                return EmuMpsBackend(target, **options)
+                return EmuMpsBackend(target=target, **options)
 
             case _:
                 raise NotImplementedError()
 
-    def __init__(
+    def run(
         self,
-        target: PasqalTarget,
-        backend: str,
+        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
+        register: PasqalRegister | Register | None = None,
         **options: Any,
-    ):
-        """PasqalLocalBackend for executing pulses sequence locally.
+    ) -> PasqalJob:
+        raise NotImplementedError()
+
+    @property
+    def target(self) -> Any:
+        raise NotImplementedError()
+
+    @property
+    def max_circuits(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _default_options(cls) -> Any:
+        raise NotImplementedError()
+
+
+class QutipEmulatorBackend(BackendV2):
+    """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
+
+    def __init__(self, target: PasqalTarget, **options: Any):
+        """
 
         Args:
-            register: Pasqal `Register` instance.
-            target: Pasqal Device instance. Default is `AnalogDevice`.
-            solver: PasqalSolver instance configured for pulse simulation.
-                Default is Pulser's `QutipEmulator`.
-            target: `Target` object.
-            **options: Additional configuration options for the simulator.
+            target (PasqalTarget): The target of the pulse sequence.
+            **options: additional configuration options
         """
 
         self.backend_name = self.__class__.__name__
         super().__init__(name=self.backend_name, **options)
-
-        self.backend = backend
-        self._device = target
-        self._layout = self.device.layout
-        self._status = None
-
-        # check whether it is essential for class to work
+        self.backend = "qutip"
         self._target = target
+        self._layout = self.target.layout
 
     @property
     def target(self) -> PasqalTarget:
@@ -100,94 +114,10 @@ class PasqalLocalBackend(PasqalBackend):
     def _default_options(cls) -> Options:
         return Options()
 
-    @property  # Find out which of these boilerplates are truly needed to implement
-    def dtm(self) -> float:
-        raise NotImplementedError(
-            f"System time resolution of output signals is not supported by {self.name}."
-        )
-
-    @property
-    def meas_map(self) -> list[list[int]]:
-        # check whether it is essential for class to work
-        raise NotImplementedError(f"Measurement map is not supported by {self.name}.")
-
-    @property
-    def device(self) -> PasqalTarget:
-        """
-        returns instance's device property (must be pulser device object).
-        """
-        return self._device
-
-    @property
-    def instructions(self) -> list[tuple[Instruction, tuple[int]]]:
-        # check whether it is essential for class to work
-        """A list of Instruction tuples on the backend of the form ``(instruction, (qubits)``"""
-        raise NotImplementedError()
-
-    @property
-    def operations(self) -> list[Instruction]:
-        # check whether it is essential for class to work
-        """A list of :class:`~qiskit.circuit.Instruction` instances that the backend supports."""
-        raise NotImplementedError()
-
-    @property
-    def operation_names(self) -> list[str]:
-        # check whether it is essential for class to work
-        """A list of instruction names that the backend supports."""
-        raise NotImplementedError()
-
-    def qubit_properties(
-        self, qubit: Union[int, list[int]]
-    ) -> Union[QubitProperties, list[QubitProperties]]:
-        # check whether it is essential for class to work
-        raise NotImplementedError()
-
-    @property
-    def dt(self) -> Union[float, None]:
-        # check whether it is essential for class to work
-        """Return the system time resolution of input signals
-
-        This is required to be implemented if the backend supports Pulse
-        scheduling.
-
-        Returns:
-            The input signal timestep in seconds.
-            If the backend doesn't define ``dt``, ``None`` will be returned.
-        """
-        raise NotImplementedError()
-
-    @property
-    def instruction_schedule_map(self) -> InstructionScheduleMap:
-        # check whether it is essential for class to work
-        """Return the :class:`~qiskit.pulse.InstructionScheduleMap` for the
-        instructions defined in this backend's target."""
-        raise NotImplementedError()
-
     def run(
         self,
         run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | None = None,
-        **options: Any,
-    ) -> PasqalJob:
-        raise NotImplementedError()
-
-
-class QutipEmulatorBackend(PasqalLocalBackend):
-    """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
-
-    def __init__(self, target: PasqalTarget, **options: Any):
-        """
-
-        Args:
-            target:
-            **options:
-        """
-        super().__init__(target, "qutip", **options)
-
-    def run(
-        self,
-        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | None = None,
+        register: PasqalRegister | Register | None = None,
         **options: Any,
     ) -> PasqalJob:
         """
@@ -213,7 +143,7 @@ class QutipEmulatorBackend(PasqalLocalBackend):
         if isinstance(run_input, ScheduleBlock):
             raise NotImplementedError("ScheduleBlocks not yet supported")
 
-        seq = PasqalSequence(register, self.device.device)
+        seq = PasqalSequence(register, self.target.device)
         seq.declare_channel("rydberg_global", "rydberg_global")
 
         pulser_pulses = to_pulser(run_input)
@@ -229,7 +159,7 @@ class QutipEmulatorBackend(PasqalLocalBackend):
         return PasqalLocalJob(backend, job_id, emulator)
 
 
-class EmuMpsBackend(PasqalLocalBackend):
+class EmuMpsBackend(BackendV2):
     """PasqalEmuMpsBackend."""
 
     def __init__(self, target: PasqalTarget, **options: Any):
@@ -238,14 +168,32 @@ class EmuMpsBackend(PasqalLocalBackend):
 
         Args:
             target (PasqalTarget): the Pasqal target instance
-            **options:
+            **options: additional configuration options for the backend
         """
-        super().__init__(target, "emu-mps", **options)
+        # super().__init__(target=target, backend="emu-mps")
+        self.backend_name = self.__class__.__name__
+        super().__init__(name=self.backend_name, **options)
+        self.backend = "qutip"
+        self._target = target
+        self._layout = self.target.layout
+
+    @property
+    def target(self) -> PasqalTarget:
+        return self._target
+
+    @property
+    def max_circuits(self) -> None:
+        # check whether it is essential for class to work
+        return None  # No max
+
+    @classmethod
+    def _default_options(cls) -> Options:
+        return Options()
 
     def run(
         self,
         run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | None = None,
+        register: PasqalRegister | Register | None = None,
         **options: Any,
     ) -> PasqalJob:
         """
@@ -265,10 +213,22 @@ class EmuMpsBackend(PasqalLocalBackend):
 class PasqalRemoteBackend(PasqalBackend):
     """PasqalRemoteBackend."""
 
+    @property
+    def target(self):
+        raise NotImplementedError()
+
+    @property
+    def max_circuits(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def _default_options(cls):
+        raise NotImplementedError()
+
     def run(
         self,
         run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | None = None,
+        register: PasqalRegister | Register | None = None,
         **options: Any,
     ) -> PasqalJob:
         """

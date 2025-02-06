@@ -1,10 +1,12 @@
 """End to end tests running qiskit composed programs on Pasqal backends"""
 
+import numpy as np
 import pytest
 from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
 from qiskit_pasqal_provider.providers.pasqal_backend import PasqalLocalBackend
 from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
+from qiskit_pasqal_provider.providers.pasqal_utils import PasqalRegister
 
 
 @pytest.mark.parametrize("duration", [20, 100, 1000])
@@ -46,7 +48,11 @@ def test_e2e(duration: int, pasqal_target: PasqalTarget) -> None:
     sched = sched_0 + sched_1
 
     bknd = PasqalLocalBackend(target=pasqal_target, backend="qutip")
-    job = bknd.run(sched)
+
+    interatomic = bknd.target.device.rydberg_blockade_radius(2 * np.pi)
+    register = PasqalRegister.square(3, interatomic)
+
+    job = bknd.run(sched, register=register)
     job.submit()
     res = job.result()
     counts = res.get_counts()
