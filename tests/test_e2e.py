@@ -1,16 +1,15 @@
 """End to end tests running qiskit composed programs on Pasqal backends"""
 
 import pytest
-import pulser
 from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
 from qiskit_pasqal_provider.providers.pasqal_backend import PasqalLocalBackend
+from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
 
 
 @pytest.mark.parametrize("duration", [20, 100, 1000])
-def test_e2e(duration: int, pasqal_register: pulser.Register) -> None:
+def test_e2e(duration: int, pasqal_target: PasqalTarget) -> None:
     """Tests e2e the creation and execution of a pulse program on PasqalLocalBackend"""
-    register = pasqal_register
 
     sched1 = Schedule()
 
@@ -45,7 +44,8 @@ def test_e2e(duration: int, pasqal_register: pulser.Register) -> None:
     sched_0 = sched1 | sched2
     sched_1 = sched3 | sched4
     sched = sched_0 + sched_1
-    bknd = PasqalLocalBackend(register=register)
+
+    bknd = PasqalLocalBackend(target=pasqal_target, backend="qutip")
     job = bknd.run(sched)
     job.submit()
     res = job.result()

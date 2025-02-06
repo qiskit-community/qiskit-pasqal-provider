@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 import pulser
+from pulser.register import Register
 import qiskit
 from qiskit.pulse import Constant, Schedule, Play
 from qiskit.pulse.channels import PulseChannel
@@ -81,9 +82,5 @@ def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
     return pulser_pulses
 
 
-class PasqalLayout:
-    pass
-
-
-class PasqalRegister:
-    pass
+class PasqalRegister(Register):
+    """PasqalRegister class. To define a register for the PasqalBackend run method"""
