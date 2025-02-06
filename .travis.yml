@@ -13,7 +13,7 @@ jobs:
   include:
     - os: linux
       python: 3.11
-      env: TOXENV=py39
+      env: TOXENV=py311
     - os: linux
       python: 3.11
       env: TOXENV=lint
