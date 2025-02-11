@@ -90,4 +90,4 @@ class QutipEmulatorBackend(PasqalBackend):
             job_id = str(uuid.uuid4())
             return PasqalLocalJob(backend, job_id, emulator)
 
-        raise ValueError(f"run_input must be Schedule, ScheduleBlock or QuantumCircuit")
+        raise ValueError("run_input must be Schedule, ScheduleBlock or QuantumCircuit")

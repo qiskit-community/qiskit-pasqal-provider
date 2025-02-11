@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
-from qiskit_pasqal_provider.providers.backend_base import PasqalLocalBackend
+from qiskit_pasqal_provider.providers.backends import PasqalLocalBackend
 from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 

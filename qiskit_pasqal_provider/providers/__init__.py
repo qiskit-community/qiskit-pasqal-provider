@@ -17,6 +17,4 @@ Template module classes and functions
     TemplateClass
 """
 
-from .backend_base import PasqalLocalBackend
-
-__all__ = ["PasqalLocalBackend"]
+__all__ = []

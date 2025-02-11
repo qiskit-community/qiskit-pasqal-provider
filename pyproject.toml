@@ -21,13 +21,10 @@ dependencies = [
     "pulser-core>=1.0, <2",
     "pulser-simulation>=1.0, <2",
     "pasqal-cloud~=0.12.5",
+    "pulser-pasqal",
 ]
 
 [project.optional-dependencies]
-remote = [
-    "pasqal-cloud",
-]
-
 # Dev dependencies.
 dev = [
     "coverage>=5.5",
