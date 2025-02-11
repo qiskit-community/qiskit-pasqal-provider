@@ -5,7 +5,7 @@ import pytest
 from pulser import Register as PasqalRegister
 from pulser.devices import Device
 
-from qiskit_pasqal_provider.providers.pasqal_layout import (
+from qiskit_pasqal_provider.providers.layouts import (
     SquareLayout,
 )
 from qiskit_pasqal_provider.providers.pasqal_devices import (

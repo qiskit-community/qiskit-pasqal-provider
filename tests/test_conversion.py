@@ -3,7 +3,7 @@
 import pulser
 from qiskit.pulse import Constant, DriveChannel, Play, Schedule
 
-from qiskit_pasqal_provider.providers.pasqal_utils import to_pulser
+from qiskit_pasqal_provider.providers.pulse_utils import to_pulser
 
 
 def test_schedule_conversion(

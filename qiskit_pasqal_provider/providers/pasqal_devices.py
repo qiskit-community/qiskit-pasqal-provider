@@ -1,13 +1,17 @@
 """Defines the Pasqal Target and Device classes"""
 
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except ImportError:
+    from qiskit_pasqal_provider.utils import StrEnum  # type: ignore [assignment]
+
 from dataclasses import replace
 
 from pulser.devices import Device, AnalogDevice, DigitalAnalogDevice
 from pulser.devices._device_datacls import BaseDevice
 from pulser.register import RegisterLayout
 
-from .pasqal_layout import PasqalLayout
+from .layouts import PasqalLayout
 
 # rethink about the names
 AVAILABLE_DEVICES = {

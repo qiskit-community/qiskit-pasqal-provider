@@ -24,6 +24,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+remote = [
+    "pasqal-cloud",
+]
+
 # Dev dependencies.
 dev = [
     "coverage>=5.5",

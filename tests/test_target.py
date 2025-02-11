@@ -9,7 +9,7 @@ from pulser.channels import Rydberg, Raman
 from qiskit_pasqal_provider.providers.pasqal_devices import (
     PasqalTarget,
 )
-from qiskit_pasqal_provider.providers.pasqal_layout import (
+from qiskit_pasqal_provider.providers.layouts import (
     SquareLayout,
 )
 
@@ -31,6 +31,8 @@ def test_target_with_device_types(
     # hybrid_device with no layout must fail
     with pytest.raises(ValueError):
         PasqalTarget(hybrid_device, None)
+
+    assert PasqalTarget(hybrid_device, square_layout1)
 
 
 def test_target_with_custom_device(square_layout1: SquareLayout) -> None:
