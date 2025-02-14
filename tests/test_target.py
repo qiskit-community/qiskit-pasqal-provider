@@ -6,7 +6,7 @@ import pytest
 from pulser.devices import Device, VirtualDevice
 from pulser.channels import Rydberg, Raman
 
-from qiskit_pasqal_provider.providers.pasqal_devices import (
+from qiskit_pasqal_provider.providers.target import (
     PasqalTarget,
 )
 from qiskit_pasqal_provider.providers.layouts import (

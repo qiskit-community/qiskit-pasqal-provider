@@ -9,7 +9,7 @@ from pulser import QPUBackend as PasqalQPUBackend, Sequence as PasqalSequence
 from pulser_pasqal import PasqalCloud
 
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister, to_pulser
-from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 

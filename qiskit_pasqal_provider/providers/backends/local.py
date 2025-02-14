@@ -13,7 +13,7 @@ from qiskit_pasqal_provider.providers.backend_base import (
 from qiskit_pasqal_provider.providers.backends.emu_mps import EmuMpsBackend
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
-from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 
 

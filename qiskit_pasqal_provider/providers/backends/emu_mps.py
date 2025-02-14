@@ -8,7 +8,7 @@ from qiskit.providers import Options
 from qiskit.pulse import Schedule, ScheduleBlock
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
-from qiskit_pasqal_provider.providers.pasqal_devices import PasqalTarget
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 

@@ -10,7 +10,7 @@ from qiskit.pulse import Schedule, ScheduleBlock
 from pulser.register.register_layout import RegisterLayout
 
 from .layouts import PasqalLayout
-from .pasqal_devices import PasqalTarget
+from .target import PasqalTarget
 from .jobs import PasqalJob
 from .pulse_utils import PasqalRegister
 

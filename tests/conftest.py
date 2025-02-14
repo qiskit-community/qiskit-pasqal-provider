@@ -8,7 +8,7 @@ from pulser.devices import Device
 from qiskit_pasqal_provider.providers.layouts import (
     SquareLayout,
 )
-from qiskit_pasqal_provider.providers.pasqal_devices import (
+from qiskit_pasqal_provider.providers.target import (
     PasqalDevice,
     AVAILABLE_DEVICES,
     PasqalTarget,

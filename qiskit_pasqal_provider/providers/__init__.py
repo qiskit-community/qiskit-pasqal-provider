@@ -16,5 +16,3 @@ Template module classes and functions
 
     TemplateClass
 """
-
-__all__ = []
