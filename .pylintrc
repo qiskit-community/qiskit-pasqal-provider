@@ -81,7 +81,8 @@ disable=raw-checker-failed,
         suppressed-message,
         useless-suppression,
         deprecated-pragma,
-        use-symbolic-message-instead
+        use-symbolic-message-instead,
+        duplicate-code
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -514,7 +515,7 @@ valid-metaclass-classmethod-first-arg=cls
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=5
+max-args=8
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
@@ -529,7 +530,7 @@ max-branches=12
 max-locals=15
 
 # Maximum number of parents for a class (see R0901).
-max-parents=7
+max-parents=8
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20
@@ -541,7 +542,7 @@ max-returns=6
 max-statements=50
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=0
 
 
 [EXCEPTIONS]

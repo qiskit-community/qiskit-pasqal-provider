@@ -12,14 +12,14 @@ notifications:
 jobs:
   include:
     - os: linux
-      python: 3.9
-      env: TOXENV=py39
+      python: 3.11
+      env: TOXENV=py311
     - os: linux
-      python: 3.9
+      python: 3.11
       env: TOXENV=lint
     - os: linux
-      python: 3.9
+      python: 3.11
       env: TOXENV=coverage
     - os: linux
-      python: 3.9
+      python: 3.11
       env: TOXENV=ecosystem

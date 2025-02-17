@@ -16,5 +16,3 @@ Template module classes and functions
 
     TemplateClass
 """
-
-from .pasqal_backend import PasqalLocalBackend

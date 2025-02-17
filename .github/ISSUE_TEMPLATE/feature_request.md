@@ -8,4 +8,3 @@ labels: 'type: feature request'
 <!-- ⚠️ Make sure to browse the opened and closed issues to confirm this idea does not exist. -->
 
 ### What is the expected behavior?
-
