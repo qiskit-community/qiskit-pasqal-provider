@@ -5,6 +5,7 @@ import pytest
 from pulser import Register as PasqalRegister
 from pulser.devices import Device
 
+from qiskit_pasqal_provider.providers.gate import InterpolatePoints
 from qiskit_pasqal_provider.providers.layouts import (
     SquareLayout,
 )
@@ -13,6 +14,36 @@ from qiskit_pasqal_provider.providers.target import (
     AVAILABLE_DEVICES,
     PasqalTarget,
 )
+
+
+@pytest.fixture
+def square_coords() -> list:
+    """simple square coordinates."""
+    return [(0, 0), (0, 1), (1, 0), (1, 1)]
+
+
+@pytest.fixture
+def null_interpolate_points() -> InterpolatePoints:
+    """constant null interpolate points instance."""
+    return InterpolatePoints(values=[0.0, 0.0, 0.0])
+
+
+@pytest.fixture
+def constant_interpolate_points() -> InterpolatePoints:
+    """constant 'normalized' interpolate points instance."""
+    return InterpolatePoints(values=[1.0, 1.0, 1.0, 1.0])
+
+
+@pytest.fixture
+def linear_interpolate_points() -> InterpolatePoints:
+    """linear interpolate points instance."""
+    return InterpolatePoints(values=[0.0, 1.0 / 3, 2.0 / 3, 1.0])
+
+
+@pytest.fixture
+def bump_interpolate_points() -> InterpolatePoints:
+    """bump interpolate points instance."""
+    return InterpolatePoints(values=[0.0, 1.0, 1.0, 0.0])
 
 
 @pytest.fixture
