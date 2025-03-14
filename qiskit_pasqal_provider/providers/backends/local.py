@@ -22,11 +22,14 @@ class PasqalLocalBackend(PasqalBackend):
 
     def __new__(
         cls,
-        target: PasqalTarget,
         backend: PasqalBackendType | str,
+        target: PasqalTarget | None = None,
         **options: Any,
     ) -> Any:
         """creates a proper backend instance."""
+
+        if target is None:
+            target = PasqalTarget()
 
         match backend:
             case "qutip":

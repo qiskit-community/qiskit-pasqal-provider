@@ -63,18 +63,10 @@ class QutipEmulatorBackend(PasqalBackend):
             A PasqalJob instance.
         """
 
-        if register is None:
-            raise ValueError("register cannot be None")
+        assert register is not None, "register cannot be None"
 
         # Run a program on Pasqal backend
         if isinstance(run_input, QuantumCircuit):
-            raise NotImplementedError(
-                "Conversion of QuantumCircuit to Pulses not implemented"
-            )
-        if isinstance(run_input, ScheduleBlock):
-            raise NotImplementedError("ScheduleBlocks not yet supported")
-
-        if isinstance(run_input, Schedule):
             seq = PasqalSequence(register, self.target.device)
             seq.declare_channel("rydberg_global", "rydberg_global")
 
@@ -89,5 +81,11 @@ class QutipEmulatorBackend(PasqalBackend):
             backend = copy.deepcopy(self)
             job_id = str(uuid.uuid4())
             return PasqalLocalJob(backend, job_id, emulator)
+
+        if isinstance(run_input, ScheduleBlock):
+            raise NotImplementedError("ScheduleBlocks not yet supported")
+
+        if isinstance(run_input, Schedule):
+            raise NotImplementedError("Schedule not supported")
 
         raise ValueError("run_input must be Schedule, ScheduleBlock or QuantumCircuit")

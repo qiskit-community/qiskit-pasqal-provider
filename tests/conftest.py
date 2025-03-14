@@ -32,6 +32,14 @@ def pasqal_register() -> PasqalRegister:
 
 
 @pytest.fixture
+def square_register2x2() -> PasqalRegister:
+    """
+    fixture for square-shaped Pasqal Register instance.
+    """
+    return PasqalRegister.square(2, spacing=5, prefix="atom")
+
+
+@pytest.fixture
 def pasqal_device() -> PasqalDevice | Device:
     """
     fixture for pulser.devices.AnalogDevice object.
@@ -45,6 +53,14 @@ def hybrid_device() -> PasqalDevice | Device:
     fixture for pulser.devices.AnalogDevice object.
     """
     return AVAILABLE_DEVICES["hybrid"]
+
+
+@pytest.fixture
+def square_layout2x2() -> SquareLayout:
+    """
+    fixture for pulser square layout instance (2x2).
+    """
+    return SquareLayout(2, 2, spacing=5)
 
 
 @pytest.fixture

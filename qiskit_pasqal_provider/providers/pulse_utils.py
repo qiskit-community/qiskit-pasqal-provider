@@ -5,9 +5,7 @@ from dataclasses import dataclass
 import pulser
 from pulser.register import Register
 import qiskit
-from qiskit.pulse import Constant, Schedule, Play
-from qiskit.pulse.channels import PulseChannel
-from qiskit.pulse.library.pulse import Pulse
+from qiskit.pulse import Constant, Schedule
 
 
 @dataclass
@@ -23,27 +21,7 @@ class TwoPhotonPulse:
     phase: float = 0
 
 
-class TwoPhotonSchedule(Schedule):
-    """
-    Schedule class that holds 2 pulses (rabi, detuning) suitable for Neutral Atom Analog devices.
-    """
-
-    def __init__(
-        self,
-        *,
-        channel: PulseChannel,
-        rabi: Pulse | None = None,
-        detuning: Pulse | None = None,
-        name: str | None = None,
-        metadata: dict | None = None,
-    ):
-        schedules = [
-            Play(rabi, channel=channel, name=rabi.name or "rabi"),
-            Play(detuning, channel=channel, name=detuning.name or "detuning"),
-        ]
-        super().__init__(*schedules, name=name, metadata=metadata)
-
-
+# todo: refactor `to_pulser` to accommodate `HamiltonianGate` operation
 def to_pulser(sched: Schedule) -> list[tuple[pulser.Pulse, str]]:
     """Utility function to convert a Qiskit Pulse Schedule into a Pulser Sequence."""
 

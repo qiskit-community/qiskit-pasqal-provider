@@ -6,7 +6,6 @@ from typing import Any, Union
 
 from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2
-from qiskit.pulse import Schedule, ScheduleBlock
 from pulser.register.register_layout import RegisterLayout
 
 from .layouts import PasqalLayout
@@ -42,7 +41,7 @@ class PasqalBackend(BackendV2, ABC):
     @abstractmethod
     def run(
         self,
-        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
+        run_input: Union[QuantumCircuit],
         register: PasqalRegister | None = None,
         **options: Any,
     ) -> PasqalJob:

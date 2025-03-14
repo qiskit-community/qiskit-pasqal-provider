@@ -14,6 +14,7 @@ from qiskit_pasqal_provider.providers.backends.emu_tn import EmuTnBackend
 from qiskit_pasqal_provider.providers.backends.emu_free import EmuFreeBackend
 from qiskit_pasqal_provider.providers.backends.qpu import QPUBackend
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
+from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 
 
@@ -23,17 +24,19 @@ class PasqalRemoteBackend(PasqalBackend):
     def __new__(
         cls,
         backend: PasqalBackendType | str,
+        remote_config: RemoteConfig,
         **_options: Any,
     ):
+        # cloud = PasqalCloud
         match backend:
             case "remote-emu-free":
-                return EmuFreeBackend()
+                return EmuFreeBackend(remote_config)
 
             case "remote-emu-tn":
-                return EmuTnBackend()
+                return EmuTnBackend(remote_config)
 
             case "qpu":
-                return QPUBackend()
+                return QPUBackend(remote_config)
 
             case _:
                 raise NotImplementedError()

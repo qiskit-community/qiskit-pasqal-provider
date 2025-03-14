@@ -7,6 +7,7 @@ from qiskit.providers import Options
 from qiskit.pulse import Schedule, ScheduleBlock
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
@@ -22,10 +23,10 @@ except ImportError as exc:
 class EmuFreeBackend(PasqalBackend):
     """EMU-Free remote backend."""
 
-    def __init__(self):
+    def __init__(self, remote_config: RemoteConfig):
         """initialize and instantiate PasqalCloud."""
         super().__init__()
-        _cloud = PasqalCloud()
+        self._cloud = PasqalCloud(**remote_config)
 
     @property
     def target(self) -> PasqalTarget:

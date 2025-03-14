@@ -12,6 +12,11 @@ from qiskit.providers.backend import Backend
 from qiskit.result import Result as QiskitResult
 from qiskit.result.models import ExperimentResult, ExperimentResultData
 
+# todo's:
+#  1. implement job using `qiskit.primitives.BasePrimitiveJob`
+#  2. implement result using `qiskit.primitives.PrimitiveResult`
+#  as in https://docs.quantum.ibm.com/open-source/create-a-provider
+
 
 class PasqalJob(Job, ABC):
     """ABC for Pasqal Jobs"""
