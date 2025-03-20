@@ -1,16 +1,14 @@
 """EMU-Free remote backend"""
 
-from typing import Union, Any
+from typing import Any
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from qiskit.pulse import Schedule, ScheduleBlock
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
-from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 
 try:
     from pulser_pasqal import PasqalCloud
@@ -42,8 +40,9 @@ class EmuFreeBackend(PasqalBackend):
 
     def run(
         self,
-        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | None = None,
+        run_input: QuantumCircuit,
+        shots: int | None = None,
+        values: dict | None = None,
         **options: Any,
     ) -> PasqalJob:
         pass

@@ -5,7 +5,6 @@ import pytest
 from qiskit import QuantumCircuit, QuantumRegister
 
 from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
-from qiskit_pasqal_provider.providers.layouts import SquareLayout
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
@@ -14,7 +13,6 @@ from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 @pytest.skip("it needs 'HamiltonianGate' implemented")
 def test_backend_workflow(
     square_register2x2: PasqalRegister,
-    square_layout2x2: SquareLayout,
 ) -> None:
     """test qutip backend correctness"""
 

@@ -1,10 +1,8 @@
 """Remote base backend"""
 
-from typing import Union, Any
+from typing import Any
 
-from pulser import Register
 from qiskit import QuantumCircuit
-from qiskit.pulse import Schedule, ScheduleBlock
 
 from qiskit_pasqal_provider.providers.backend_base import (
     PasqalBackend,
@@ -15,7 +13,6 @@ from qiskit_pasqal_provider.providers.backends.emu_free import EmuFreeBackend
 from qiskit_pasqal_provider.providers.backends.qpu import QPUBackend
 from qiskit_pasqal_provider.providers.jobs import PasqalJob
 from qiskit_pasqal_provider.utils import RemoteConfig
-from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 
 
 class PasqalRemoteBackend(PasqalBackend):
@@ -55,16 +52,18 @@ class PasqalRemoteBackend(PasqalBackend):
 
     def run(
         self,
-        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | Register | None = None,
+        run_input: QuantumCircuit,
+        shots: int | None = None,
+        values: dict | None = None,
         **options: Any,
     ) -> PasqalJob:
         """
+        Run a quantum circuit for a given execution interface, namely `Sampler`.
 
         Args:
-            run_input (QuantumCircuit, Schedule, ScheduleBlock): the block of instructions
-                to be run
-            register (PasqalRegister): the register to be used in the instruction execution
+            run_input (QuantumCircuit): the quantum circuit to be run
+            shots: number of shots to run. Optional.
+            values: a dictionary containing all the parametric values. Optional.
             **options: additional configuration options for the run
 
         Returns:

@@ -2,7 +2,7 @@
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Union
+from typing import Any
 
 from qiskit import QuantumCircuit
 from qiskit.providers import BackendV2
@@ -11,7 +11,6 @@ from pulser.register.register_layout import RegisterLayout
 from .layouts import PasqalLayout
 from .target import PasqalTarget
 from .jobs import PasqalJob
-from .pulse_utils import PasqalRegister
 
 try:
     from enum import StrEnum
@@ -41,8 +40,20 @@ class PasqalBackend(BackendV2, ABC):
     @abstractmethod
     def run(
         self,
-        run_input: Union[QuantumCircuit],
-        register: PasqalRegister | None = None,
+        run_input: QuantumCircuit,
+        shots: int | None = None,
+        values: dict | None = None,
         **options: Any,
     ) -> PasqalJob:
-        pass
+        """
+        Run a quantum circuit for a given execution interface, namely `Sampler`.
+
+        Args:
+            run_input: the quantum circuit to be run.
+            shots: number of shots to run. Optional.
+            values: a dictionary containing all the parametric values. Optional.
+            **options: extra options to pass to the backend if needed.
+
+        Returns:
+            A PasqalJob instance containing the results from the execution interface.
+        """
