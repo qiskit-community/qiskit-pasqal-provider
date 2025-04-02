@@ -79,6 +79,9 @@ class QutipEmulatorBackend(PasqalBackend):
             circuit=run_input,
         )
 
+        # building into a regular sequence by defining attribute values for all declared variables
+        seq.build(**values)
+
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend

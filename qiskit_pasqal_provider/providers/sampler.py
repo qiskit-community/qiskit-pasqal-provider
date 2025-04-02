@@ -31,8 +31,9 @@ class Sampler(BaseSamplerV2):
         """Method to return the provided backend"""
         return self._backend
 
+    @classmethod
     def _coerce_pubs(
-        self, pubs: Iterable[SamplerPubLike]
+        cls, pubs: Iterable[SamplerPubLike]
     ) -> tuple[QuantumCircuit] | tuple[QuantumCircuit, dict[str, ParameterExpression]]:
         """
         Coerce the pubs into digestible data for backend's run method.
@@ -83,4 +84,5 @@ class Sampler(BaseSamplerV2):
 
         """
 
-        raise NotImplementedError()
+        checked_pubs = self._coerce_pubs(pubs)
+        return self._backend.run()
