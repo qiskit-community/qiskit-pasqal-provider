@@ -13,7 +13,7 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
     gen_seq,
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.jobs import PasqalJob
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 
 

@@ -10,7 +10,8 @@ from qiskit.providers import Options
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.jobs import PasqalJob, PasqalLocalJob
+from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
     get_register_from_circuit,
     gen_seq,
@@ -20,6 +21,8 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
 class QutipEmulatorBackend(PasqalBackend):
     """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
 
+    _version: str = "0.1.0"
+
     def __init__(self, target: PasqalTarget, **options: Any):
         """
 
@@ -28,8 +31,8 @@ class QutipEmulatorBackend(PasqalBackend):
             **options: additional configuration options
         """
 
-        self.backend_name = self.__class__.__name__
-        super().__init__(name=self.backend_name, **options)
+        backend_name = self.__class__.__name__
+        super().__init__(name=backend_name, **options)
         self.backend = "qutip"
         self._target = target
         self._layout = self.target.layout
@@ -80,12 +83,22 @@ class QutipEmulatorBackend(PasqalBackend):
         )
 
         # building into a regular sequence by defining attribute values for all declared variables
-        seq.build(**values)
+        if values:
+            seq.build(**values)
 
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend
-        emulator = QutipEmulator.from_sequence(seq)
+        self._emulator = QutipEmulator.from_sequence(seq)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
-        return PasqalLocalJob(backend, job_id, emulator)
+
+        job = PasqalLocalJob(
+            backend=backend,
+            job_id=job_id,
+            shots=shots,
+            qojb_id=job_id,
+            backend_version=self._version,
+        )
+        job.submit()
+        return job

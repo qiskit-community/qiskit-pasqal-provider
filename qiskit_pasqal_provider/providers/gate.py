@@ -9,7 +9,11 @@ from pulser.math import AbstractArray
 from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.gate import Gate
 
-from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
+from qiskit_pasqal_provider.providers.pulse_utils import (
+    PasqalRegister,
+    RegisterTransform,
+    GridLiteralType,
+)
 
 CoordsKey = Union[str, int, float]
 
@@ -63,6 +67,16 @@ class InterpolatePoints:
         """data points for interpolation"""
         return self._values
 
+    @property
+    def interpolator(self) -> str:
+        """The interpolator method name."""
+        return self._interpolator
+
+    @property
+    def interpolator_options(self) -> dict:
+        """The key-value pairs to fill the interpolator function with."""
+        return self._interpolator_kwargs
+
 
 class HamiltonianGate(Gate):
     """Hamiltonian gate, an analog gate."""
@@ -71,8 +85,9 @@ class HamiltonianGate(Gate):
         self,
         amplitude: InterpolatePoints,
         detuning: InterpolatePoints,
-        phase: InterpolatePoints,
+        phase: float,
         coords: ArrayLike,
+        grid_transform: GridLiteralType = "triangular",
         composed_wf: Any | None = None,
     ):
         """
@@ -82,7 +97,7 @@ class HamiltonianGate(Gate):
         Args:
             amplitude: an InterpolatePoints instance to represent an amplitude waveform.
             detuning: an InterpolatePoints instance to represent a detuning waveform.
-            phase: an InterpolatePoints instance to represent a phase waveform.
+            phase: a float number value to represent the phase.
             coords: an array-like containing (x, y) coordinates of the qubits.
             composed_wf: alternative approach to generate a sequence of waveforms
                 instead of amplitude, detuning and phase
@@ -97,7 +112,6 @@ class HamiltonianGate(Gate):
         if not (
             isinstance(amplitude, InterpolatePoints)
             and isinstance(detuning, InterpolatePoints)
-            and isinstance(phase, InterpolatePoints)
         ):
             raise TypeError(
                 f"amplitude and detuning must be InterpolatePoints, not "
@@ -122,10 +136,32 @@ class HamiltonianGate(Gate):
             unit="dt",
         )
 
+        self._grid = grid_transform
         self._amplitude = amplitude
         self._detuning = detuning
         self._phase = phase
-        self._analog_register = PasqalRegister.from_coordinates(coords, prefix="q")
+
+        new_coords = RegisterTransform(
+            grid_transform=self._grid, coords=coords  # type: ignore [arg-type]
+        ).coords
+        self._analog_register = PasqalRegister.from_coordinates(
+            coords=new_coords, prefix="q"  # type: ignore [arg-type]
+        )
+
+    @property
+    def amplitude(self) -> InterpolatePoints:
+        """Amplitude waveform-like data."""
+        return self._amplitude
+
+    @property
+    def detuning(self) -> InterpolatePoints:
+        """Detuning waveform-like data."""
+        return self._detuning
+
+    @property
+    def phase(self) -> float:
+        """Phase of the pulse as float."""
+        return self._phase
 
     @property
     def coords(self) -> dict[str, AbstractArray]:

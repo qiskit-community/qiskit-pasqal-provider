@@ -11,7 +11,7 @@ from qiskit_pasqal_provider.providers.backend_base import (
 from qiskit_pasqal_provider.providers.backends.emu_tn import EmuTnBackend
 from qiskit_pasqal_provider.providers.backends.emu_free import EmuFreeBackend
 from qiskit_pasqal_provider.providers.backends.qpu import QPUBackend
-from qiskit_pasqal_provider.providers.jobs import PasqalJob
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.utils import RemoteConfig
 
 

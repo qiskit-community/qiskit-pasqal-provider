@@ -14,6 +14,7 @@ from qiskit.primitives import (
 )
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
 
 
 class Sampler(BaseSamplerV2):
@@ -34,7 +35,7 @@ class Sampler(BaseSamplerV2):
     @classmethod
     def _coerce_pubs(
         cls, pubs: Iterable[SamplerPubLike]
-    ) -> tuple[QuantumCircuit] | tuple[QuantumCircuit, dict[str, ParameterExpression]]:
+    ) -> tuple[QuantumCircuit, dict[str, ParameterExpression] | dict]:
         """
         Coerce the pubs into digestible data for backend's run method.
 
@@ -47,14 +48,14 @@ class Sampler(BaseSamplerV2):
         """
 
         if isinstance(pubs, QuantumCircuit):
-            return (pubs,)
+            return pubs, {}
 
         if isinstance(pubs, (list, tuple)):
 
             if isinstance(pubs[0], QuantumCircuit):
 
                 if len(pubs) == 1:
-                    return (pubs[0],)
+                    return pubs[0], {}
 
                 if len(pubs) == 2:
 
@@ -68,7 +69,7 @@ class Sampler(BaseSamplerV2):
 
     def run(
         self, pubs: Iterable[SamplerPubLike], *, shots: int | None = None
-    ) -> BasePrimitiveJob[PrimitiveResult[SamplerPubResult], JobStatus]:
+    ) -> BasePrimitiveJob[PrimitiveResult[SamplerPubResult], JobStatus] | PasqalJob:
         """
         Runs and collects samples from each pub.
 
@@ -84,5 +85,5 @@ class Sampler(BaseSamplerV2):
 
         """
 
-        checked_pubs = self._coerce_pubs(pubs)
-        return self._backend.run()
+        qc, values = self._coerce_pubs(pubs)
+        return self._backend.run(run_input=qc, values=values, shots=shots)

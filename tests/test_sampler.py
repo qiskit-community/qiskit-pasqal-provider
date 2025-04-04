@@ -1,24 +1,32 @@
 """Test sampler instance"""
 
-import pytest
-
 from qiskit import QuantumCircuit
 
 from qiskit_pasqal_provider.providers.sampler import Sampler
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
-from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
-from qiskit_pasqal_provider.providers.jobs import PasqalResult
+from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
+from qiskit_pasqal_provider.providers.result import PasqalResult
 
 
-def test_local_sampler_qutip() -> None:
+def test_local_sampler_qutip(square_coords: list) -> None:
     """Testing sampler instance with qutip emulator (local provider)."""
 
-    qc = QuantumCircuit(2)
+    # analog gate properties
+    ampl = InterpolatePoints(values=[1, 1, 1])
+    det = InterpolatePoints(values=[0, 0.5, 1])
+    phase = 0.0
+
+    # analog gate
+    gate = HamiltonianGate(ampl, det, phase, square_coords, grid_transform="square")
+
+    # qiskit circuit with analog gate
+    qc = QuantumCircuit(4)
+    qc.append(gate, qc.qubits)
 
     provider = PasqalProvider()
     backend = provider.get_backend("qutip")
     sampler = Sampler(backend)
-    results = sampler.run([]).result()
-    print(results)
+    results = sampler.run([qc]).result()
 
+    print(results)
     assert isinstance(results, PasqalResult)

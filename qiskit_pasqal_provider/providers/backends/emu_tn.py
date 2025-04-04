@@ -8,7 +8,7 @@ from qiskit.providers import Options
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.jobs import PasqalJob
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
 
 try:
     from pulser_pasqal import PasqalCloud

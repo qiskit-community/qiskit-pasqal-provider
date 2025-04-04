@@ -1,7 +1,7 @@
 """Overall util classes and functions"""
 
 from enum import Enum
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Protocol, Any
 
 from pasqal_cloud import TokenProvider, Endpoints, Auth0Conf
 
@@ -67,3 +67,12 @@ class RemoteConfig(Mapping):
 
     def __len__(self):
         return len(self.__dict__)
+
+
+class PasqalEmulator(Protocol):
+    """A protocol class to account for generic Pasqal emulators."""
+
+    def run(self, *args: Any, **kwargs: Any) -> Any:
+        """
+        A run method that must exist for emulators.
+        """

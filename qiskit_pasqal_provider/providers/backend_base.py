@@ -10,7 +10,8 @@ from pulser.register.register_layout import RegisterLayout
 
 from .layouts import PasqalLayout
 from .target import PasqalTarget
-from .jobs import PasqalJob
+from .job_base import PasqalJob
+from ..utils import PasqalEmulator
 
 try:
     from enum import StrEnum
@@ -36,6 +37,13 @@ class PasqalBackend(BackendV2, ABC):
 
     _target: PasqalTarget
     _layouts: PasqalLayout | RegisterLayout
+    _version: str
+    _emulator: PasqalEmulator  # pylint: disable=E0601
+
+    @property
+    def emulator(self) -> PasqalEmulator:
+        """Pasqal emulator instance"""
+        return self._emulator
 
     @abstractmethod
     def run(
