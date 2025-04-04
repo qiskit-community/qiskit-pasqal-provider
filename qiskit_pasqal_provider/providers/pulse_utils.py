@@ -136,7 +136,7 @@ def gen_seq(
         else:
             raise ValueError(
                 f"gate {gate} has no waveform properties and "
-                f"therefore cannot be used for analog computing."
+                "therefore cannot be used for analog computing."
             )
 
     return seq
