@@ -10,12 +10,6 @@ from qiskit_pasqal_provider.providers.result import PasqalResult
 from qiskit_pasqal_provider.utils import PasqalEmulator
 
 
-# todo's:
-#  1. implement job using `qiskit.primitives.BasePrimitiveJob`
-#  2. implement result using `qiskit.primitives.PrimitiveResult`
-#  as in https://docs.quantum.ibm.com/open-source/create-a-provider
-
-
 class PasqalLocalJob(PasqalJob):
     """Class to encapsulate local jobs submitted to Pasqal backends."""
 

@@ -28,5 +28,4 @@ def test_local_sampler_qutip(square_coords: list) -> None:
     sampler = Sampler(backend)
     results = sampler.run([qc]).result()
 
-    print(results)
     assert isinstance(results, PasqalResult)
