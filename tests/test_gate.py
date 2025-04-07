@@ -3,7 +3,7 @@
 import pytest
 
 import numpy as np
-from qiskit.circuit import Parameter
+from qiskit.circuit import Parameter, QuantumCircuit
 from qiskit.circuit.exceptions import CircuitError
 
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
@@ -31,14 +31,13 @@ def test_interpolate_points() -> None:
 def test_analog_gate(
     constant_interpolate_points: InterpolatePoints,
     linear_interpolate_points: InterpolatePoints,
-    null_interpolate_points: InterpolatePoints,
     square_coords: list,
 ) -> None:
     """testing `HamiltonianGate` class correctness"""
 
     ampl = constant_interpolate_points
     det = linear_interpolate_points
-    phase = null_interpolate_points
+    phase = 0.0
 
     hg = HamiltonianGate(ampl, det, phase, coords=square_coords)
 
@@ -55,3 +54,9 @@ def test_analog_gate(
 
     with pytest.raises(CircuitError):
         hg.to_matrix()
+
+    qc = QuantumCircuit(len(square_coords))
+    assert qc.append(hg, qc.qubits)
+
+    for instruction in qc.data:
+        assert isinstance(instruction.operation, HamiltonianGate)

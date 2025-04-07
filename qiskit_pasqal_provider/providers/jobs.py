@@ -1,76 +1,81 @@
 """This module implements the qiskit job class used for PasqalBackend objects."""
 
-from abc import ABC
-from typing import Union
+from typing import Any
 
-from pulser.result import Result as PulserResult
-from pulser_simulation import QutipEmulator
-from pulser_simulation.simresults import SimulationResults
-from qiskit.providers import JobStatus
-from qiskit.providers import JobV1 as Job
-from qiskit.providers.backend import Backend
-from qiskit.result import Result as QiskitResult
-from qiskit.result.models import ExperimentResult, ExperimentResultData
+from qiskit.providers.jobstatus import JobStatus, JOB_FINAL_STATES
 
-
-class PasqalJob(Job, ABC):
-    """ABC for Pasqal Jobs"""
-
-
-class PasqalResult(QiskitResult):
-    """To hold and convert Pasqal results to Qiskit Results"""
-
-    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
-        self,
-        qobj_id,
-        job_id,
-        success,
-        results: Union[PulserResult, SimulationResults],
-        date=None,
-        status=None,
-        header=None,
-        **kwargs,
-    ) -> None:
-        if isinstance(results, SimulationResults):
-            _data = ExperimentResultData(counts=results.sample_final_state())
-        else:
-            raise NotImplementedError
-        _results: list[ExperimentResult] = [
-            ExperimentResult(shots=1000, success=True, data=_data)
-        ]
-        super().__init__(
-            "pasqal_local_backend",
-            "0.0.1",
-            qobj_id,
-            job_id,
-            success,
-            _results,
-            date,
-            status,
-            header,
-            **kwargs,
-        )
+from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
+from qiskit_pasqal_provider.providers.result import PasqalResult
+from qiskit_pasqal_provider.utils import PasqalEmulator
 
 
 class PasqalLocalJob(PasqalJob):
-    """Class to encapsulate local jobs submitted to Pasqal backends"""
+    """Class to encapsulate local jobs submitted to Pasqal backends."""
 
-    def __init__(
-        self, backend: Backend | None, job_id: str, emulator: QutipEmulator, **kwargs
-    ) -> None:
-        super().__init__(backend, job_id, **kwargs)
-        self._result: PasqalResult = None
+    _backend: PasqalBackend
+    _result: PasqalResult | None
+    _status: JobStatus
+    _emulator: PasqalEmulator
+
+    def __init__(self, backend: PasqalBackend, job_id: str, **kwargs: Any):
+        """
+        A Pasqal job for local emulators.
+
+        Args:
+            backend: Pasqal backends (must be an emulator)
+            job_id: job id of the execution
+            emulator: which emulator to use
+            **kwargs:
+        """
+
+        super().__init__(job_id=job_id, **kwargs)
+        self._backend = backend
+        self._result = None
         self._status = JobStatus.INITIALIZING
-        self._emulator = emulator
+        self._emulator = backend.emulator
+
+    def backend(self) -> PasqalBackend:
+        """Pasqal backend instance."""
+        return self._backend
 
     def submit(self) -> None:
+        """Submit the job to the backend for execution."""
         self._status = JobStatus.RUNNING
         results = self._emulator.run(progress_bar=True)
-        self._result = PasqalResult(self.job_id, self.job_id, True, results=results)
+        self.metadata["success"] = True
+        self._result = PasqalResult(
+            backend_name=self.backend().name,
+            job_id=self._job_id,
+            results=results,
+            metadata=self.metadata,
+        )
         self._status = JobStatus.DONE
 
     def result(self) -> PasqalResult:
+        """Return the result of the job."""
         return self._result
 
     def status(self) -> JobStatus:
+        """Return the status of the job."""
         return self._status
+
+    def done(self) -> bool:
+        """Return whether the job was successfully run."""
+        return self._status == JobStatus.DONE
+
+    def running(self) -> bool:
+        """Return whether the job is actively running."""
+        return self._status == JobStatus.RUNNING
+
+    def cancelled(self) -> bool:
+        """Return whether the job has been cancelled."""
+        return self._status == JobStatus.CANCELLED
+
+    def in_final_state(self) -> bool:
+        """Return whether the job is in a final job state such as `DONE` or `ERROR`."""
+        return self._status in JOB_FINAL_STATES
+
+    def cancel(self) -> Any:
+        """Attempt to cancel the job."""
+        raise NotImplementedError()

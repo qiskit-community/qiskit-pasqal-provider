@@ -2,22 +2,26 @@
 
 import copy
 import uuid
-from typing import Any, Union
+from typing import Any
 
-from pulser import Register, Sequence as PasqalSequence
 from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from qiskit.pulse import Schedule, ScheduleBlock
 
 from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.jobs import PasqalJob, PasqalLocalJob
-from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister, to_pulser
+from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
+from qiskit_pasqal_provider.providers.job_base import PasqalJob
+from qiskit_pasqal_provider.providers.pulse_utils import (
+    get_register_from_circuit,
+    gen_seq,
+)
 
 
 class QutipEmulatorBackend(PasqalBackend):
     """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
+
+    _version: str = "0.1.0"
 
     def __init__(self, target: PasqalTarget, **options: Any):
         """
@@ -27,8 +31,8 @@ class QutipEmulatorBackend(PasqalBackend):
             **options: additional configuration options
         """
 
-        self.backend_name = self.__class__.__name__
-        super().__init__(name=self.backend_name, **options)
+        backend_name = self.__class__.__name__
+        super().__init__(name=backend_name, **options)
         self.backend = "qutip"
         self._target = target
         self._layout = self.target.layout
@@ -47,47 +51,54 @@ class QutipEmulatorBackend(PasqalBackend):
 
     def run(
         self,
-        run_input: Union[QuantumCircuit, Schedule, ScheduleBlock],
-        register: PasqalRegister | Register | None = None,
+        run_input: QuantumCircuit,
+        shots: int | None = None,
+        values: dict | None = None,
         **options: Any,
     ) -> PasqalJob:
         """
+        Run a quantum circuit for a given execution interface, namely `Sampler`.
 
         Args:
-            run_input (QuantumCircuit, Schedule, ScheduleBlock): the block of instructions
-                to be run
-            register (PasqalRegister): the register to be used in the instruction execution
-            **options: additional configuration options for the run
+            run_input: the quantum circuit to be run.
+            shots: number of shots to run. Optional.
+            values: a dictionary containing all the parametric values. Optional.
+            **options: extra options to pass to the backend if needed.
 
         Returns:
-            A PasqalJob instance.
+            A PasqalJob instance containing the results from the execution interface.
         """
 
-        if register is None:
-            raise ValueError("register cannot be None")
+        if not isinstance(run_input, QuantumCircuit):
+            raise ValueError("'run_input' argument must be a QuantumCircuit")
+
+        # get the register from the analog gate inside `run_input` argument (QuantumCircuit)
+        analog_register = get_register_from_circuit(run_input)
 
         # Run a program on Pasqal backend
-        if isinstance(run_input, QuantumCircuit):
-            raise NotImplementedError(
-                "Conversion of QuantumCircuit to Pulses not implemented"
-            )
-        if isinstance(run_input, ScheduleBlock):
-            raise NotImplementedError("ScheduleBlocks not yet supported")
+        seq = gen_seq(
+            analog_register=analog_register,
+            device=self.target.device,
+            circuit=run_input,
+        )
 
-        if isinstance(run_input, Schedule):
-            seq = PasqalSequence(register, self.target.device)
-            seq.declare_channel("rydberg_global", "rydberg_global")
+        # building into a regular sequence by defining attribute values for all declared variables
+        if values:
+            seq.build(**values)
 
-            pulser_pulses = to_pulser(run_input)
-            for pulse, channel in pulser_pulses:
-                seq.add(pulse, channel)
+        # initialise the backend from sequence.
+        # In the sequence the register and device is encoded
+        # we can imagine moving that to the Qiskit Backend
+        self._emulator = QutipEmulator.from_sequence(seq)
+        backend = copy.deepcopy(self)
+        job_id = str(uuid.uuid4())
 
-            # initialise the backend from sequence.
-            # In the sequence the register and device is encoded
-            # we can imagine moving that to the Qiskit Backend
-            emulator = QutipEmulator.from_sequence(seq)
-            backend = copy.deepcopy(self)
-            job_id = str(uuid.uuid4())
-            return PasqalLocalJob(backend, job_id, emulator)
-
-        raise ValueError("run_input must be Schedule, ScheduleBlock or QuantumCircuit")
+        job = PasqalLocalJob(
+            backend=backend,
+            job_id=job_id,
+            shots=shots,
+            qojb_id=job_id,
+            backend_version=self._version,
+        )
+        job.submit()
+        return job

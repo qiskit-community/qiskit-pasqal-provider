@@ -46,7 +46,7 @@ class PasqalTarget:
 
     def __init__(
         self,
-        device: PasqalDeviceType | PasqalDevice | BaseDevice | str,
+        device: PasqalDeviceType | PasqalDevice | BaseDevice | str = "pasqal_device",
         layout: PasqalLayout | RegisterLayout | None = None,
     ):
         """
@@ -55,8 +55,8 @@ class PasqalTarget:
 
         Args:
             device (PasqalDeviceType, Device, str): `PasqalDeviceType` value or string
-                with the name of the device when the device is known; Use `Device` when
-                providing custom device instance.
+                with the name of the device when the device is known; Use `PasqalDevice`
+                when providing custom device instance. Default to `"pasqal_device"`.
             layout (PasqalLayout, None): Optional parameter to define the layout of the
                 device, if the device does not provide one. It will try to retrieve the
                 layout from the device, unless it provides `PasqalLayout` instance. If
@@ -70,6 +70,7 @@ class PasqalTarget:
     def _get_device(
         self, device: PasqalDeviceType | PasqalDevice | BaseDevice | str
     ) -> PasqalDevice | BaseDevice:
+
         if isinstance(device, PasqalDeviceType | str):
             new_device = AVAILABLE_DEVICES[device]
             self._accepts_new_layouts = new_device.accepts_new_layouts
