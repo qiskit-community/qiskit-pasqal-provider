@@ -1,5 +1,5 @@
 """PasqalCloud remote backend"""
-
+import uuid
 from typing import Any
 
 from qiskit import QuantumCircuit
@@ -7,6 +7,7 @@ from qiskit.providers import Options
 from pulser import QPUBackend as PasqalQPUBackend
 from pulser_pasqal import PasqalCloud
 
+from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
 from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.pulse_utils import (
     get_register_from_circuit,
@@ -14,11 +15,14 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.job_base import PasqalJob
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.providers.backend_base import PasqalBackend, PasqalBackendType
 
 
 class QPUBackend(PasqalBackend):
     """QPU backend"""
+
+    _version: str = "0.1.0"
+    backend_name = PasqalBackendType.QPU
 
     def __init__(self, remote_config: RemoteConfig):
         """initialize and instantiate PasqalCloud."""
@@ -68,6 +72,12 @@ class QPUBackend(PasqalBackend):
             circuit=run_input,
         )
 
-        _qpu = PasqalQPUBackend(sequence=seq, connection=self._cloud)
+        if values:
+            seq.build(**values)
 
-        raise NotImplementedError("QPU backend is not fully implemented yet.")
+        self._executor = PasqalQPUBackend(sequence=seq, connection=self._cloud)
+        job_id = str(uuid.uuid4())
+
+        job = PasqalRemoteJob(job_id=job_id)
+        job.submit()
+        return job

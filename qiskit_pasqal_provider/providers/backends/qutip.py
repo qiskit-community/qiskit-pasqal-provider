@@ -8,7 +8,7 @@ from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.providers.backend_base import PasqalBackend, PasqalBackendType
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
 from qiskit_pasqal_provider.providers.job_base import PasqalJob
@@ -22,6 +22,7 @@ class QutipEmulatorBackend(PasqalBackend):
     """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
 
     _version: str = "0.1.0"
+    backend_name = PasqalBackendType.QUTIP
 
     def __init__(self, target: PasqalTarget, **options: Any):
         """
@@ -33,7 +34,6 @@ class QutipEmulatorBackend(PasqalBackend):
 
         backend_name = self.__class__.__name__
         super().__init__(name=backend_name, **options)
-        self.backend = "qutip"
         self._target = target
         self._layout = self.target.layout
 
@@ -89,7 +89,7 @@ class QutipEmulatorBackend(PasqalBackend):
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend
-        self._emulator = QutipEmulator.from_sequence(seq)
+        self._executor = QutipEmulator.from_sequence(seq)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
 

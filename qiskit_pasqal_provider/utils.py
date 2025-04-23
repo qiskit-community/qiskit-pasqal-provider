@@ -69,8 +69,11 @@ class RemoteConfig(Mapping):
         return len(self.__dict__)
 
 
-class PasqalEmulator(Protocol):
+class PasqalExecutor(Protocol):
     """A protocol class to account for generic Pasqal emulators."""
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        """To initialize the executor in the appropriate way."""
 
     def run(self, *args: Any, **kwargs: Any) -> Any:
         """
