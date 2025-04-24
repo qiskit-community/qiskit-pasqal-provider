@@ -23,9 +23,15 @@ def test_interpolate_points() -> None:
         k == p == v
         for k, p, v in zip(wf.values, np.array(values), values)  # type: ignore [arg-type]
     )
+    assert wf.times is None
 
     with pytest.raises(AssertionError):
         InterpolatePoints(values=values, duration="t")
+
+    times = np.linspace(0, 1, num=len(values))
+    wf2 = InterpolatePoints(values=values, duration=t, times=times)
+
+    assert wf2.times is not None
 
 
 def test_analog_gate(
