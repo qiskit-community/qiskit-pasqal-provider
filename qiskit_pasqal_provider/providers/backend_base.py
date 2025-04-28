@@ -1,5 +1,6 @@
 """Pasqal base backends"""
 
+import sys
 import logging
 from abc import ABC, abstractmethod
 from typing import Any
@@ -13,9 +14,12 @@ from .target import PasqalTarget
 from .job_base import PasqalJob
 from ..utils import PasqalEmulator
 
-try:
+
+# check whether python version is equal or greater than 3.12 to decide which
+#   StrEnum version to import from
+if sys.version_info >= (3, 12):
     from enum import StrEnum
-except ImportError:
+else:
     from qiskit_pasqal_provider.utils import StrEnum  # type: ignore [assignment]
 
 
