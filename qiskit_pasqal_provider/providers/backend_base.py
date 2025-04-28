@@ -20,7 +20,7 @@ from ..utils import PasqalEmulator
 if sys.version_info >= (3, 12):
     from enum import StrEnum
 else:
-    from qiskit_pasqal_provider.utils import StrEnum  # type: ignore [assignment]
+    from qiskit_pasqal_provider.utils import StrEnum
 
 
 logger = logging.getLogger(__name__)
