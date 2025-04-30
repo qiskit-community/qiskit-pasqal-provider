@@ -5,6 +5,7 @@ from typing import Any
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 from pulser import QPUBackend as PasqalQPUBackend
+from pulser.backend.remote import JobParams
 from pulser_pasqal import PasqalCloud
 
 from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
@@ -14,8 +15,10 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
     gen_seq,
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend, PasqalBackendType
+from qiskit_pasqal_provider.providers.abstract_base import (
+    PasqalBackend, PasqalBackendType,
+    PasqalJob
+)
 
 
 class QPUBackend(PasqalBackend):
@@ -48,6 +51,7 @@ class QPUBackend(PasqalBackend):
         run_input: QuantumCircuit,
         shots: int | None = None,
         values: dict | None = None,
+        wait: bool = True,
         **options: Any,
     ) -> PasqalJob:
         """
@@ -57,6 +61,10 @@ class QPUBackend(PasqalBackend):
             run_input: the quantum circuit to be run.
             shots: number of shots to run. Optional.
             values: a dictionary containing all the parametric values. Optional.
+            wait: Whether to wait until the results of the jobs become
+                available.  If set to False, the call is non-blocking and the
+                obtained results' status can be checked using their `status`
+                property. Default to True.
             **options: extra options to pass to the backend if needed.
 
         Returns:
@@ -77,7 +85,8 @@ class QPUBackend(PasqalBackend):
 
         self._executor = PasqalQPUBackend(sequence=seq, connection=self._cloud)
         job_id = str(uuid.uuid4())
+        job_params = [JobParams(runs=shots, variables=values)]
 
-        job = PasqalRemoteJob(job_id=job_id)
+        job = PasqalRemoteJob(job_id=job_id, job_params=job_params, wait=wait, **options)
         job.submit()
         return job

@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from qiskit_pasqal_provider.providers.backend_base import (
+from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
 )

@@ -1,5 +1,6 @@
 """Test sampler instance"""
 
+import pytest
 from qiskit import QuantumCircuit
 
 from qiskit_pasqal_provider.providers.sampler import Sampler
@@ -8,7 +9,8 @@ from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePo
 from qiskit_pasqal_provider.providers.result import PasqalResult
 
 
-def test_local_sampler_qutip(square_coords: list) -> None:
+@pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
+def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     """Testing sampler instance with qutip emulator (local provider)."""
 
     # analog gate properties
@@ -24,7 +26,7 @@ def test_local_sampler_qutip(square_coords: list) -> None:
     qc.append(gate, qc.qubits)
 
     provider = PasqalProvider()
-    backend = provider.get_backend("qutip")
+    backend = provider.get_backend(backend_name)
     sampler = Sampler(backend)
     results = sampler.run([qc]).result()
 

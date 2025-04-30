@@ -13,8 +13,7 @@ from qiskit.primitives import (
     SamplerPubResult,
 )
 
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
+from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, PasqalJob
 
 
 class Sampler(BaseSamplerV2):

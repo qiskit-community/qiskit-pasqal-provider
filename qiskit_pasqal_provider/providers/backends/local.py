@@ -4,13 +4,12 @@ from typing import Any
 
 from qiskit import QuantumCircuit
 
-from qiskit_pasqal_provider.providers.backend_base import (
+from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
-    PasqalBackendType,
+    PasqalBackendType, PasqalJob,
 )
 from qiskit_pasqal_provider.providers.backends.emu_mps import EmuMpsBackend
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
 

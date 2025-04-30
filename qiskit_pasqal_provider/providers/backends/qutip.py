@@ -8,10 +8,12 @@ from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend, PasqalBackendType
+from qiskit_pasqal_provider.providers.abstract_base import (
+    PasqalBackend, PasqalBackendType,
+    PasqalJob
+)
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
     get_register_from_circuit,
     gen_seq,

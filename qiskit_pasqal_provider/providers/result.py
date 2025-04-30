@@ -2,8 +2,10 @@
 
 import copy
 import time
+from collections import Counter
 from typing import Any
 
+from pulser.backend import Results
 from pulser.backend.remote import RemoteResults, BatchStatus
 from pulser_simulation.simresults import SimulationResults
 
@@ -35,7 +37,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
 
         match results:
 
-            case SimulationResults():
+            case SimulationResults() | Results():
                 _data = self._fetch_sim_results(results, metadata)
 
             case RemoteResults():
@@ -57,18 +59,39 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         self._backend_name = backend_name
 
     @classmethod
-    def _fetch_sim_results(cls, results: SimulationResults, metadata: dict[str, Any]) -> DataBin:
-        """"""
-        # get either a user-defined number of shots (number of samples) or emulator default
-        if metadata["shots"] is None:
-            _data = DataBin(counts=results.sample_final_state())
-            metadata["shots"] = int(sum(_data.counts.values()))  # pylint: disable=E1101
+    def _get_counts(
+        cls,
+        results: SimulationResults | Results,
+        metadata: dict[str, Any]
+    ) -> Counter | dict[str, int | float]:
+        """Get counts from results (pulser's SimulationResults or Results)."""
 
-        else:
-            _data = DataBin(
-                counts=results.sample_final_state(N_samples=metadata["shots"])
-            )
+        if isinstance(results, SimulationResults):
 
+            if metadata["shots"] is None:
+                return results.sample_final_state()
+
+            return results.sample_final_state(N_samples=metadata["shots"])
+
+        elif isinstance(results, Results):
+            if metadata.get("config"):
+                obs = metadata["config"].observables[0]
+                times = results.get_result_times(obs)
+                return results.get_result(obs, times[-1])
+
+        raise ValueError("results must be a SimulationResults or Results.")
+
+    def _fetch_sim_results(
+        self,
+        results: SimulationResults | Results,
+        metadata: dict[str, Any]
+    ) -> DataBin:
+        """
+        Fetch simulation results, either from SimulationResults or Results.
+        """
+
+        _data = DataBin(counts=self._get_counts(results, metadata))
+        metadata["shots"] = int(sum(_data.counts.values()))  # pylint: disable=E1101
         return _data
 
     @classmethod
