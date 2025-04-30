@@ -78,6 +78,9 @@ def _get_wf_values(
                 "Current Pasqal provider version does not support parametric expressions."
             )
 
+        case None:
+            return ()
+
         case _:
             raise NotImplementedError(f"values {type(values)} not supported.")
 
@@ -117,6 +120,7 @@ def gen_seq(
             amp_wf = InterpolatedWaveform(
                 duration=gate.amplitude.duration,
                 values=_get_wf_values(seq, gate.amplitude.values),
+                times=_get_wf_values(seq, gate.amplitude.times) or None,
                 interpolator=gate.amplitude.interpolator,
                 **gate.amplitude.interpolator_options,
             )
@@ -124,6 +128,7 @@ def gen_seq(
             det_wf = InterpolatedWaveform(
                 duration=gate.detuning.duration,
                 values=_get_wf_values(seq, gate.detuning.values),
+                times=_get_wf_values(seq, gate.detuning.times) or None,
                 interpolator=gate.detuning.interpolator,
                 **gate.detuning.interpolator_options,
             )

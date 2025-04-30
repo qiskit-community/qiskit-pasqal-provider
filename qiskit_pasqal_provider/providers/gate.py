@@ -24,12 +24,19 @@ class InterpolatePoints:
     It should be used to generate the points for the `HamiltonianGate` instance.
     """
 
-    __slots__ = ("_values", "_duration", "_interpolator", "_interpolator_kwargs")
+    __slots__ = (
+        "_values",
+        "_duration",
+        "_times",
+        "_interpolator",
+        "_interpolator_kwargs",
+    )
 
     def __init__(
         self,
         values: ArrayLike,
         duration: int | float | ParameterExpression = 1000,  # think how to define it
+        times: ArrayLike | None = None,
         interpolator: str = "PchipInterpolator",
         **interpolator_kwargs: Any,
     ):
@@ -42,6 +49,7 @@ class InterpolatePoints:
             values: an array-like data representing the points to be interpolated.
                 It can be parametrized through `qiskit.circuit.Parameter`.
             duration: optional duration of the waveform (in ns). Defaults to 1000.
+            times: Fractions of the total duration (between 0 and 1). Optional.
             interpolator: The SciPy interpolation class to use. Supports
                 "PchipInterpolator" and "interp1d".
             **interpolator_kwargs: Extra parameters to give to the chosen
@@ -54,6 +62,7 @@ class InterpolatePoints:
         values = np.array(values)
         self._values = values
         self._duration = duration
+        self._times = times
         self._interpolator = interpolator
         self._interpolator_kwargs = interpolator_kwargs
 
@@ -66,6 +75,11 @@ class InterpolatePoints:
     def values(self) -> ArrayLike:
         """data points for interpolation"""
         return self._values
+
+    @property
+    def times(self) -> ArrayLike | None:
+        """normalized fraction of the total duration. Can be None"""
+        return self._times
 
     @property
     def interpolator(self) -> str:
