@@ -44,7 +44,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
                 _data = self._fetch_remote_results(results, metadata)
 
             case _:
-                raise ValueError("results must be either locally simulated or remote ones.")
+                raise ValueError("Results must be either locally simulated or provided remotely.")
 
         # feed the data bin into the sampler result with the metadata
         _results: list[SamplerPubResult] = [SamplerPubResult(data=_data)]
