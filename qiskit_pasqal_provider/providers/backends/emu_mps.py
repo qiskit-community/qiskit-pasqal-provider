@@ -26,7 +26,7 @@ class EmuMpsBackend(PasqalBackend):
 
     def __init__(self, target: PasqalTarget, **options: Any):
         """
-        defines the EMU-MPS backend instance.
+        Defines the EMU-MPS backend instance.
 
         Args:
             target (PasqalTarget): the Pasqal target instance
