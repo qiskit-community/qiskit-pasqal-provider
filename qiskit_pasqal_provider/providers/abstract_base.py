@@ -53,7 +53,7 @@ class PasqalBackendType(StrEnum):
 
 
 class PasqalBackend(BackendV2, ABC):
-    """PasqaqlBackend base class."""
+    """PasqalBackend base class."""
 
     _target: PasqalTarget
     _layouts: PasqalLayout | RegisterLayout
