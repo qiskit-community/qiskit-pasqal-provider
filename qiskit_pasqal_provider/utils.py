@@ -63,7 +63,7 @@ class RemoteConfig(Mapping):
         return self.__dict__[x]
 
     def __iter__(self):
-        return iter(self.__dict__)
+        yield from self.__dict__.items()
 
     def __len__(self):
         return len(self.__dict__)

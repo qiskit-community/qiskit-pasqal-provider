@@ -3,13 +3,14 @@
 from typing import Any
 
 from qiskit import QuantumCircuit
+from pasqal_cloud.device import EmulatorType
 
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
-    PasqalBackendType, PasqalJob,
+    PasqalBackendType,
+    PasqalJob,
 )
-from qiskit_pasqal_provider.providers.backends.emu_tn import EmuTnBackend
-from qiskit_pasqal_provider.providers.backends.emu_free import EmuFreeBackend
+from qiskit_pasqal_provider.providers.backends.emu_remote import EmuRemoteBackend
 from qiskit_pasqal_provider.providers.backends.qpu import QPUBackend
 from qiskit_pasqal_provider.utils import RemoteConfig
 
@@ -26,10 +27,16 @@ class PasqalRemoteBackend(PasqalBackend):
         # cloud = PasqalCloud
         match backend:
             case "remote-emu-free":
-                return EmuFreeBackend(remote_config)
+                return EmuRemoteBackend(backend, EmulatorType.EMU_FREE, remote_config)
 
             case "remote-emu-tn":
-                return EmuTnBackend(remote_config)
+                return EmuRemoteBackend(backend, EmulatorType.EMU_TN,remote_config)
+
+            case "remote-emu-mps":
+                return EmuRemoteBackend(backend, EmulatorType.EMU_MPS, remote_config)
+
+            case "remote-emu-qpu":
+                return EmuRemoteBackend(backend, EmulatorType.EMU_FRESNEL, remote_config)
 
             case "qpu":
                 return QPUBackend(remote_config)

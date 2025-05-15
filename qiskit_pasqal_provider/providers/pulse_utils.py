@@ -8,7 +8,7 @@ from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
 from pulser.devices._device_datacls import BaseDevice
-from pulser.parametrized import Variable
+from pulser.parametrized import Variable, ParamObj, Parametrized
 from pulser.register import Register
 from pulser.waveforms import InterpolatedWaveform
 from qiskit.circuit import QuantumCircuit, ParameterExpression, Parameter
@@ -40,7 +40,7 @@ class TwoPhotonPulse:
 
 def _get_wf_values(
     seq: Sequence, values: int | float | Parameter | ArrayLike
-) -> tuple[int | float | Variable] | tuple:
+) -> ParamObj | int | float | Variable | None:
     """
     Get waveform parameters to transform into number or pulser parametric variable. For now,
     it is assumed that parametric values are single-sized.
@@ -56,22 +56,34 @@ def _get_wf_values(
     match values:
 
         case int() | float():
-            return (values,)
+            return values
 
-        case list() | tuple() | np.ndarray():
+        case tuple() | list() | np.ndarray():
+
+            if all(isinstance(k, Parameter) for k in values) and len(set(values)) == 1:
+                var = seq.declare_variable(values[0].name, size=len(values), dtype=float)
+                return var
+
             new_values = ()
-            for value in values:
-                new_values += _get_wf_values(seq, value)
 
-            return new_values
+            for value in values:
+                res = _get_wf_values(seq, value)
+
+                if res is not None:
+                    new_values += res,
+
+            return new_values[0] if len(new_values) == 1 else new_values
 
         case np.integer() | np.floating():
-            return (values,)
+            return values
 
         case Parameter():
-            # for now, parameter will be of size 1
-            var = seq.declare_variable(values.name, size=1, dtype=float)
-            return (var,)
+            if values.name not in seq.declared_variables:
+                # single parameters must be of size 1
+                var = seq.declare_variable(values.name, size=1, dtype=float)
+                return var
+
+            return None
 
         case ParameterExpression():
             raise NotImplementedError(
@@ -79,7 +91,7 @@ def _get_wf_values(
             )
 
         case None:
-            return ()
+            return None
 
         case _:
             raise NotImplementedError(f"values {type(values)} not supported.")
@@ -143,6 +155,8 @@ def gen_seq(
                 f"gate {gate} has no waveform properties and "
                 "therefore cannot be used for analog computing."
             )
+
+    assert isinstance(seq, Sequence)
 
     return seq
 

@@ -28,15 +28,18 @@ class InterpolatePoints:
         "_values",
         "_duration",
         "_times",
+        "_n",
+        "_params",
         "_interpolator",
         "_interpolator_kwargs",
     )
 
     def __init__(
         self,
-        values: ArrayLike,
-        duration: int | float | ParameterExpression = 1000,  # think how to define it
+        values: ArrayLike | ParameterExpression,
+        duration: int | float | ParameterExpression = 1000,
         times: ArrayLike | None = None,
+        n: int | None = None,
         interpolator: str = "PchipInterpolator",
         **interpolator_kwargs: Any,
     ):
@@ -50,6 +53,8 @@ class InterpolatePoints:
                 It can be parametrized through `qiskit.circuit.Parameter`.
             duration: optional duration of the waveform (in ns). Defaults to 1000.
             times: Fractions of the total duration (between 0 and 1). Optional.
+            n: the number of values points, in case `qiskit.circuit.Parameter` is
+                provided on values argument. Default to None.
             interpolator: The SciPy interpolation class to use. Supports
                 "PchipInterpolator" and "interp1d".
             **interpolator_kwargs: Extra parameters to give to the chosen
@@ -59,10 +64,21 @@ class InterpolatePoints:
         assert isinstance(duration, int | float | ParameterExpression)
         assert isinstance(interpolator, str)
 
-        values = np.array(values)
+        if n is None:
+            values = np.array(values)
+            n = len(values)
+
+        elif isinstance(values, ParameterExpression) and None != n:
+            values = np.full(shape=n, fill_value=values)
+
+        else:
+            raise ValueError("Argument 'n' must be the size of values argument.")
+
+        self._n = n
         self._values = values
         self._duration = duration
         self._times = times
+        self._params = self._extract_params()
         self._interpolator = interpolator
         self._interpolator_kwargs = interpolator_kwargs
 
@@ -82,6 +98,11 @@ class InterpolatePoints:
         return self._times
 
     @property
+    def parameters(self) -> list[Parameter | ParameterExpression]:
+        """list of parameters"""
+        return self._params
+
+    @property
     def interpolator(self) -> str:
         """The interpolator method name."""
         return self._interpolator
@@ -91,6 +112,29 @@ class InterpolatePoints:
         """The key-value pairs to fill the interpolator function with."""
         return self._interpolator_kwargs
 
+    def _extract_params(self) -> list[Parameter | ParameterExpression]:
+        """Extract the parameters list from values, duration and times arguments."""
+
+        values_params = []
+        for k in self.values:
+            if isinstance(k, Parameter | ParameterExpression):
+                values_params.extend(k.parameters)
+
+        duration_params = (
+            list(self.duration.parameters)
+            if isinstance(self.duration, ParameterExpression)
+            else []
+        )
+
+        times_params = []
+
+        if self.times is not None:
+            for k in self.times:
+                if isinstance(k, Parameter | ParameterExpression):
+                    times_params.extend(k.parameters)
+
+        return list(set(values_params + duration_params + times_params))
+
 
 class HamiltonianGate(Gate):
     """Hamiltonian gate, an analog gate."""
@@ -99,10 +143,11 @@ class HamiltonianGate(Gate):
         self,
         amplitude: InterpolatePoints,
         detuning: InterpolatePoints,
-        phase: float,
+        phase: float | ParameterExpression,
         coords: ArrayLike,
         grid_transform: GridLiteralType = "triangular",
         composed_wf: Any | None = None,
+        transform: bool = False,
     ):
         """
         Hamiltonian gate is an analog gate that provides the relevant functionalities
@@ -140,16 +185,17 @@ class HamiltonianGate(Gate):
             )
 
         num_qubits = len(coords)  # type: ignore [arg-type]
+        phase_params = list(phase.parameters) if isinstance(phase, ParameterExpression) else []
 
         super().__init__(
             name="HG",
             num_qubits=num_qubits,
-            params=[],
+            params=list(set(amplitude.parameters + detuning.parameters + phase_params)),
             label="",
-            duration=amplitude.duration,  # qiskit emits warning on this, but it's needed
             unit="dt",
         )
 
+        self.duration = amplitude.duration
         self._grid = grid_transform
         self._amplitude = amplitude
         self._detuning = detuning
@@ -157,7 +203,8 @@ class HamiltonianGate(Gate):
 
         new_coords = RegisterTransform(
             grid_transform=self._grid, coords=coords  # type: ignore [arg-type]
-        ).coords
+        ).coords if transform else coords
+
         self._analog_register = PasqalRegister.from_coordinates(
             coords=new_coords, prefix="q"  # type: ignore [arg-type]
         )

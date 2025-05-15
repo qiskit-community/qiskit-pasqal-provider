@@ -1,20 +1,22 @@
 """EMU-MPS backend."""
 
-import copy
 import uuid
 from typing import Any
 
 from emu_mps import MPSBackend, MPSConfig, BitStrings
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from pulser.backend.remote import JobParams
 
 from qiskit_pasqal_provider.providers.abstract_base import (
-    PasqalBackend, PasqalBackendType,
-    PasqalJob
+    PasqalBackend,
+    PasqalBackendType,
+    PasqalJob,
 )
-from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob, PasqalLocalJob
-from qiskit_pasqal_provider.providers.pulse_utils import get_register_from_circuit, gen_seq
+from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
+from qiskit_pasqal_provider.providers.pulse_utils import (
+    get_register_from_circuit,
+    gen_seq,
+)
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
 
@@ -80,8 +82,7 @@ class EmuMpsBackend(PasqalBackend):
         )
 
         if values:
-            seq.build(**values)
-
+            seq = seq.build(**values)
 
         bitstrings = BitStrings() if shots is None else BitStrings(num_shots=shots)
         config = MPSConfig(observables=[bitstrings])

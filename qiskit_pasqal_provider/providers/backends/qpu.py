@@ -1,11 +1,11 @@
 """PasqalCloud remote backend"""
-import uuid
+
+from copy import deepcopy
 from typing import Any
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from pulser import QPUBackend as PasqalQPUBackend
-from pulser.backend.remote import JobParams
+from pasqal_cloud.job import CreateJob
 from pulser_pasqal import PasqalCloud
 
 from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
@@ -16,8 +16,9 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.abstract_base import (
-    PasqalBackend, PasqalBackendType,
-    PasqalJob
+    PasqalBackend,
+    PasqalBackendType,
+    PasqalJob,
 )
 
 
@@ -25,14 +26,26 @@ class QPUBackend(PasqalBackend):
     """QPU backend"""
 
     _version: str = "0.1.0"
-    backend_name = PasqalBackendType.QPU
+    _backend_name = PasqalBackendType.QPU
+    _emulator = None
 
     def __init__(self, remote_config: RemoteConfig):
         """initialize and instantiate PasqalCloud."""
+
         super().__init__()
-        # check whether pulser's `AnalogDevice` is compatible with QPU
-        self._target = PasqalTarget(device="pasqal_device")
-        self._cloud = PasqalCloud(**remote_config)
+
+        self._cloud = PasqalCloud(
+            username=remote_config.username,
+            password=remote_config.password,
+            project_id=remote_config.project_id,
+            token_provider=remote_config.token_provider,
+            endpoints=remote_config.endpoints,
+            auth0=remote_config.auth0,
+            webhook=remote_config.webhook,
+        )
+
+        self._executor = self._cloud._sdk_connection
+        self._target = PasqalTarget(cloud=self._cloud)
 
     @property
     def target(self) -> PasqalTarget:
@@ -73,20 +86,27 @@ class QPUBackend(PasqalBackend):
 
         analog_register = get_register_from_circuit(run_input)
 
+        # define automatic layout based on register (limited functionality)
+        new_register = analog_register.with_automatic_layout(device=self.target.device)
+
+        # validate register from device layout; will throw an error if not compatible
+        self.target.device.validate_register(new_register)
+
         # get a sequence
         seq = gen_seq(
-            analog_register=analog_register,
+            analog_register=new_register,
             device=self.target.device,
             circuit=run_input,
         )
 
         if values:
-            seq.build(**values)
+            seq = seq.build(**values)
 
-        self._executor = PasqalQPUBackend(sequence=seq, connection=self._cloud)
-        job_id = str(uuid.uuid4())
-        job_params = [JobParams(runs=shots, variables=values)]
+        job_params = [CreateJob(runs=shots, variables=values)]
 
-        job = PasqalRemoteJob(job_id=job_id, job_params=job_params, wait=wait, **options)
+        backend = deepcopy(self)
+
+        job = PasqalRemoteJob(backend, seq=seq, job_params=job_params, wait=wait)
+
         job.submit()
         return job

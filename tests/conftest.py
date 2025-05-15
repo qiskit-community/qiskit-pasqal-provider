@@ -51,7 +51,7 @@ def pasqal_target() -> PasqalTarget:
     """
     fixture for pre-defined pasqal target instance.
     """
-    return PasqalTarget(device=AVAILABLE_DEVICES["pasqal_device"])
+    return PasqalTarget(device=AVAILABLE_DEVICES["analog"])
 
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def pasqal_device() -> PasqalDevice | Device:
     """
     fixture for pulser.devices.AnalogDevice object.
     """
-    return AVAILABLE_DEVICES["pasqal_device"]
+    return AVAILABLE_DEVICES["analog"]
 
 
 @pytest.fixture

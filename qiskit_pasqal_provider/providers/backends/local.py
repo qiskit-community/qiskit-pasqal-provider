@@ -6,7 +6,8 @@ from qiskit import QuantumCircuit
 
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
-    PasqalBackendType, PasqalJob,
+    PasqalBackendType,
+    PasqalJob,
 )
 from qiskit_pasqal_provider.providers.backends.emu_mps import EmuMpsBackend
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend

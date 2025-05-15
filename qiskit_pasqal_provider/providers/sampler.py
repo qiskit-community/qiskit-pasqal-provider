@@ -1,9 +1,9 @@
 """Sampler base class based on `SamplerV2`."""
 
-from typing import Iterable
+from typing import Any, Iterable
 from warnings import warn
 
-from qiskit.circuit import QuantumCircuit, ParameterExpression
+from qiskit.circuit import QuantumCircuit, Parameter, ParameterExpression
 from qiskit.providers.jobstatus import JobStatus
 from qiskit.primitives import (
     BaseSamplerV2,
@@ -23,13 +23,23 @@ class Sampler(BaseSamplerV2):
         self._backend = backend
 
     @property
-    def mode(self):
+    def mode(self) -> None:
         """Sampler mode"""
         warn("'mode' is not a valid method for Pasqal's  Sampler class.", UserWarning)
+        return None
 
     def backend(self) -> PasqalBackend:
         """Method to return the provided backend"""
         return self._backend
+
+    def build(
+        self,
+        pubs: Iterable[SamplerPubLike],
+        *,
+        values: dict | None = None
+    ) -> PasqalBackend:
+        qc, values = self._coerce_pubs(pubs)
+        return self._backend.build(qc, values=values)
 
     @classmethod
     def _coerce_pubs(
@@ -49,17 +59,23 @@ class Sampler(BaseSamplerV2):
         if isinstance(pubs, QuantumCircuit):
             return pubs, {}
 
-        if isinstance(pubs, (list, tuple)):
+        if isinstance(pubs, list | tuple):
+
+            if isinstance(pubs[0], tuple):
+
+                if len(pubs[0]) == 1 and isinstance(pubs[0][0], QuantumCircuit):
+                    return pubs[0][0], {}
+
+                if (
+                    len(pubs[0]) == 2
+                    and isinstance(pubs[0][0], QuantumCircuit)
+                    and isinstance(pubs[0][1], dict)
+                ):
+
+                    return pubs[0][0], _parameter_to_str(pubs[0][1])
 
             if isinstance(pubs[0], QuantumCircuit):
-
-                if len(pubs) == 1:
-                    return pubs[0], {}
-
-                if len(pubs) == 2:
-
-                    if isinstance(pubs[1], dict):
-                        return pubs[0], pubs[1]
+                return pubs[0], {}
 
         raise ValueError(
             "'pubs' argument must be a QuantumCircuit "
@@ -86,3 +102,7 @@ class Sampler(BaseSamplerV2):
 
         qc, values = self._coerce_pubs(pubs)
         return self._backend.run(run_input=qc, values=values, shots=shots)
+
+
+def _parameter_to_str(values: dict[Parameter, Any]) -> dict[str, Any]:
+    return {k.name:v for k, v in values.items()}

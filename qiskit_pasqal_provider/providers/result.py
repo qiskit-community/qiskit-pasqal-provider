@@ -5,6 +5,8 @@ import time
 from collections import Counter
 from typing import Any
 
+from pasqal_cloud.job import Job as PasqalJobData
+from pasqal_cloud.batch import Batch as PasqalBatchData
 from pulser.backend import Results
 from pulser.backend.remote import RemoteResults, BatchStatus
 from pulser_simulation.simresults import SimulationResults
@@ -19,15 +21,16 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
     def __init__(
         self,
         backend_name: str,
-        job_id: str,
-        results: SimulationResults | RemoteResults,
+        job_id: str | list[str],
+        results: SimulationResults | RemoteResults | dict | None,
         metadata: dict[str, Any] | None = None,
     ):
         """
         Constructor for results from Pasqal emulators and QPUs.
 
         Args:
-            backend_name: Backend name
+            backend_name: Backend name as in `providers.abstract_base.PasqalBackendType` enum class
+            job_id: The identifiable str value for the job.
             results: Pulser results from emulator or QPU
             metadata: Metadata that is common to all the results, such as `backend_version`,
                 `shots`, `qobj_id`, `job_id`, `success`
@@ -38,13 +41,24 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         match results:
 
             case SimulationResults() | Results():
-                _data = self._fetch_sim_results(results, metadata)
+                _data = self._fetch_local_sim_results(results, metadata)
 
             case RemoteResults():
-                _data = self._fetch_remote_results(results, metadata)
+
+                if backend_name == "qpu":
+                    _data = self._fetch_qpu_results(results, metadata)
+
+                else:
+                    # this branch must fetch remote simulated results
+                    _data = self._fetch_remote_pulser_sim_results(results, metadata)
+
+            case dict() | None:
+                _data = self._fetch_cloud_results(results, metadata)
 
             case _:
-                raise ValueError("results must be either locally simulated or remote ones.")
+                raise ValueError(
+                    "results must be either locally simulated or remote ones."
+                )
 
         # feed the data bin into the sampler result with the metadata
         _results: list[SamplerPubResult] = [SamplerPubResult(data=_data)]
@@ -60,9 +74,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
 
     @classmethod
     def _get_counts(
-        cls,
-        results: SimulationResults | Results,
-        metadata: dict[str, Any]
+        cls, results: SimulationResults | Results, metadata: dict[str, Any]
     ) -> Counter | dict[str, int | float]:
         """Get counts from results (pulser's SimulationResults or Results)."""
 
@@ -73,7 +85,8 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
 
             return results.sample_final_state(N_samples=metadata["shots"])
 
-        elif isinstance(results, Results):
+        if isinstance(results, Results):
+
             if metadata.get("config"):
                 obs = metadata["config"].observables[0]
                 times = results.get_result_times(obs)
@@ -81,13 +94,11 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
 
         raise ValueError("results must be a SimulationResults or Results.")
 
-    def _fetch_sim_results(
-        self,
-        results: SimulationResults | Results,
-        metadata: dict[str, Any]
+    def _fetch_local_sim_results(
+        self, results: SimulationResults | Results, metadata: dict[str, Any]
     ) -> DataBin:
         """
-        Fetch simulation results, either from SimulationResults or Results.
+        Fetch local simulation results, either from SimulationResults or Results.
         """
 
         _data = DataBin(counts=self._get_counts(results, metadata))
@@ -95,8 +106,10 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         return _data
 
     @classmethod
-    def _fetch_remote_results(cls, results: RemoteResults, metadata: dict[str, Any]) -> DataBin:
-        """To fetch remote results from PasqalCloud (emulator and QPU)."""
+    def _fetch_remote_pulser_sim_results(
+        cls, results: RemoteResults, metadata: dict[str, Any]
+    ) -> DataBin:
+        """To fetch remote results from emulators via PasqalCloud."""
 
         # a simple loop to wait for the job to finish running
         while results.get_batch_status() in {BatchStatus.PENDING, BatchStatus.RUNNING}:
@@ -105,7 +118,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         def get_result() -> DataBin:
             """getting results from remote once the batch finishes"""
 
-            match status := results.get_batch_status():
+            match results.get_batch_status():
 
                 case BatchStatus.DONE:
                     return DataBin(counts=results.results[0].sampling_dist)
@@ -123,7 +136,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
                     while results.get_batch_status() in {
                         BatchStatus.PENDING,
                         BatchStatus.RUNNING,
-                        BatchStatus.PAUSED
+                        BatchStatus.PAUSED,
                     }:
                         time.sleep(metadata.get("sleep_sec", None) or 10)
                         return get_result()
@@ -134,6 +147,41 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
             raise NotImplementedError()
 
         return get_result()
+
+    @classmethod
+    def _fetch_cloud_results(cls, _results: dict[str, Any] | None, metadata: dict) -> DataBin:
+        """
+        To fetch results from `pasqal_cloud.SDK` connections. Used by QPU and
+        some remote emulators.
+        """
+
+        batch: PasqalBatchData = metadata["batch"]
+
+        # get job object to retrieve status and result
+        job_obj: PasqalJobData = batch.ordered_jobs[-1]
+
+        if job_obj.status == "DONE":
+            return DataBin(counts=Counter(job_obj.result))
+
+        while job_obj.status in {"PENDING", "RUNNING"}:
+            batch.refresh()
+            time.sleep(metadata.get("sleep_sec", None) or 15)
+
+            if job_obj.status == "DONE":
+                return DataBin(counts=Counter(job_obj.result))
+
+            if job_obj.status in {"TIMED_OUT", "ERROR"}:
+                break
+
+        raise ValueError(
+            "Something went wrong. Please check the cloud project page for more information."
+        )
+
+    @classmethod
+    def _fetch_qpu_results(cls, results: RemoteResults, metadata: dict[str, Any]) -> DataBin:
+        """To fetch remote results from QPU via PasqalCloud."""
+
+        ...
 
     @staticmethod
     def _update_metadata(metadata: dict[str, Any], **kwargs: Any) -> None:

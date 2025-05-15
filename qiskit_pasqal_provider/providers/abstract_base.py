@@ -5,14 +5,14 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any
 
-from pulser.backend.remote import JobParams, RemoteResults
-from pulser_simulation.simresults import SimulationResults
-
 from qiskit import QuantumCircuit
 from qiskit.primitives import BasePrimitiveJob
 from qiskit.providers import BackendV2, JobStatus
-from pulser.register.register_layout import RegisterLayout
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
+from pasqal_cloud import SDK as PasqalSDK, EmulatorType
+from pulser.backend.remote import JobParams, RemoteResults
+from pulser.register.register_layout import RegisterLayout
+from pulser_simulation.simresults import SimulationResults
 
 from .layouts import PasqalLayout
 from .result import PasqalResult
@@ -41,14 +41,17 @@ class PasqalBackendType(StrEnum):
     - EMU_MPS
     - REMOTE_EMU_FREE
     - REMOTE_EMU_TN
+    - REMOTE_EMU_MPS
+    - REMOTE_EMU_QPU
     - QPU
-
     """
 
     QUTIP = "qutip"
     EMU_MPS = "emu-mps"
     REMOTE_EMU_FREE = "remote-emu-free"
     REMOTE_EMU_TN = "remote-emu-tn"
+    REMOTE_EMU_MPS = "remote-emu-mps"
+    REMOTE_EMU_QPU = "remote-emu-qpu"
     QPU = "qpu"
 
 
@@ -59,10 +62,11 @@ class PasqalBackend(BackendV2, ABC):
     _layouts: PasqalLayout | RegisterLayout
     _backend_name: str | PasqalBackendType
     _version: str
-    _executor: PasqalExecutor  # pylint: disable=E0601
+    _executor: PasqalExecutor | PasqalSDK  # pylint: disable=E0601
+    _emulator: EmulatorType | None
 
     @property
-    def backend_executor(self) -> PasqalExecutor:
+    def executor(self) -> PasqalExecutor | PasqalSDK:
         """Pasqal emulator or QPU instance"""
         return self._executor
 
@@ -94,7 +98,7 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
     _backend: PasqalBackend
     _result: PasqalResult | None
     _status: JobStatus
-    _executor: PasqalExecutor
+    _executor: PasqalExecutor | PasqalSDK
 
     def backend(self) -> PasqalBackend:
         """Pasqal backend instance."""
@@ -131,12 +135,12 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
     ) -> SimulationResults | RemoteResults:
         """Check the self._executor run method signature"""
 
-        import inspect
+        import inspect  # type: ignore [import-outside-toplevel]
 
         run_arg_spec = inspect.getfullargspec(self._executor.run)
 
         # default case (works with QPU and default remote backends): ['job_params', 'wait']
-        if set(run_arg_spec.args) == {'job_params', 'wait'}:
+        if set(run_arg_spec.args) == {"job_params", "wait"}:
             return self._executor.run(job_params=job_params, wait=wait)
 
         # case where there are parameters but can be ignored
@@ -145,10 +149,13 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
             (len(run_arg_spec.args) - 1) > 0
             and (run_arg_spec.defaults is None or len(run_arg_spec.defaults) > 0)
         ):
-                return self._executor.run()
+            return self._executor.run()
 
         # no args case
-        else:
+        if (
+            len(run_arg_spec.args) == 0
+            or ("self" in run_arg_spec.args and len(run_arg_spec.args) == 1)
+        ):
             return self._executor.run()
 
         # other cases, implementation needed

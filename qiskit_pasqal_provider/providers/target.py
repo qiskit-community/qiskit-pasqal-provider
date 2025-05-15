@@ -9,15 +9,31 @@ from dataclasses import replace
 
 from pulser.devices import Device, AnalogDevice, DigitalAnalogDevice
 from pulser.devices._device_datacls import BaseDevice
+from pulser.json.abstract_repr.deserializer import deserialize_device
 from pulser.register import RegisterLayout
+from pulser_pasqal import PasqalCloud
 
 from .layouts import PasqalLayout
 
-# rethink about the names
+
 AVAILABLE_DEVICES = {
-    "pasqal_device": replace(AnalogDevice, name="PasqalDevice1"),
+    "analog": replace(AnalogDevice, name="PasqalDevice1"),
     "hybrid": replace(DigitalAnalogDevice, name="HybridDevice"),
 }
+
+
+def get_qpu_device(cloud: PasqalCloud) -> Device:
+    """
+    Get the QPU device with current valid specs.
+
+    Args:
+        cloud: A `PasqalCloud` instance
+
+    Returns:
+        A `Device` object for the available QPU
+    """
+
+    return cloud.fetch_available_devices()["FRESNEL"]
 
 
 class PasqalDeviceType(StrEnum):
@@ -25,8 +41,9 @@ class PasqalDeviceType(StrEnum):
     StrEnum for available device types
     """
 
-    PASQAL_DEVICE = "pasqal_device"
-    HYBRID = "hybrid"
+    ANALOG_EMULATOR = "analog"
+    HYBRID_EMULATOR = "hybrid"
+    QPU_DEVICE = "qpu"
 
 
 class PasqalDevice(Device):
@@ -43,11 +60,13 @@ class PasqalTarget:
     _accepts_new_layouts: bool
     _pre_calibrated_layouts: tuple
     _layout: PasqalLayout | RegisterLayout
+    _cloud: PasqalCloud | None
 
     def __init__(
         self,
-        device: PasqalDeviceType | PasqalDevice | BaseDevice | str = "pasqal_device",
+        device: PasqalDeviceType | PasqalDevice | BaseDevice | str = "analog",
         layout: PasqalLayout | RegisterLayout | None = None,
+        cloud: PasqalCloud | None = None,
     ):
         """
         PasqalDevice constructor defines device and register layout used by
@@ -56,20 +75,31 @@ class PasqalTarget:
         Args:
             device (PasqalDeviceType, Device, str): `PasqalDeviceType` value or string
                 with the name of the device when the device is known; Use `PasqalDevice`
-                when providing custom device instance. Default to `"pasqal_device"`.
+                when providing custom device instance. Default to `"analog"`.
             layout (PasqalLayout, None): Optional parameter to define the layout of the
                 device, if the device does not provide one. It will try to retrieve the
                 layout from the device, unless it provides `PasqalLayout` instance. If
                 `None` is provided and no layout is found, an error raises. Default to
                 `None`.
+            cloud (PasqalCloud): Optional cloud object that retrieves the available QPU.
+                Default to `None`.
         """
 
+        self._cloud = cloud
         self._device = self._get_device(device)
         self._layout = self._get_layout(layout)
 
     def _get_device(
         self, device: PasqalDeviceType | PasqalDevice | BaseDevice | str
     ) -> PasqalDevice | BaseDevice:
+        """Retrieve the correct device object given a device argument."""
+
+        # if cloud is defined, fetch the device from it
+        if self._cloud:
+            new_device = get_qpu_device(self._cloud)
+            self._accepts_new_layouts = new_device.accepts_new_layouts
+            self._pre_calibrated_layouts = new_device.pre_calibrated_layouts
+            return new_device
 
         if isinstance(device, PasqalDeviceType | str):
             new_device = AVAILABLE_DEVICES[device]
