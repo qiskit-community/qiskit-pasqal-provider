@@ -1,4 +1,5 @@
 """Remote emulator backend"""
+
 from copy import deepcopy
 from typing import Any
 
@@ -6,13 +7,18 @@ from qiskit import QuantumCircuit
 from qiskit.providers import Options
 from pasqal_cloud import EmulatorType, CreateJob
 from pulser_pasqal import PasqalCloud
+from pulser.register import Register
 
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalJob,
 )
 from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
-from qiskit_pasqal_provider.providers.pulse_utils import get_register_from_circuit, gen_seq
+from qiskit_pasqal_provider.providers.pulse_utils import (
+    get_register_from_circuit,
+    gen_seq,
+    PasqalRegister,
+)
 from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
@@ -25,7 +31,7 @@ class EmuRemoteBackend(PasqalBackend):
         backend_name: str,
         emulator: EmulatorType,
         remote_config: RemoteConfig,
-        target: PasqalTarget | None = None
+        target: PasqalTarget | None = None,
     ):
         """initialize and instantiate PasqalCloud."""
 
@@ -79,11 +85,15 @@ class EmuRemoteBackend(PasqalBackend):
 
         assert shots is not None, "shots must not be None. Choose an integer value."
 
-        analog_register = get_register_from_circuit(run_input)
+        analog_register: Register | PasqalRegister = get_register_from_circuit(
+            run_input
+        )
 
         if self._emulator == EmulatorType.EMU_FRESNEL:
             # define automatic layout based on register (limited functionality)
-            analog_register = analog_register.with_automatic_layout(device=self.target.device)
+            analog_register = analog_register.with_automatic_layout(
+                device=self.target.device
+            )
 
             # validate register from device layout; will throw an error if not compatible
             self.target.device.validate_register(analog_register)

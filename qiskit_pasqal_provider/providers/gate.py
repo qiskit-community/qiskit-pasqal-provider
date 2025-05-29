@@ -68,7 +68,7 @@ class InterpolatePoints:
             values = np.array(values)
             n = len(values)
 
-        elif isinstance(values, ParameterExpression) and None != n:
+        elif isinstance(values, ParameterExpression) and None is not n:
             values = np.full(shape=n, fill_value=values)
 
         else:
@@ -116,7 +116,7 @@ class InterpolatePoints:
         """Extract the parameters list from values, duration and times arguments."""
 
         values_params = []
-        for k in self.values:
+        for k in self.values:  # type: ignore [union-attr]
             if isinstance(k, Parameter | ParameterExpression):
                 values_params.extend(k.parameters)
 
@@ -129,7 +129,7 @@ class InterpolatePoints:
         times_params = []
 
         if self.times is not None:
-            for k in self.times:
+            for k in self.times:  # type: ignore [union-attr]
                 if isinstance(k, Parameter | ParameterExpression):
                     times_params.extend(k.parameters)
 
@@ -185,7 +185,9 @@ class HamiltonianGate(Gate):
             )
 
         num_qubits = len(coords)  # type: ignore [arg-type]
-        phase_params = list(phase.parameters) if isinstance(phase, ParameterExpression) else []
+        phase_params = (
+            list(phase.parameters) if isinstance(phase, ParameterExpression) else []
+        )
 
         super().__init__(
             name="HG",
@@ -201,9 +203,13 @@ class HamiltonianGate(Gate):
         self._detuning = detuning
         self._phase = phase
 
-        new_coords = RegisterTransform(
-            grid_transform=self._grid, coords=coords  # type: ignore [arg-type]
-        ).coords if transform else coords
+        new_coords = (
+            RegisterTransform(
+                grid_transform=self._grid, coords=coords  # type: ignore [arg-type]
+            ).coords
+            if transform
+            else coords
+        )
 
         self._analog_register = PasqalRegister.from_coordinates(
             coords=new_coords, prefix="q"  # type: ignore [arg-type]

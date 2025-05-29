@@ -64,4 +64,4 @@ py-modules = []
 
 [tool.setuptools.packages.find]
 include = ['qiskit_pasqal_provider*']
-exclude = ['qiskit_pasqal_provider*tests']
+exclude = ['qiskit_pasqal_provider*tests', 'demo']

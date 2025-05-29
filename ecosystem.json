@@ -2,7 +2,7 @@
     "dependencies_files": [],
     "language": {
         "name": "python",
-        "versions": ["3.11"]
+        "versions": ["3.11", "3.12"]
     },
     "tests_command": [
         "python -m pytest -v --doctest-modules"

@@ -8,8 +8,6 @@ except ImportError:
 from dataclasses import replace
 
 from pulser.devices import Device, AnalogDevice, DigitalAnalogDevice
-from pulser.devices._device_datacls import BaseDevice
-from pulser.json.abstract_repr.deserializer import deserialize_device
 from pulser.register import RegisterLayout
 from pulser_pasqal import PasqalCloud
 
@@ -43,7 +41,7 @@ class PasqalDeviceType(StrEnum):
 
     ANALOG_EMULATOR = "analog"
     HYBRID_EMULATOR = "hybrid"
-    QPU_DEVICE = "qpu"
+    FRESNEL_DEVICE = "fresnel"
 
 
 class PasqalDevice(Device):
@@ -56,7 +54,7 @@ class PasqalTarget:
     to be used by `PasqalBackend` instances.
     """
 
-    _device: PasqalDevice | BaseDevice
+    _device: PasqalDevice | Device
     _accepts_new_layouts: bool
     _pre_calibrated_layouts: tuple
     _layout: PasqalLayout | RegisterLayout
@@ -64,7 +62,7 @@ class PasqalTarget:
 
     def __init__(
         self,
-        device: PasqalDeviceType | PasqalDevice | BaseDevice | str = "analog",
+        device: PasqalDeviceType | PasqalDevice | Device | str = "analog",
         layout: PasqalLayout | RegisterLayout | None = None,
         cloud: PasqalCloud | None = None,
     ):
@@ -90,8 +88,8 @@ class PasqalTarget:
         self._layout = self._get_layout(layout)
 
     def _get_device(
-        self, device: PasqalDeviceType | PasqalDevice | BaseDevice | str
-    ) -> PasqalDevice | BaseDevice:
+        self, device: PasqalDeviceType | PasqalDevice | Device | str
+    ) -> PasqalDevice | Device:
         """Retrieve the correct device object given a device argument."""
 
         # if cloud is defined, fetch the device from it
@@ -110,11 +108,6 @@ class PasqalTarget:
         if isinstance(device, PasqalDevice | Device):
             self._accepts_new_layouts = device.accepts_new_layouts
             self._pre_calibrated_layouts = device.pre_calibrated_layouts
-            return device
-
-        if isinstance(device, BaseDevice):
-            self._accepts_new_layouts = True
-            self._pre_calibrated_layouts = ()
             return device
 
         raise TypeError(f"'{device.name}' of type {type(device)} is not supported")
@@ -146,7 +139,7 @@ class PasqalTarget:
 
             if self._pre_calibrated_layouts:
 
-                if self.device.is_calibrated_layout(layout):  # type: ignore [attr-defined]
+                if self.device.is_calibrated_layout(layout):  # type: ignore [arg-type]
                     return layout
 
                 raise ValueError("layout does not match the pre-calibrated layouts.")
@@ -156,7 +149,7 @@ class PasqalTarget:
         raise ValueError(f"device '{self.device.name}' does not accept new layouts")
 
     @property
-    def device(self) -> PasqalDevice | BaseDevice:
+    def device(self) -> PasqalDevice | Device:
         """device attribute"""
         return self._device
 

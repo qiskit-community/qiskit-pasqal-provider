@@ -34,7 +34,9 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
 
 
 @pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
-def test_local_sampler_backends_parametric(backend_name: str, square_coords: list) -> None:
+def test_local_sampler_backends_parametric(
+    backend_name: str, square_coords: list
+) -> None:
     """
     Testing sampler instance with qutip and emu-mps emulators (local provider) with
     parametric values.
@@ -58,6 +60,6 @@ def test_local_sampler_backends_parametric(backend_name: str, square_coords: lis
     provider = PasqalProvider()
     backend = provider.get_backend(backend_name)
     sampler = Sampler(backend)
-    results = sampler.run([(qc, {p:[1,1,1,1], d:[0, 1/3, 2/3, 1]})]).result()
+    results = sampler.run([(qc, {p: [1, 1, 1, 1], d: [0, 1 / 3, 2 / 3, 1]})]).result()
 
     assert isinstance(results, PasqalResult)

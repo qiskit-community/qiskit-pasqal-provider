@@ -35,8 +35,8 @@ class EmuMpsBackend(PasqalBackend):
             **options: additional configuration options for the backend
         """
         # super().__init__(target=target, backend="emu-mps")
-        self.backend_name = self.__class__.__name__
-        super().__init__(name=self.backend_name, **options)
+        name = self.__class__.__name__
+        super().__init__(name=name, **options)
         self.backend = "emu-mps"
         self._target = target
         self._layout = self.target.layout

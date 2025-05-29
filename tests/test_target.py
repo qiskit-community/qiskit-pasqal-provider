@@ -56,7 +56,7 @@ def test_target_with_custom_device(square_layout1: SquareLayout) -> None:
 
     # no layout, should fail
     with pytest.raises(ValueError):
-        PasqalTarget(virtual_device, None)
+        PasqalTarget(virtual_device, None)  # type: ignore [arg-type]
 
     # define layout, should pass
-    assert PasqalTarget(virtual_device, square_layout1)
+    assert PasqalTarget(virtual_device, square_layout1)  # type: ignore [arg-type]

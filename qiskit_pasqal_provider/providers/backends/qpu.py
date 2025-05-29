@@ -26,7 +26,7 @@ class QPUBackend(PasqalBackend):
     """QPU backend"""
 
     _version: str = "0.1.0"
-    _backend_name = PasqalBackendType.QPU
+    _backend_name = PasqalBackendType.FRESNEL
     _emulator = None
 
     def __init__(self, remote_config: RemoteConfig):
@@ -83,6 +83,8 @@ class QPUBackend(PasqalBackend):
         Returns:
             A PasqalJob instance containing the results from the execution interface.
         """
+
+        assert shots is not None, "shots must not be None. Choose an integer value."
 
         analog_register = get_register_from_circuit(run_input)
 

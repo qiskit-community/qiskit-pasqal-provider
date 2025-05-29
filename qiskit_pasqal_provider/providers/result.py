@@ -149,7 +149,9 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         return get_result()
 
     @classmethod
-    def _fetch_cloud_results(cls, _results: dict[str, Any] | None, metadata: dict) -> DataBin:
+    def _fetch_cloud_results(
+        cls, _results: dict[str, Any] | None, metadata: dict
+    ) -> DataBin:
         """
         To fetch results from `pasqal_cloud.SDK` connections. Used by QPU and
         some remote emulators.
@@ -178,10 +180,11 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         )
 
     @classmethod
-    def _fetch_qpu_results(cls, results: RemoteResults, metadata: dict[str, Any]) -> DataBin:
+    def _fetch_qpu_results(
+        cls, results: RemoteResults, metadata: dict[str, Any]
+    ) -> DataBin:
         """To fetch remote results from QPU via PasqalCloud."""
-
-        ...
+        raise NotImplementedError()
 
     @staticmethod
     def _update_metadata(metadata: dict[str, Any], **kwargs: Any) -> None:

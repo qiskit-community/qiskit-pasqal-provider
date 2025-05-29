@@ -3,7 +3,7 @@
 import sys
 import logging
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, cast
 
 from qiskit import QuantumCircuit
 from qiskit.primitives import BasePrimitiveJob
@@ -40,19 +40,17 @@ class PasqalBackendType(StrEnum):
     - QUTIP
     - EMU_MPS
     - REMOTE_EMU_FREE
-    - REMOTE_EMU_TN
     - REMOTE_EMU_MPS
-    - REMOTE_EMU_QPU
-    - QPU
+    - REMOTE_EMU_FRESNEL
+    - FRESNEL
     """
 
     QUTIP = "qutip"
     EMU_MPS = "emu-mps"
     REMOTE_EMU_FREE = "remote-emu-free"
-    REMOTE_EMU_TN = "remote-emu-tn"
     REMOTE_EMU_MPS = "remote-emu-mps"
-    REMOTE_EMU_QPU = "remote-emu-qpu"
-    QPU = "qpu"
+    REMOTE_EMU_FRESNEL = "remote-emu-fresnel"
+    FRESNEL = "fresnel"
 
 
 class PasqalBackend(BackendV2, ABC):
@@ -66,9 +64,19 @@ class PasqalBackend(BackendV2, ABC):
     _emulator: EmulatorType | None
 
     @property
+    def backend_name(self) -> str | PasqalBackendType:
+        """Backend name"""
+        return self._backend_name
+
+    @property
     def executor(self) -> PasqalExecutor | PasqalSDK:
         """Pasqal emulator or QPU instance"""
         return self._executor
+
+    @property
+    def emulator(self) -> EmulatorType | None:
+        """Emulator object"""
+        return self._emulator
 
     @abstractmethod
     def run(
@@ -133,10 +141,14 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
         job_params: list[JobParams] | None = None,
         wait: bool | None = None,
     ) -> SimulationResults | RemoteResults:
-        """Check the self._executor run method signature"""
+        """
+        Check the self._executor run method signature;
+        Only compatible with local run.
+        """
 
-        import inspect  # type: ignore [import-outside-toplevel]
+        import inspect  # pylint: disable=import-outside-toplevel
 
+        self._executor = cast(PasqalExecutor, self._executor)
         run_arg_spec = inspect.getfullargspec(self._executor.run)
 
         # default case (works with QPU and default remote backends): ['job_params', 'wait']
@@ -152,9 +164,8 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
             return self._executor.run()
 
         # no args case
-        if (
-            len(run_arg_spec.args) == 0
-            or ("self" in run_arg_spec.args and len(run_arg_spec.args) == 1)
+        if len(run_arg_spec.args) == 0 or (
+            "self" in run_arg_spec.args and len(run_arg_spec.args) == 1
         ):
             return self._executor.run()
 

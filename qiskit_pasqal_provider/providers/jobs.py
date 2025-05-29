@@ -1,6 +1,6 @@
 """This module implements the qiskit job class used for PasqalBackend objects."""
 
-from typing import Any
+from typing import Any, cast
 
 from qiskit.providers.jobstatus import JobStatus
 from pasqal_cloud import SDK as PasqalSDK, Batch as PasqalBatch
@@ -38,7 +38,7 @@ class PasqalLocalJob(PasqalJob):
         self._backend = backend
         self._result = None
         self._status = JobStatus.INITIALIZING
-        self._executor = backend.executor
+        self._executor = cast(PasqalExecutor, backend.executor)
 
     def submit(self) -> None:
         """Submit the job to the local backend for execution."""
@@ -95,7 +95,7 @@ class PasqalRemoteJob(PasqalJob):
         super().__init__(job_id="", **kwargs)
         self._seq = seq
         self._backend = backend
-        self._executor = backend.executor
+        self._executor = cast(PasqalSDK, backend.executor)
         self._job_params = job_params
         self._wait = wait
         self._batch = None
@@ -105,21 +105,18 @@ class PasqalRemoteJob(PasqalJob):
 
         self._status = JobStatus.RUNNING
 
-        if self._backend._backend_name == "QPU":
+        if self._backend.backend_name == "QPU":
             self._batch = self._executor.create_batch(
-                self._seq.to_abstract_repr(),
-                self._job_params,
-                wait=self._wait
+                self._seq.to_abstract_repr(), self._job_params, wait=self._wait
             )
 
         else:
             self._batch = self._executor.create_batch(
                 self._seq.to_abstract_repr(),
                 self._job_params,
-                emulator=self._backend._emulator,
+                emulator=self._backend.emulator,
                 wait=self._wait,
             )
-
 
         self.metadata = {"batch": self._batch, "status": None}
 
@@ -127,7 +124,7 @@ class PasqalRemoteJob(PasqalJob):
             backend_name=self.backend().name,
             job_id="",
             results=None,
-            metadata=self.metadata
+            metadata=self.metadata,
         )
 
         match self.metadata["status"]:

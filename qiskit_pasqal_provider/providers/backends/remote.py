@@ -12,6 +12,7 @@ from qiskit_pasqal_provider.providers.abstract_base import (
 )
 from qiskit_pasqal_provider.providers.backends.emu_remote import EmuRemoteBackend
 from qiskit_pasqal_provider.providers.backends.qpu import QPUBackend
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
 
 
@@ -22,23 +23,27 @@ class PasqalRemoteBackend(PasqalBackend):
         cls,
         backend: PasqalBackendType | str,
         remote_config: RemoteConfig,
+        target: PasqalTarget | None = None,
         **_options: Any,
     ):
         # cloud = PasqalCloud
         match backend:
             case "remote-emu-free":
-                return EmuRemoteBackend(backend, EmulatorType.EMU_FREE, remote_config)
-
-            case "remote-emu-tn":
-                return EmuRemoteBackend(backend, EmulatorType.EMU_TN,remote_config)
+                return EmuRemoteBackend(
+                    backend, EmulatorType.EMU_FREE, remote_config, target
+                )
 
             case "remote-emu-mps":
-                return EmuRemoteBackend(backend, EmulatorType.EMU_MPS, remote_config)
+                return EmuRemoteBackend(
+                    backend, EmulatorType.EMU_MPS, remote_config, target
+                )
 
-            case "remote-emu-qpu":
-                return EmuRemoteBackend(backend, EmulatorType.EMU_FRESNEL, remote_config)
+            case "remote-emu-fresnel":
+                return EmuRemoteBackend(
+                    backend, EmulatorType.EMU_FRESNEL, remote_config, target
+                )
 
-            case "qpu":
+            case "fresnel":
                 return QPUBackend(remote_config)
 
             case _:

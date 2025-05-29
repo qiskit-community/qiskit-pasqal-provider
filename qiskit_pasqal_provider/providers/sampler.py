@@ -26,20 +26,10 @@ class Sampler(BaseSamplerV2):
     def mode(self) -> None:
         """Sampler mode"""
         warn("'mode' is not a valid method for Pasqal's  Sampler class.", UserWarning)
-        return None
 
     def backend(self) -> PasqalBackend:
         """Method to return the provided backend"""
         return self._backend
-
-    def build(
-        self,
-        pubs: Iterable[SamplerPubLike],
-        *,
-        values: dict | None = None
-    ) -> PasqalBackend:
-        qc, values = self._coerce_pubs(pubs)
-        return self._backend.build(qc, values=values)
 
     @classmethod
     def _coerce_pubs(
@@ -105,4 +95,4 @@ class Sampler(BaseSamplerV2):
 
 
 def _parameter_to_str(values: dict[Parameter, Any]) -> dict[str, Any]:
-    return {k.name:v for k, v in values.items()}
+    return {k.name: v for k, v in values.items()}

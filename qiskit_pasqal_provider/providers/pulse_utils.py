@@ -8,7 +8,7 @@ from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
 from pulser.devices._device_datacls import BaseDevice
-from pulser.parametrized import Variable, ParamObj, Parametrized
+from pulser.parametrized import Variable, ParamObj
 from pulser.register import Register
 from pulser.waveforms import InterpolatedWaveform
 from qiskit.circuit import QuantumCircuit, ParameterExpression, Parameter
@@ -40,7 +40,7 @@ class TwoPhotonPulse:
 
 def _get_wf_values(
     seq: Sequence, values: int | float | Parameter | ArrayLike
-) -> ParamObj | int | float | Variable | None:
+) -> ParamObj | int | float | Variable | np.integer | np.floating | tuple | None:
     """
     Get waveform parameters to transform into number or pulser parametric variable. For now,
     it is assumed that parametric values are single-sized.
@@ -61,16 +61,21 @@ def _get_wf_values(
         case tuple() | list() | np.ndarray():
 
             if all(isinstance(k, Parameter) for k in values) and len(set(values)) == 1:
-                var = seq.declare_variable(values[0].name, size=len(values), dtype=float)
+                var = seq.declare_variable(
+                    values[0].name, size=len(values), dtype=float
+                )
                 return var
 
-            new_values = ()
+            new_values: (
+                tuple[ParamObj | int | float | Variable | np.integer | np.floating]
+                | tuple
+            ) = ()
 
             for value in values:
                 res = _get_wf_values(seq, value)
 
                 if res is not None:
-                    new_values += res,
+                    new_values += (res,)
 
             return new_values[0] if len(new_values) == 1 else new_values
 
@@ -98,7 +103,7 @@ def _get_wf_values(
 
 
 def gen_seq(
-    analog_register: PasqalRegister,
+    analog_register: PasqalRegister | Register,
     device: BaseDevice | PasqalDevice,
     circuit: QuantumCircuit,
 ) -> Sequence:
