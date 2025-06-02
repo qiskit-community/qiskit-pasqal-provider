@@ -3,8 +3,7 @@
 from dataclasses import replace
 
 import pytest
-from pulser.devices import Device, VirtualDevice
-from pulser.channels import Rydberg, Raman
+from pulser.devices import Device, AnalogDevice
 
 from qiskit_pasqal_provider.providers.target import (
     PasqalTarget,
@@ -37,26 +36,18 @@ def test_target_with_device_types(
 
 def test_target_with_custom_device(square_layout1: SquareLayout) -> None:
     """Test PasqalTarget with custom device and layout"""
-    virtual_device = VirtualDevice(
-        name="MockVirtualDevice",
+    mock_device = replace(
+        AnalogDevice,
+        name="ExampleDevice",
         dimensions=2,
         rydberg_level=61,
-    )
-    virtual_device = replace(
-        virtual_device,
-        channel_ids=(
-            "ryd_loc",
-            "ram_loc",
-        ),
-        channel_objects=(
-            Rydberg.Local(None, None, max_duration=None),
-            Raman.Local(None, None, max_duration=None),
-        ),
+        accepts_new_layouts=True,
+        pre_calibrated_layouts=(),
     )
 
     # no layout, should fail
     with pytest.raises(ValueError):
-        PasqalTarget(virtual_device, None)  # type: ignore [arg-type]
+        PasqalTarget(mock_device, None)
 
     # define layout, should pass
-    assert PasqalTarget(virtual_device, square_layout1)  # type: ignore [arg-type]
+    assert PasqalTarget(mock_device, square_layout1)

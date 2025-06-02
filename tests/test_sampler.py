@@ -1,12 +1,15 @@
 """Test sampler instance"""
 
 import pytest
+from pulser import Sequence, Register
 from qiskit.circuit import QuantumCircuit, Parameter
+
 
 from qiskit_pasqal_provider.providers.sampler import Sampler
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
 from qiskit_pasqal_provider.providers.result import PasqalResult
+from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 
 
 @pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
@@ -19,7 +22,9 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     phase = 0.0
 
     # analog gate
-    gate = HamiltonianGate(ampl, det, phase, square_coords, grid_transform="square")
+    gate = HamiltonianGate(
+        ampl, det, phase, square_coords, grid_transform="square", transform=True
+    )
 
     # qiskit circuit with analog gate
     qc = QuantumCircuit(4)
@@ -31,6 +36,10 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     results = sampler.run([qc]).result()
 
     assert isinstance(results, PasqalResult)
+
+    with pytest.raises(ValueError):
+        seq = Sequence(Register({'q0':(2, -1)}), device=AVAILABLE_DEVICES["analog"])
+        sampler.run([seq])
 
 
 @pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
@@ -51,7 +60,9 @@ def test_local_sampler_backends_parametric(
     phase = 0.0
 
     # analog gate
-    gate = HamiltonianGate(ampl, det, phase, square_coords, grid_transform="square")
+    gate = HamiltonianGate(
+        ampl, det, phase, square_coords, grid_transform="square", transform=True
+    )
 
     # qiskit circuit with analog gate
     qc = QuantumCircuit(4)

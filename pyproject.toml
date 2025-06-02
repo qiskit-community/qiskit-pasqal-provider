@@ -12,9 +12,9 @@ authors = [
 ]
 
 dependencies = [
-    "certifi>=2024.12.14",
-    "importlib_metadata>=8.5.0",
-    "qiskit-aer>=0.15.1",
+    "certifi",
+    "importlib_metadata",
+    "qiskit-aer",
     "qiskit>1.0, <2",
     "pulser-core>=1.4, <2",
     "pulser-simulation>=1.0, <2",
@@ -27,21 +27,19 @@ dependencies = [
 # Dev dependencies.
 dev = [
     "coverage",
-    "pylint>=3.3",
+    "pylint",
     "nbqa",
     "treon",
-    "pytest==8.3.4",
+    "pytest",
     "pytest-randomly",
-    "mypy>=1.14.1",
+    "mypy",
     "mypy-extensions",
     "jupyter-sphinx",
     "nbsphinx",
     "sphinx-autodoc-typehints",
     "qiskit-sphinx-theme",
     "reno",
-    # Black's formatting rules can change between major versions, so we use
-    # the ~= specifier for it.
-    "black[jupyter]~=24.10",
+    "black[jupyter]",
 ]
 
 [project.urls]

@@ -1,8 +1,8 @@
 """Test the provider functionalities"""
 
+import pulser.exceptions.serialization
 import pytest
 
-from qiskit_pasqal_provider.providers.backends.emu_free import EmuFreeBackend
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
 from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
@@ -27,8 +27,10 @@ def test_provider_with_remote() -> None:
     provider = PasqalProvider(remote_config)
 
     assert provider.remote_config == remote_config
-    assert isinstance(provider.get_backend("remote-emu-free"), EmuFreeBackend)
-    assert isinstance(provider.get_backend("qutip"), QutipEmulatorBackend)
+
+    with pytest.raises(pulser.exceptions.serialization.DeserializeDeviceError):
+        # cannot retrieve `fetch_available_devices()` from a mock-up RemoteConfig
+        assert provider.get_backend("remote-emu-fresnel")
 
 
 def test_provider_invalid_backend() -> None:

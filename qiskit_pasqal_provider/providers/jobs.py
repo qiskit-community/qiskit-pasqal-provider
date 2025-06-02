@@ -119,10 +119,11 @@ class PasqalRemoteJob(PasqalJob):
             )
 
         self.metadata = {"batch": self._batch, "status": None}
+        job_id = self._executor.get_jobs().results[0]
 
         self._result = PasqalResult(
             backend_name=self.backend().name,
-            job_id="",
+            job_id=job_id,
             results=None,
             metadata=self.metadata,
         )

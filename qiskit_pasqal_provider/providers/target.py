@@ -20,7 +20,7 @@ AVAILABLE_DEVICES = {
 }
 
 
-def get_qpu_device(cloud: PasqalCloud) -> Device:
+def fetch_remote_device(cloud: PasqalCloud) -> Device:
     """
     Get the QPU device with current valid specs.
 
@@ -94,7 +94,7 @@ class PasqalTarget:
 
         # if cloud is defined, fetch the device from it
         if self._cloud:
-            new_device = get_qpu_device(self._cloud)
+            new_device = fetch_remote_device(self._cloud)
             self._accepts_new_layouts = new_device.accepts_new_layouts
             self._pre_calibrated_layouts = new_device.pre_calibrated_layouts
             return new_device
