@@ -3,7 +3,6 @@
 import uuid
 from typing import Any
 
-from emu_mps import MPSBackend, MPSConfig, BitStrings
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
@@ -18,6 +17,15 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
     gen_seq,
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
+
+try:
+    from emu_mps import MPSBackend, MPSConfig, BitStrings
+
+except ImportError as err:
+    raise ImportError(
+        "`emu-mps` package should be installed in order to use `EmuMpsBackend`."
+        " However, Windows is currently not supported."
+    ) from err
 
 
 class EmuMpsBackend(PasqalBackend):

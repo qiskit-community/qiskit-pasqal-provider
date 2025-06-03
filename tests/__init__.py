@@ -16,4 +16,5 @@ def _gen_dict_result() -> dict:
     _res[np.binary_repr(11, NUM_ATOMS)] = 25
     return _res
 
+
 DEFAULT_DICT_RESULT = _gen_dict_result()

@@ -38,7 +38,7 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     assert isinstance(results, PasqalResult)
 
     with pytest.raises(ValueError):
-        seq = Sequence(Register({'q0':(2, -1)}), device=AVAILABLE_DEVICES["analog"])
+        seq = Sequence(Register({"q0": (2, -1)}), device=AVAILABLE_DEVICES["analog"])
         sampler.run([seq])
 
 
