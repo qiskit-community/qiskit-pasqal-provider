@@ -12,13 +12,13 @@ authors = [
 ]
 
 dependencies = [
-    "certifi>=2021.5.30",
-    "importlib_metadata>=4.8.1",
-    "qiskit-aer>=0.14.0",
-    "qiskit>=1.0, <2",
-    "pulser-core>=1.0, <2",
-    "pulser-simulation>=1.0, <2",
-    "pasqal-cloud~=0.12.5",
+    "certifi",
+    "importlib_metadata",
+    "qiskit-aer",
+    "qiskit<2",
+    "pulser-core<2",
+    "pulser-simulation<2",
+    "pasqal-cloud",
     "pulser-pasqal",
     "emu-mps",
 ]
@@ -26,22 +26,19 @@ dependencies = [
 [project.optional-dependencies]
 # Dev dependencies.
 dev = [
-    "coverage>=5.5",
-    "pylint>=2.9.5",
-    "nbqa>=1.1.1",
-    "treon>=0.1.3",
-    "pytest>=6.2.5",
-    "pytest-randomly>=1.2.0",
-    "mypy>=0.780",
-    "mypy-extensions>=0.4.3",
-    "jupyter-sphinx>=0.3.2",
-    "nbsphinx>=0.8.8",
-    "sphinx-autodoc-typehints>=1.17.0",
-    "qiskit-sphinx-theme~=1.16.0",
-    "reno>=3.5.0",
-    # Black's formatting rules can change between major versions, so we use
-    # the ~= specifier for it.
-    "black[jupyter]~=24.10",
+    "coverage",
+    "pylint",
+    "nbqa",
+    "treon",
+    "pytest",
+    "pytest-randomly",
+    "mypy",
+    "mypy-extensions",
+    "jupyter-sphinx",
+    "nbsphinx",
+    "sphinx-autodoc-typehints",
+    "qiskit-sphinx-theme",
+    "reno",
 ]
 
 [project.urls]
