@@ -1,5 +1,7 @@
 """Test sampler instance"""
 
+from sys import platform
+
 import pytest
 from pulser import Sequence, Register
 from qiskit.circuit import QuantumCircuit, Parameter
@@ -12,7 +14,16 @@ from qiskit_pasqal_provider.providers.result import PasqalResult
 from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 
 
-@pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
+@pytest.mark.parametrize(
+    "backend_name",
+    [
+        "qutip",
+        pytest.param(
+            "emu-mps",
+            marks=pytest.mark.skipif(platform in ["win32", "cygwin"], reason="Windows"),
+        ),
+    ],
+)
 def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     """Testing sampler instance with qutip and emu-mps emulators (local provider)."""
 
@@ -42,7 +53,16 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
         sampler.run([seq])
 
 
-@pytest.mark.parametrize("backend_name", ["qutip", "emu-mps"])
+@pytest.mark.parametrize(
+    "backend_name",
+    [
+        "qutip",
+        pytest.param(
+            "emu-mps",
+            marks=pytest.mark.skipif(platform in ["win32", "cygwin"], reason="Windows"),
+        ),
+    ],
+)
 def test_local_sampler_backends_parametric(
     backend_name: str, square_coords: list
 ) -> None:
