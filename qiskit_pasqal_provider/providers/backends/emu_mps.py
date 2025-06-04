@@ -21,72 +21,73 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
-if platform not in ["win32", "cygwin"]:
-    from emu_mps import MPSBackend, MPSConfig, BitStrings
 
-    class EmuMpsBackend(PasqalBackend):
-        """PasqalEmuMpsBackend."""
+class EmuMpsBackend(PasqalBackend):
+    """PasqalEmuMpsBackend."""
 
-        _version: str = "0.1.0"
-        backend_name = PasqalBackendType.EMU_MPS
+    _version: str = "0.1.0"
+    backend_name = PasqalBackendType.EMU_MPS
 
-        def __init__(self, target: PasqalTarget, **options: Any):
-            """
-            Defines the EMU-MPS backend instance.
+    def __init__(self, target: PasqalTarget, **options: Any):
+        """
+        Defines the EMU-MPS backend instance.
 
-            Args:
-                target (PasqalTarget): the Pasqal target instance
-                **options: additional configuration options for the backend
-            """
-            # super().__init__(target=target, backend="emu-mps")
-            name = self.__class__.__name__
-            super().__init__(name=name, **options)
-            self.backend = "emu-mps"
-            self._target = target
-            self._layout = self.target.layout
+        Args:
+            target (PasqalTarget): the Pasqal target instance
+            **options: additional configuration options for the backend
+        """
+        # super().__init__(target=target, backend="emu-mps")
+        name = self.__class__.__name__
+        super().__init__(name=name, **options)
+        self.backend = "emu-mps"
+        self._target = target
+        self._layout = self.target.layout
 
-        @property
-        def target(self) -> PasqalTarget:
-            return self._target
+    @property
+    def target(self) -> PasqalTarget:
+        return self._target
 
-        @property
-        def max_circuits(self) -> None:
-            return None
+    @property
+    def max_circuits(self) -> None:
+        return None
 
-        @classmethod
-        def _default_options(cls) -> Options:
-            return Options()
+    @classmethod
+    def _default_options(cls) -> Options:
+        return Options()
 
-        def run(
-            self,
-            run_input: QuantumCircuit,
-            shots: int | None = None,
-            values: dict | None = None,
-            **options: Any,
-        ) -> PasqalJob:
-            """
-            Run a quantum circuit for a given execution interface, namely `Sampler`.
+    def run(
+        self,
+        run_input: QuantumCircuit,
+        shots: int | None = None,
+        values: dict | None = None,
+        **options: Any,
+    ) -> PasqalJob:
+        """
+        Run a quantum circuit for a given execution interface, namely `Sampler`.
 
-            Args:
-                run_input: the quantum circuit to be run.
-                shots: number of shots to run. Optional.
-                values: a dictionary containing all the parametric values. Optional.
-                **options: extra options to pass to the backend if needed.
+        Args:
+            run_input: the quantum circuit to be run.
+            shots: number of shots to run. Optional.
+            values: a dictionary containing all the parametric values. Optional.
+            **options: extra options to pass to the backend if needed.
 
-            Returns:
-                A PasqalJob instance containing the results from the execution interface.
-            """
+        Returns:
+            A PasqalJob instance containing the results from the execution interface.
+        """
 
-            analog_register = get_register_from_circuit(run_input)
+        analog_register = get_register_from_circuit(run_input)
 
-            seq = gen_seq(
-                analog_register=analog_register,
-                device=self.target.device,
-                circuit=run_input,
-            )
+        seq = gen_seq(
+            analog_register=analog_register,
+            device=self.target.device,
+            circuit=run_input,
+        )
 
-            if values:
-                seq = seq.build(**values)
+        if values:
+            seq = seq.build(**values)
+
+        if platform not in ["win32", "cygwin"]:
+            from emu_mps import MPSBackend, MPSConfig, BitStrings
 
             bitstrings = BitStrings() if shots is None else BitStrings(num_shots=shots)
             config = MPSConfig(observables=[bitstrings])
@@ -103,3 +104,5 @@ if platform not in ["win32", "cygwin"]:
             )
             job.submit()
             return job
+
+        raise ImportError("EMU-MPS is not supported by Windows.")
