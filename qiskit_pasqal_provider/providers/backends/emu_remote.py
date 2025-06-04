@@ -1,51 +1,52 @@
-"""PasqalCloud remote backend"""
+"""Remote emulator backend"""
 
 from copy import deepcopy
 from typing import Any
 
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from pasqal_cloud.job import CreateJob
+from pasqal_cloud import EmulatorType, CreateJob
 from pulser_pasqal import PasqalCloud
+from pulser.register import Register
 
+from qiskit_pasqal_provider.providers.abstract_base import (
+    PasqalBackend,
+    PasqalJob,
+)
 from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
-from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.pulse_utils import (
     get_register_from_circuit,
     gen_seq,
+    PasqalRegister,
 )
+from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
-from qiskit_pasqal_provider.providers.abstract_base import (
-    PasqalBackend,
-    PasqalBackendType,
-    PasqalJob,
-)
 
 
-class QPUBackend(PasqalBackend):
-    """QPU backend"""
+class EmuRemoteBackend(PasqalBackend):
+    """Remotely emulate backends. It gathers the remote backends."""
 
-    _version: str = "0.1.0"
-    _backend_name = PasqalBackendType.FRESNEL
-    _emulator = None
-
-    def __init__(self, remote_config: RemoteConfig):
+    def __init__(
+        self,
+        backend_name: str,
+        emulator: EmulatorType,
+        remote_config: RemoteConfig,
+        target: PasqalTarget | None = None,
+    ):
         """initialize and instantiate PasqalCloud."""
 
         super().__init__()
 
+        self._backend_name = backend_name
+        self._emulator = emulator
         self._cloud = PasqalCloud(
             username=remote_config.username,
             password=remote_config.password,
             project_id=remote_config.project_id,
-            token_provider=remote_config.token_provider,
-            endpoints=remote_config.endpoints,
-            auth0=remote_config.auth0,
-            webhook=remote_config.webhook,
         )
 
         self._executor = self._cloud._sdk_connection
-        self._target = PasqalTarget(cloud=self._cloud)
+        self._target = target if target is not None else PasqalTarget(cloud=self._cloud)
 
     @property
     def target(self) -> PasqalTarget:
@@ -68,35 +69,37 @@ class QPUBackend(PasqalBackend):
         **options: Any,
     ) -> PasqalJob:
         """
-        Run a quantum circuit for a given execution interface, namely `Sampler`.
+        Runs a quantum circuit for a given remote emulated execution interface,
+        namely `Sampler`.
 
         Args:
             run_input: the quantum circuit to be run.
             shots: number of shots to run. Optional.
             values: a dictionary containing all the parametric values. Optional.
-            wait: Whether to wait until the results of the jobs become
-                available.  If set to False, the call is non-blocking and the
-                obtained results' status can be checked using their `status`
-                property. Default to True.
+            wait: whether to wait for all the results to be retrieved. Default `True`.
             **options: extra options to pass to the backend if needed.
 
         Returns:
-            A PasqalJob instance containing the results from the execution interface.
+            A `PasqalJob` object containing the results from the execution interface.
         """
 
         assert shots is not None, "shots must not be None. Choose an integer value."
 
-        analog_register = get_register_from_circuit(run_input)
+        analog_register: Register | PasqalRegister = get_register_from_circuit(
+            run_input
+        )
 
-        # define automatic layout based on register (limited functionality)
-        new_register = analog_register.with_automatic_layout(device=self.target.device)
+        if self._emulator == EmulatorType.EMU_FRESNEL:
+            # define automatic layout based on register (limited functionality)
+            analog_register = analog_register.with_automatic_layout(
+                device=self.target.device
+            )
 
-        # validate register from device layout; will throw an error if not compatible
-        self.target.device.validate_register(new_register)
+            # validate register from device layout; will throw an error if not compatible
+            self.target.device.validate_register(analog_register)
 
-        # get a sequence
         seq = gen_seq(
-            analog_register=new_register,
+            analog_register=analog_register,
             device=self.target.device,
             circuit=run_input,
         )

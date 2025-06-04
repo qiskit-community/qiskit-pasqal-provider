@@ -4,14 +4,17 @@ import copy
 import uuid
 from typing import Any
 
-from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
+from pulser_simulation import QutipEmulator
 
-from qiskit_pasqal_provider.providers.backend_base import PasqalBackend
+from qiskit_pasqal_provider.providers.abstract_base import (
+    PasqalBackend,
+    PasqalBackendType,
+    PasqalJob,
+)
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
     get_register_from_circuit,
     gen_seq,
@@ -22,6 +25,8 @@ class QutipEmulatorBackend(PasqalBackend):
     """QutipEmulatorBackend to emulate pulse sequences using QuTiP."""
 
     _version: str = "0.1.0"
+    backend_name = PasqalBackendType.QUTIP
+    _emulator = None
 
     def __init__(self, target: PasqalTarget, **options: Any):
         """
@@ -33,7 +38,6 @@ class QutipEmulatorBackend(PasqalBackend):
 
         backend_name = self.__class__.__name__
         super().__init__(name=backend_name, **options)
-        self.backend = "qutip"
         self._target = target
         self._layout = self.target.layout
 
@@ -73,23 +77,22 @@ class QutipEmulatorBackend(PasqalBackend):
             raise ValueError("'run_input' argument must be a QuantumCircuit")
 
         # get the register from the analog gate inside `run_input` argument (QuantumCircuit)
-        analog_register = get_register_from_circuit(run_input)
+        _analog_register = get_register_from_circuit(run_input)
 
-        # Run a program on Pasqal backend
         seq = gen_seq(
-            analog_register=analog_register,
+            analog_register=_analog_register,
             device=self.target.device,
             circuit=run_input,
         )
 
         # building into a regular sequence by defining attribute values for all declared variables
         if values:
-            seq.build(**values)
+            seq = seq.build(**values)
 
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend
-        self._emulator = QutipEmulator.from_sequence(seq)
+        self._executor = QutipEmulator.from_sequence(seq)
         backend = copy.deepcopy(self)
         job_id = str(uuid.uuid4())
 

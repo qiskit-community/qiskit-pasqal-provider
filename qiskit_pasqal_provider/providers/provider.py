@@ -2,14 +2,13 @@
 
 from typing import Any
 
-from qiskit_pasqal_provider.providers.backend_base import (
+from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
 )
-from qiskit_pasqal_provider.providers.backends import (
-    PasqalLocalBackend,
-    PasqalRemoteBackend,
-)
+from qiskit_pasqal_provider.providers.backends.local import PasqalLocalBackend
+from qiskit_pasqal_provider.providers.backends.remote import PasqalRemoteBackend
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
 
 
@@ -41,7 +40,9 @@ class PasqalProvider:
 
         self.options = options
 
-    def get_backend(self, backend_name: str) -> PasqalBackend:
+    def get_backend(
+        self, backend_name: str, target: PasqalTarget | None = None
+    ) -> PasqalBackend:
         """
         Retrieves a backend instance from a given backend name string. It will
         try to look for it on the local backends first, then on remote backends.
@@ -51,6 +52,7 @@ class PasqalProvider:
 
         Args:
             backend_name: a string containing the name of the desired backend.
+            target: the optional Pasqal target device.
 
         Returns:
             A PasqalBackend instance. It will be a local or remote backend
@@ -60,7 +62,9 @@ class PasqalProvider:
         if backend_name in PasqalBackendType:
 
             try:
-                _backend = PasqalLocalBackend(backend=backend_name, **self.options)
+                _backend = PasqalLocalBackend(
+                    backend=backend_name, target=target, **self.options
+                )
 
             except NotImplementedError:
 
@@ -73,6 +77,7 @@ class PasqalProvider:
                     _backend = PasqalRemoteBackend(
                         backend=backend_name,
                         remote_config=self.remote_config,
+                        target=target,
                         **self.options,
                     )
 

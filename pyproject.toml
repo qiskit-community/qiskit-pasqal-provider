@@ -2,9 +2,7 @@
 
 [project]
 name = "qiskit_pasqal_provider"
-dynamic = [
-    "version",
-]
+version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file = "LICENSE.txt"}
@@ -18,13 +16,13 @@ dependencies = [
     "importlib_metadata>=4.8.1",
     "qiskit-aer>=0.14.0",
     "qiskit>=1.0, <2",
-    "pulser-core>=1.0, <2",
-    "pulser-simulation>=1.0, <2",
+    "pulser>=1.4",
     "pasqal-cloud~=0.12.5",
-    "pulser-pasqal",
 ]
 
 [project.optional-dependencies]
+mps = ["emu-mps>=2"]
+
 # Dev dependencies.
 dev = [
     "coverage>=5.5",
@@ -63,4 +61,4 @@ py-modules = []
 
 [tool.setuptools.packages.find]
 include = ['qiskit_pasqal_provider*']
-exclude = ['qiskit_pasqal_provider*tests']
+exclude = ['qiskit_pasqal_provider*tests', 'demo']

@@ -1,16 +1,18 @@
 """Local base backend"""
 
+# pylint: disable=import-outside-toplevel
+
+from sys import platform
 from typing import Any
 
 from qiskit import QuantumCircuit
 
-from qiskit_pasqal_provider.providers.backend_base import (
+from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
+    PasqalJob,
 )
-from qiskit_pasqal_provider.providers.backends.emu_mps import EmuMpsBackend
 from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
-from qiskit_pasqal_provider.providers.job_base import PasqalJob
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
 
@@ -33,7 +35,14 @@ class PasqalLocalBackend(PasqalBackend):
                 return QutipEmulatorBackend(target=target, **options)
 
             case "emu-mps":
-                return EmuMpsBackend(target=target, **options)
+                if platform not in ["win32", "cygwin"]:
+                    from qiskit_pasqal_provider.providers.backends.emu_mps import (
+                        EmuMpsBackend,
+                    )
+
+                    return EmuMpsBackend(target=target, **options)
+
+                raise ImportError("EMU-MPS library is not supported by Windows.")
 
             case _:
                 raise NotImplementedError()
