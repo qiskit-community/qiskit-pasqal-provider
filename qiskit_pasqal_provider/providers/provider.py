@@ -6,10 +6,8 @@ from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
 )
-from qiskit_pasqal_provider.providers.backends import (
-    PasqalLocalBackend,
-    PasqalRemoteBackend,
-)
+from qiskit_pasqal_provider.providers.backends.local import PasqalLocalBackend
+from qiskit_pasqal_provider.providers.backends.remote import PasqalRemoteBackend
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
 
