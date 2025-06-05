@@ -6,9 +6,12 @@ version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file = "LICENSE.txt"}
-description = "Qiskit Pasqal provider."
+description = "Qiskit provider for Pasqal's analog neutral atom QPUs"
 authors = [
-   { name = "My Name", email = "my.email@email.net"},
+   { name = "Eduardo Maschio", email = "eduardo.maschio@pasqal.com"},
+   { name = "Aleksander Wennerstee", email = "aleksander.wennersteen@pasqal.com"},
+   { name = "Roland Guichard", email = "roland.guichard@pasqal.com"},
+   { name = "Pasqal", email="contact@pasqal.com"},
 ]
 
 dependencies = [
@@ -44,8 +47,8 @@ dev = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/qiskit-community/quantum-prototype-template"
-"Bug Tracker" = "https://github.com/qiskit-community/quantum-prototype-template/issues"
+"Homepage" = "https://github.com/qiskit-community/qiskit-pasqal-provider"
+"Bug Tracker" = "https://github.com/qiskit-community/qiskit-pasqal-provider/issues"
 
 [build-system]
 requires = [
