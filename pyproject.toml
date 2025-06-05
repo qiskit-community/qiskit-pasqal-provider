@@ -9,7 +9,7 @@ license = {file = "LICENSE.txt"}
 description = "Qiskit provider for Pasqal's analog neutral atom QPUs"
 authors = [
    { name = "Eduardo Maschio", email = "eduardo.maschio@pasqal.com"},
-   { name = "Aleksander Wennerstee", email = "aleksander.wennersteen@pasqal.com"},
+   { name = "Aleksander Wennersteen", email = "aleksander.wennersteen@pasqal.com"},
    { name = "Roland Guichard", email = "roland.guichard@pasqal.com"},
    { name = "Pasqal", email="contact@pasqal.com"},
 ]

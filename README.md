@@ -10,7 +10,10 @@
 
 This project contains the appropriate abstraction to program [Pasqal](https://pasqal.com)'s analog neutral atom QPUs from Qiskit.
 
-We encourage the user to check out specialized resources, such as the [Pulser Documentation](https://docs.pasqal.com/pulser/) to discover how to best take program analog neutral atom QPUs.
+We encourage the user to check out specialized resources, such as the [Pulser Documentation](https://docs.pasqal.com/pulser/), to discover how to best take program analog neutral atom QPUs.
+
+To target Pasqal's QPUs or cloud based emulators, sign up for [Pasqal cloud](https://www.pasqal.com/solutions/cloud/).
+
 
 ### Table of Contents
 
