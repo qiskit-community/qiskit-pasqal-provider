@@ -1,6 +1,5 @@
 """Test the provider functionalities"""
 
-import pulser.exceptions.serialization
 import pytest
 
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
@@ -28,9 +27,8 @@ def test_provider_with_remote() -> None:
 
     assert provider.remote_config == remote_config
 
-    with pytest.raises(pulser.exceptions.serialization.DeserializeDeviceError):
-        # cannot retrieve `fetch_available_devices()` from a mock-up RemoteConfig
-        assert provider.get_backend("remote-emu-fresnel")
+    # now works with mock remote configuration
+    assert provider.get_backend("remote-emu-fresnel")
 
 
 def test_provider_invalid_backend() -> None:
