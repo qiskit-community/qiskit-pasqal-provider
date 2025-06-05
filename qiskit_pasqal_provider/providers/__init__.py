@@ -1,18 +1,22 @@
 """
-===========================================================
-Template module (:mod:`prototype_template.template_module`)
-===========================================================
+=================================================================
+Qiskit Pasqal Provider (:mod:`qiskit_pasqal_provider.providers`)
+=================================================================
 
-.. currentmodule:: prototype_template.template_module
+.. currentmodule:: qiskit_pasqal_provider.providers
 
-This module contains an :class:`TemplateClass`
-which is the main class for this template example.
 
-Template module classes and functions
-=====================================
+Qiskit Pasqal Provider classes and functions
+=============================================
 
 .. autosummary::
     :toctree: ../stubs/
 
-    TemplateClass
+    HamiltonianGate
+    PasqalProvider
+    Sampler
 """
+
+from .gate import HamiltonianGate
+from .provider import PasqalProvider
+from .sampler import Sampler
