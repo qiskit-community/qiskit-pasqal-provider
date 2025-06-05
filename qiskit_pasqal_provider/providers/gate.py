@@ -135,6 +135,10 @@ class InterpolatePoints:
 
         return list(set(values_params + duration_params + times_params))
 
+    def __len__(self) -> int:
+        """InterpolatePoints length is equal to its values' length."""
+        return len(self.values)
+
 
 class HamiltonianGate(Gate):
     """Hamiltonian gate, an analog gate."""
@@ -143,7 +147,7 @@ class HamiltonianGate(Gate):
         self,
         amplitude: InterpolatePoints,
         detuning: InterpolatePoints,
-        phase: float | ParameterExpression,
+        phase: float | InterpolatePoints | ParameterExpression,
         coords: ArrayLike,
         grid_transform: GridLiteralType = "triangular",
         composed_wf: Any | None = None,
@@ -158,8 +162,11 @@ class HamiltonianGate(Gate):
             detuning: an InterpolatePoints instance to represent a detuning waveform.
             phase: a float number value to represent the phase.
             coords: an array-like containing (x, y) coordinates of the qubits.
+            grid_transform: a string of which grid transform to use. Default to "triangular".
             composed_wf: alternative approach to generate a sequence of waveforms
-                instead of amplitude, detuning and phase
+                instead of amplitude, detuning and phase. Default to None.
+            transform: whether the coordinates need to be transformed into atoms coordinates.
+                Default to False.
         """
 
         # perform some checks
@@ -168,20 +175,30 @@ class HamiltonianGate(Gate):
             # implement it later as alternative to `InterpolatePoints`
             raise NotImplementedError("'composed_wf' argument is not available yet.")
 
-        if not (
-            isinstance(amplitude, InterpolatePoints)
-            and isinstance(detuning, InterpolatePoints)
-        ):
+        if not isinstance(amplitude, InterpolatePoints):
+            raise TypeError(f"amplitude must be InterpolatePoints, not {type(amplitude)}.")
+
+        if not isinstance(detuning, InterpolatePoints):
+            raise TypeError(f"detuning must be InterpolatePoints, not {type(detuning)}.")
+
+        if not isinstance(phase, InterpolatePoints | float | ParameterExpression):
             raise TypeError(
-                f"amplitude and detuning must be InterpolatePoints, not "
-                f"{type(amplitude)} (amplitude), {type(detuning)} (detuning)."
+                f"phase must be either InterpolatePoints, float or ParameterExpression, not "
+                f"{type(phase)}."
             )
 
         if amplitude.duration != detuning.duration:
             raise ValueError(
-                f"amplitude and detuning must have the same duration times;"
+                f"amplitude and detuning must have the same duration times; "
                 f"amplitude duration: {amplitude.duration}, "
                 f"detuning duration: {detuning.duration}."
+            )
+
+        if len(amplitude) != len(detuning):
+            raise ValueError(
+                f"amplitude and detuning must have the same values' length; "
+                f"amplitude length: {len(amplitude)}, "
+                f"detuning length: {len(detuning)}."
             )
 
         num_qubits = len(coords)  # type: ignore [arg-type]
@@ -226,7 +243,7 @@ class HamiltonianGate(Gate):
         return self._detuning
 
     @property
-    def phase(self) -> float:
+    def phase(self) -> float | InterpolatePoints | ParameterExpression:
         """Phase of the pulse as float."""
         return self._phase
 

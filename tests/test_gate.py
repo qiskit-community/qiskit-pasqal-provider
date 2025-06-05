@@ -8,6 +8,7 @@ from qiskit.circuit.exceptions import CircuitError
 
 from qiskit_pasqal_provider.providers.pulse_utils import PasqalRegister
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
+from tests.conftest import null_interpolate_points
 
 
 def test_interpolate_points() -> None:
@@ -37,6 +38,7 @@ def test_interpolate_points() -> None:
 def test_analog_gate(
     constant_interpolate_points: InterpolatePoints,
     linear_interpolate_points: InterpolatePoints,
+    null_interpolate_points: InterpolatePoints,
     square_coords: list,
 ) -> None:
     """testing `HamiltonianGate` class correctness"""
@@ -47,10 +49,43 @@ def test_analog_gate(
 
     hg = HamiltonianGate(ampl, det, phase, coords=square_coords)
 
+    with pytest.raises(ValueError):
+        # amplitude and detuning values must have the same duration
+        HamiltonianGate(
+            InterpolatePoints([0., 0.], duration=1000),
+            InterpolatePoints([0., 0.], duration=900),
+            phase,
+            coords=square_coords
+        )
+
+    with pytest.raises(ValueError):
+        HamiltonianGate(
+            InterpolatePoints([0., 0.]),
+            InterpolatePoints([0., 0., 0.]),
+            phase,
+            coords=square_coords
+        )
+
+    # should work with phase as InterpolatePoints as well
+    assert HamiltonianGate(ampl, det, null_interpolate_points, coords=square_coords)
+
+    with pytest.raises(TypeError):
+        # amplitude must be InterpolatePoints
+        HamiltonianGate([0, 0, 0], det, null_interpolate_points, coords=square_coords)
+
+    with pytest.raises(TypeError):
+        # detuning must be InterpolatePoints
+        HamiltonianGate(ampl,[0, 0, 0], null_interpolate_points, coords=square_coords)
+
+    with pytest.raises(TypeError):
+        # phase must be either InterpolatePoints, float or ParameterExpression
+        HamiltonianGate(ampl, det,[0, 0, 0], coords=square_coords)
+
     _analog_register = PasqalRegister.from_coordinates(square_coords, prefix="q")
 
     assert np.all([hg.analog_register, _analog_register])  # type: ignore [arg-type]
     assert np.all([hg.coords, _analog_register.qubits])  # type: ignore [arg-type]
+
 
     with pytest.raises(AttributeError):
         hg.control()

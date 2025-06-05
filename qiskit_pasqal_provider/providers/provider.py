@@ -12,7 +12,6 @@ from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
 
 
-# help to find a good name for it. PasqalProvider, PasqalService, something else?
 class PasqalProvider:
     """Pasqal provider class"""
 
