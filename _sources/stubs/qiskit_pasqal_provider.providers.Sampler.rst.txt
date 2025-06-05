@@ -1,0 +1,30 @@
+﻿qiskit\_pasqal\_provider.providers.Sampler
+==========================================
+
+.. currentmodule:: qiskit_pasqal_provider.providers
+
+.. autoclass:: Sampler
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Sampler.__init__
+      ~Sampler.backend
+      ~Sampler.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Sampler.mode
+   
+   

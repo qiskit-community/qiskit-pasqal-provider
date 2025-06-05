@@ -6,9 +6,9 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="&lt;no title&gt;" href="tutorials/index.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>Template project 0.0.0</title>
+        <title>Qiskit Pasqal Provider 0.1.0</title>
       <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=82a976d7" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
     <link rel="stylesheet" type="text/css" href="_static/styles/qiskit-ecosystem.css?v=745c5aa7" />
     <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Template project 0.0.0</div></a>
+      <a href="#"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Template project 0.0.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
 </div><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -181,11 +181,13 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Home</a></li>
 </ul>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/example_tutorial.html">Quantum Prototype Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="how_tos/example_how_to.html">Quantum Prototype How-To</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction_to_qpp.html">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction_to_qpp.html#QPP">QPP</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="apidocs/index.html">API References</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API References</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="apidocs/template.html">Template module (<code class="xref py py-mod docutils literal notranslate"><span class="pre">prototype_template.template_module</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Template module (prototype_template.template_module)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="stubs/prototype_template.template_module.TemplateClass.html">prototype_template.template_module.TemplateClass</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.Sampler.html">qiskit_pasqal_provider.providers.Sampler</a></li>
 </ul>
 </li>
 </ul>
@@ -222,18 +224,74 @@
           </label>
         </div>
         <article role="main">
-          <section id="template-project-documentation">
-<h1>Template project documentation<a class="headerlink" href="#template-project-documentation" title="Link to this heading">¶</a></h1>
+          <section id="qiskit-pasqal-provider-documentation">
+<h1>Qiskit Pasqal Provider documentation<a class="headerlink" href="#qiskit-pasqal-provider-documentation" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<p>This template repository makes creating new quantum prototype projects much easier for our team. It reduces the overhead of implementing the “bones” of a project – including package setup, testing, and CI/CD. The code examples in this template repository are written in accordance with pylint style checks, and the sample prototype_template module has an associated unit test module. We have also included examples of coverage testing, notebook tests, and notebook lint checks and wrapped all of these using tox automated testing software.</p>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/example_tutorial.html">Quantum Prototype Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="how_tos/example_how_to.html">Quantum Prototype How-To</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apidocs/index.html">API References</a></li>
-</ul>
 </div>
+<p>This project contains the appropriate abstraction to program <a class="reference external" href="https://pasqal.com">Pasqal</a>’s analog neutral atom QPUs from Qiskit.</p>
+<p>We encourage the user to check out specialized resources, such as the <a class="reference external" href="https://docs.pasqal.com/pulser/">Pulser Documentation</a>, to discover how to best take program analog neutral atom QPUs.</p>
+<p>To target Pasqal’s QPUs or cloud based emulators, sign up for <a class="reference external" href="https://www.pasqal.com/solutions/cloud/">Pasqal cloud</a>.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>Qiskit Pasqal Provider can be installed with pip
+``
+python3 -m pip install qiskit-pasqal-provider
+``</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>The Qiskit Pasqal Provider works with regular Qiskit functions like the <code class="docutils literal notranslate"><span class="pre">SamplerV2</span></code>.
+What is required is the use of two classes found in this project, the <code class="docutils literal notranslate"><span class="pre">PasqalProvider`</span></code> and:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="n">ampl</span><span class="p">,</span> <span class="n">detuning</span><span class="o">=</span><span class="n">det</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let us see a simple example</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">HamiltonianGate</span><span class="p">,</span>
+                                                  <span class="n">InterpolatePoints</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+
+<span class="c1"># We define the coordinates of the atoms, 6 in total.</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+
+<span class="c1"># With a blockade radius of 8.7</span>
+<span class="n">blockade_radius</span> <span class="o">=</span> <span class="mf">8.7</span>
+
+<span class="c1"># Calculate interaction strength between nearest-neighbours</span>
+<span class="n">interaction</span> <span class="o">=</span> <span class="mf">5420158.53</span> <span class="o">/</span> <span class="n">blockade_radius</span><span class="o">**</span><span class="mi">6</span>
+
+<span class="c1"># Set up an adiabatic pulse,</span>
+<span class="c1"># This pulse ramps from up 0 -&gt; 4, stays constant, and ramps down again during the times</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">ampl</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">det</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span>
+    <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">interaction</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">interaction</span> <span class="o">/</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1"># analog gate</span>
+<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">ampl</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">)</span>
+
+<span class="c1"># Qiskit circuit with analog gate</span>
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
+
+<span class="n">provider_qutip</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
+<span class="n">backend_qutip</span> <span class="o">=</span> <span class="n">provider_qutip</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">)</span>
+<span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
+<span class="n">results_qutip</span> <span class="o">=</span> <span class="n">sampler_qutip</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">results_qutip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+
+<span class="c1"># Counter({&#39;100110&#39;: 139, &#39;010001&#39;: 127, &#39;010100&#39;: 111, &#39;001000&#39;: 92, &#39;100001&#39;: 92, ... })</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -254,7 +312,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022
+                Copyright &#169; 2025
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -280,7 +338,9 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Template project documentation</a><ul>
+<li><a class="reference internal" href="#">Qiskit Pasqal Provider documentation</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -294,7 +354,7 @@
   </div>
 </div><script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=7026087e"></script>
+    <script src="_static/documentation_options.js?v=01f34227"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

@@ -1,12 +1,12 @@
-.. prototype_template:
+.. qiskit_pasqal_provider:
 
-.. module:: prototype_template
+.. module:: qiskit_pasqal_provider
 
-=============================
-Template API References
-=============================
+=====================
+QPP API References
+=====================
 
 .. toctree::
    :maxdepth: 1
 
-   template
+   qpp
