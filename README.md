@@ -19,17 +19,13 @@ To target Pasqal's QPUs or cloud based emulators, sign up for [Pasqal cloud](htt
 
 ##### For Users
 
-1.  [About the Project](docs/project_overview.md)
-2.  [Beginner's Guide](docs/beginners_guide.md)
-3.  [Installation](INSTALL.md)
-4.  [Quickstart Guide](docs/quickstart_guide.md)
-5.  [Tutorials](docs/tutorials/example_tutorial.ipynb)
-6.  [How-Tos](docs/how_tos/example_how_to.ipynb)
-7.  [Prototype Template File Glossary](docs/file-map-and-description.md)
-8.  [How to Give Feedback](#how-to-give-feedback)
-9.  [Contribution Guidelines](#contribution-guidelines)
-10. [References and Acknowledgements](#references-and-acknowledgements)
-11. [License](#license)
+1.  [Installation](INSTALL.md)
+1.  [Quickstart Guide](docs/quickstart_guide.md)
+2.  [Tutorials](docs/tutorials/introduction_to_qpp.ipynb)
+3.  [How to Give Feedback](#how-to-give-feedback)
+4.  [Contribution Guidelines](#contribution-guidelines)
+5.  [References and Acknowledgements](#references-and-acknowledgements)
+6.  [License](#license)
 
 ##### For Developers/Contributors
 
@@ -56,7 +52,9 @@ For information on how to contribute to this project, please take a look at our 
 
 ## References and Acknowledgements
 [Pasqal cloud](https://www.pasqal.com/solutions/cloud/)
+
 [Pulser documentation](https://docs.pasqal.com/pulser/)
+
 [Qiskit](https://github.com/qiskit/qiskit)
 
 
