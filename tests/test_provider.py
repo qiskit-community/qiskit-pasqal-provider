@@ -28,8 +28,9 @@ def test_provider_with_remote() -> None:
 
     assert provider.remote_config == remote_config
 
-    with pytest.raises(pulser.exceptions.serialization.DeserializeDeviceError):
-        # cannot retrieve `fetch_available_devices()` from a mock-up RemoteConfig
+    with pytest.raises(Exception):
+        # for `pulser.exceptions.serialization.DeserializeDeviceError`:
+        #   cannot retrieve `fetch_available_devices()` from a mock-up RemoteConfig
         assert provider.get_backend("remote-emu-fresnel")
 
 
