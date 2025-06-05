@@ -9,7 +9,8 @@ from qiskit.circuit import QuantumCircuit, Parameter
 
 from qiskit_pasqal_provider.providers.sampler import Sampler
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
-from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
+from qiskit_pasqal_provider.providers.gate import HamiltonianGate
+from qiskit_pasqal_provider.providers.pulse_utils import InterpolatePoints
 from qiskit_pasqal_provider.providers.result import PasqalResult
 from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 

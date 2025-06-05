@@ -2,15 +2,17 @@
 
 from dataclasses import dataclass
 
-from typing import Literal
+from typing import Literal, Any
 import numpy as np
+from numpy._typing import ArrayLike
 from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
 from pulser.devices._device_datacls import BaseDevice
+from pulser.math.abstract_array import AbstractArray
 from pulser.parametrized import Variable, ParamObj
 from pulser.register import Register
-from pulser.waveforms import InterpolatedWaveform
+from pulser.waveforms import InterpolatedWaveform, CustomWaveform
 from qiskit.circuit import QuantumCircuit, ParameterExpression, Parameter
 
 from qiskit_pasqal_provider.providers.target import PasqalDevice
@@ -36,6 +38,196 @@ class TwoPhotonPulse:
     rabi: pulser.waveforms.Waveform = None
     detuning: pulser.waveforms.Waveform = None
     phase: float = 0
+
+
+class InterpolatePoints:
+    """
+    A class to hold attributes for later use on `pulser`'s `InterpolateWaveform` class.
+    It should be used to generate the points for the `HamiltonianGate` instance.
+    """
+
+    __slots__ = (
+        "_values",
+        "_duration",
+        "_times",
+        "_n",
+        "_params",
+        "_interpolator",
+        "_interpolator_kwargs",
+    )
+
+    def __init__(
+        self,
+        values: ArrayLike | ParameterExpression,
+        duration: int | float | ParameterExpression = 1000,
+        times: ArrayLike | None = None,
+        n: int | None = None,
+        interpolator: str = "PchipInterpolator",
+        **interpolator_kwargs: Any,
+    ):
+        """
+        A class to hold attributes for later use on `pulser`'s `InterpolateWaveform`
+        class. It should be used to generate the points for the `HamiltonianGate`
+        instance.
+
+        Args:
+            values: an array-like data representing the points to be interpolated.
+                It can be parametrized through `qiskit.circuit.Parameter`.
+            duration: optional duration of the waveform (in ns). Defaults to 1000.
+            times: Fractions of the total duration (between 0 and 1). Optional.
+            n: the number of values points, in case `qiskit.circuit.Parameter` is
+                provided on values argument. Default to None.
+            interpolator: The SciPy interpolation class to use. Supports
+                "PchipInterpolator" and "interp1d".
+            **interpolator_kwargs: Extra parameters to give to the chosen
+                interpolator class.
+        """
+
+        assert isinstance(duration, int | float | ParameterExpression)
+        assert isinstance(interpolator, str)
+
+        if n is None:
+            values = np.array(values)
+            n = len(values)
+
+        elif isinstance(values, ParameterExpression) and None is not n:
+            values = np.full(shape=n, fill_value=values)
+
+        else:
+            raise ValueError("Argument 'n' must be the size of values argument.")
+
+        self._n = n
+        self._values = values
+        self._duration = duration
+        self._times = times
+        self._params = self._extract_params()
+        self._interpolator = interpolator
+        self._interpolator_kwargs = interpolator_kwargs
+
+    @property
+    def duration(self) -> int | float | Parameter:
+        """duration of the waveform (in ns)"""
+        return self._duration
+
+    @property
+    def values(self) -> ArrayLike:
+        """data points for interpolation"""
+        return self._values
+
+    @property
+    def times(self) -> ArrayLike | None:
+        """normalized fraction of the total duration. Can be None"""
+        return self._times
+
+    @property
+    def parameters(self) -> list[Parameter | ParameterExpression]:
+        """list of parameters"""
+        return self._params
+
+    @property
+    def interpolator(self) -> str:
+        """The interpolator method name."""
+        return self._interpolator
+
+    @property
+    def interpolator_options(self) -> dict:
+        """The key-value pairs to fill the interpolator function with."""
+        return self._interpolator_kwargs
+
+    def _extract_params(self) -> list[Parameter | ParameterExpression]:
+        """Extract the parameters list from values, duration and times arguments."""
+
+        values_params = []
+        for k in self.values:  # type: ignore [union-attr]
+            if isinstance(k, Parameter | ParameterExpression):
+                values_params.extend(k.parameters)
+
+        duration_params = (
+            list(self.duration.parameters)
+            if isinstance(self.duration, ParameterExpression)
+            else []
+        )
+
+        times_params = []
+
+        if self.times is not None:
+            for k in self.times:  # type: ignore [union-attr]
+                if isinstance(k, Parameter | ParameterExpression):
+                    times_params.extend(k.parameters)
+
+        return list(set(values_params + duration_params + times_params))
+
+    def __len__(self) -> int:
+        """InterpolatePoints length is equal to its values' length."""
+        return len(self.values)
+
+
+def _get_phase(
+    ampl_wf: InterpolatedWaveform,
+    det_wf: InterpolatedWaveform,
+    phase: float | InterpolatePoints | ParameterExpression,
+    duration: int | float,
+) -> tuple[CustomWaveform, AbstractArray]:
+    """
+    Get phase and transform into a waveform, with a new detuning from the two sources.
+
+    Args:
+        ampl_wf: amplitude waveform (InterpolatedWaveform).
+        det_wf: detuning waveform (InterpolatedWaveform).
+        phase: phase (either InterpolatePoints, float or ParameterExpression).
+        duration: float
+
+    Returns:
+        A tuple containing the CustomWaveform made of the two-source detuning and a phase as array
+    """
+
+    # Pasqal's CUDA-Q `_setup_phase` function code used here
+    # credits: Aleksander Wennersteen and Kaonan Micadei
+
+    interpolator = "PchipInterpolator"
+
+    # check phase type
+
+    if isinstance(phase, InterpolatePoints):
+        interpolator = phase.interpolator
+        phases = phase.values
+        times = (
+            phase.times
+            if phase.times is not None
+            else np.linspace(0, 1, num=len(phase.values))
+        )
+
+    elif isinstance(phase, float):
+        phases = [phase for _ in det_wf.samples]
+        times = np.linspace(0, 1, num=len(det_wf.samples))
+
+    elif isinstance(phase, Parameter):
+        phases = [phase.name for _ in det_wf.samples]
+        times = np.linspace(0, 1, num=len(det_wf.samples))
+
+    else:
+        raise ValueError(
+            f"phase type is not supported for building pulses ({type(phase)});"
+            f" must be InterpolatePoints, float or Parameter."
+        )
+
+    phase_wf = CustomWaveform(
+        InterpolatedWaveform(
+            duration,
+            values=phases,
+            times=times,
+            interpolator=interpolator,
+        ).samples  # type: ignore
+    )
+    # Use a phase modulated pulse to calculate the corresponding
+    # detuning waveform and phase offset of phase_wf
+    phase_mod = pulser.Pulse.ArbitraryPhase(ampl_wf, phase_wf)
+    # Sum the detunings from the two sources
+    full_det_wf = CustomWaveform(det_wf.samples + phase_mod.detuning.samples)
+    # Extract the phase offset
+    phase = phase_mod.phase
+
+    return full_det_wf, phase  # type: ignore
 
 
 def _get_wf_values(
@@ -88,7 +280,7 @@ def _get_wf_values(
                 var = seq.declare_variable(values.name, size=1, dtype=float)
                 return var
 
-            return None
+            return seq.declared_variables[values.name]
 
         case ParameterExpression():
             raise NotImplementedError(
@@ -135,7 +327,7 @@ def gen_seq(
             and hasattr(gate, "phase")
         ):
             amp_wf = InterpolatedWaveform(
-                duration=gate.amplitude.duration,
+                duration=_get_wf_values(seq, gate.amplitude.duration),
                 values=_get_wf_values(seq, gate.amplitude.values),
                 times=_get_wf_values(seq, gate.amplitude.times) or None,
                 interpolator=gate.amplitude.interpolator,
@@ -143,15 +335,21 @@ def gen_seq(
             )
 
             det_wf = InterpolatedWaveform(
-                duration=gate.detuning.duration,
+                duration=_get_wf_values(seq, gate.detuning.duration),
                 values=_get_wf_values(seq, gate.detuning.values),
                 times=_get_wf_values(seq, gate.detuning.times) or None,
                 interpolator=gate.detuning.interpolator,
                 **gate.detuning.interpolator_options,
             )
 
-            # phase should be a scalar (at least that's what we have in `pulser.Pulse`)
-            pulse = Pulse(amp_wf, det_wf, gate.phase)
+            if isinstance(gate.phase, float):
+                # in case phase is scalar
+                phase = gate.phase
+
+            else:
+                det_wf, phase = _get_phase(amp_wf, det_wf, gate.phase, amp_wf.duration)
+
+            pulse = Pulse(amp_wf, det_wf, phase)
 
             seq.add(pulse, channel_name)
 
