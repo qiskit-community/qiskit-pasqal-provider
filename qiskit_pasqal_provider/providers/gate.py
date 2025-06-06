@@ -4,15 +4,14 @@ from typing import Any, Union
 
 import numpy as np
 from numpy.typing import ArrayLike
-
 from pulser.math import AbstractArray
 from qiskit.circuit import Parameter, ParameterExpression
 from qiskit.circuit.gate import Gate
 
 from qiskit_pasqal_provider.providers.pulse_utils import (
+    GridLiteralType,
     PasqalRegister,
     RegisterTransform,
-    GridLiteralType,
 )
 
 CoordsKey = Union[str, int, float]
@@ -194,7 +193,6 @@ class HamiltonianGate(Gate):
             num_qubits=num_qubits,
             params=list(set(amplitude.parameters + detuning.parameters + phase_params)),
             label="",
-            unit="dt",
         )
 
         self.duration = amplitude.duration

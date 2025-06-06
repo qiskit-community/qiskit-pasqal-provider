@@ -55,7 +55,7 @@ class PasqalLocalBackend(PasqalBackend):
         **options: Any,
     ) -> PasqalJob:
         """
-        Run a quantum circuit for a given execution interface, namely `Sampler`.
+        Run a quantum circuit for a given execution interface, namely `SamplerV2`.
 
         Args:
             run_input: the quantum circuit to be run.

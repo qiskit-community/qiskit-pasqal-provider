@@ -3,14 +3,13 @@
 from sys import platform
 
 import pytest
-from pulser import Sequence, Register
-from qiskit.circuit import QuantumCircuit, Parameter
+from pulser import Register, Sequence
+from qiskit.circuit import Parameter, QuantumCircuit
 
-
-from qiskit_pasqal_provider.providers.sampler import Sampler
-from qiskit_pasqal_provider.providers.provider import PasqalProvider
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
+from qiskit_pasqal_provider.providers.provider import PasqalProvider
 from qiskit_pasqal_provider.providers.result import PasqalResult
+from qiskit_pasqal_provider.providers.sampler import SamplerV2
 from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 
 
@@ -43,7 +42,7 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
 
     provider = PasqalProvider()
     backend = provider.get_backend(backend_name)
-    sampler = Sampler(backend)
+    sampler = SamplerV2(backend)
     results = sampler.run([qc]).result()
 
     assert isinstance(results, PasqalResult)
@@ -90,7 +89,7 @@ def test_local_sampler_backends_parametric(
 
     provider = PasqalProvider()
     backend = provider.get_backend(backend_name)
-    sampler = Sampler(backend)
+    sampler = SamplerV2(backend)
     results = sampler.run([(qc, {p: [1, 1, 1, 1], d: [0, 1 / 3, 2 / 3, 1]})]).result()
 
     assert isinstance(results, PasqalResult)

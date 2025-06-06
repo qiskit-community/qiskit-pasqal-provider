@@ -14,9 +14,9 @@ Qiskit Pasqal Provider classes and functions
 
     HamiltonianGate
     PasqalProvider
-    Sampler
+    SamplerV2
 """
 
 from .gate import HamiltonianGate
 from .provider import PasqalProvider
-from .sampler import Sampler
+from .sampler import SamplerV2
