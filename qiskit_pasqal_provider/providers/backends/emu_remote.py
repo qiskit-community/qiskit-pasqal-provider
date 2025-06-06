@@ -3,24 +3,21 @@
 from copy import deepcopy
 from typing import Any
 
+from pasqal_cloud import CreateJob, EmulatorType
+from pulser.register import Register
+from pulser_pasqal import PasqalCloud
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from pasqal_cloud import EmulatorType, CreateJob
-from pulser_pasqal import PasqalCloud
-from pulser.register import Register
 
-from qiskit_pasqal_provider.providers.abstract_base import (
-    PasqalBackend,
-    PasqalJob,
-)
+from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, PasqalJob
 from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
-    get_register_from_circuit,
-    gen_seq,
     PasqalRegister,
+    gen_seq,
+    get_register_from_circuit,
 )
-from qiskit_pasqal_provider.utils import RemoteConfig
 from qiskit_pasqal_provider.providers.target import PasqalTarget
+from qiskit_pasqal_provider.utils import RemoteConfig
 
 
 class EmuRemoteBackend(PasqalBackend):
@@ -70,7 +67,7 @@ class EmuRemoteBackend(PasqalBackend):
     ) -> PasqalJob:
         """
         Runs a quantum circuit for a given remote emulated execution interface,
-        namely `Sampler`.
+        namely `SamplerV2`.
 
         Args:
             run_input: the quantum circuit to be run.

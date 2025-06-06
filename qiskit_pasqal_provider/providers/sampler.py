@@ -3,20 +3,20 @@
 from typing import Any, Iterable
 from warnings import warn
 
-from qiskit.circuit import QuantumCircuit, Parameter, ParameterExpression
-from qiskit.providers.jobstatus import JobStatus
+from qiskit.circuit import Parameter, ParameterExpression, QuantumCircuit
 from qiskit.primitives import (
-    BaseSamplerV2,
-    SamplerPubLike,
     BasePrimitiveJob,
+    BaseSamplerV2,
     PrimitiveResult,
+    SamplerPubLike,
     SamplerPubResult,
 )
+from qiskit.providers.jobstatus import JobStatus
 
 from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, PasqalJob
 
 
-class Sampler(BaseSamplerV2):
+class SamplerV2(BaseSamplerV2):
     """Pasqal's sampler base class."""
 
     def __init__(self, backend: PasqalBackend):

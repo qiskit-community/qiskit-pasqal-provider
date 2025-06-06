@@ -2,8 +2,8 @@
 
 from typing import Any
 
-from qiskit import QuantumCircuit
 from pasqal_cloud.device import EmulatorType
+from qiskit import QuantumCircuit
 
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
@@ -69,7 +69,7 @@ class PasqalRemoteBackend(PasqalBackend):
         **options: Any,
     ) -> PasqalJob:
         """
-        Run a quantum circuit for a given execution interface, namely `Sampler`.
+        Run a quantum circuit for a given execution interface, namely `SamplerV2`.
 
         Args:
             run_input (QuantumCircuit): the quantum circuit to be run

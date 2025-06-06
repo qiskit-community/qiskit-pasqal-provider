@@ -2,7 +2,7 @@
 
 [project]
 name = "qiskit_pasqal_provider"
-version = "0.1.0"
+version = "0.1.1"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file = "LICENSE.txt"}
@@ -17,8 +17,7 @@ authors = [
 dependencies = [
     "certifi>=2021.5.30",
     "importlib_metadata>=4.8.1",
-    "qiskit-aer>=0.14.0",
-    "qiskit>=1.0, <2",
+    "qiskit>=1.0,<3",
     "pulser>=1.5",
     "pasqal-cloud~=0.12.5",
 ]

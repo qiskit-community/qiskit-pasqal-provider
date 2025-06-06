@@ -23,7 +23,7 @@ from qiskit.circuit import QuantumCircuit
 from qiskit_pasqal_provider.providers.gate import (HamiltonianGate,
                                                    InterpolatePoints)
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
-from qiskit_pasqal_provider.providers.sampler import Sampler
+from qiskit_pasqal_provider.providers.sampler import SamplerV2
 
 # We define the coordinates of the atoms, 6 in total.
 coords = [[0, 0], [3, 5.2], [6, 0], [9, -5.2], [9, 5.2], [12, 0]]
@@ -53,7 +53,7 @@ qc.append(gate, qc.qubits)
 
 provider_qutip = PasqalProvider()
 backend_qutip = provider_qutip.get_backend("qutip")
-sampler_qutip = Sampler(backend_qutip)
+sampler_qutip = SamplerV2(backend_qutip)
 results_qutip = sampler_qutip.run([qc], shots=1000).result()
 
 print(results_qutip[0].data.counts)

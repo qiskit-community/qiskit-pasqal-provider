@@ -4,21 +4,21 @@ import copy
 import uuid
 from typing import Any
 
+from pulser_simulation import QutipEmulator
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
-from pulser_simulation import QutipEmulator
 
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
     PasqalJob,
 )
-from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.jobs import PasqalLocalJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
-    get_register_from_circuit,
     gen_seq,
+    get_register_from_circuit,
 )
+from qiskit_pasqal_provider.providers.target import PasqalTarget
 
 
 class QutipEmulatorBackend(PasqalBackend):
@@ -61,7 +61,7 @@ class QutipEmulatorBackend(PasqalBackend):
         **options: Any,
     ) -> PasqalJob:
         """
-        Run a quantum circuit for a given execution interface, namely `Sampler`.
+        Run a quantum circuit for a given execution interface, namely `SamplerV2`.
 
         Args:
             run_input: the quantum circuit to be run.
