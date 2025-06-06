@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="&lt;no title&gt;" href="tutorials/index.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>Qiskit Pasqal Provider 0.1.0</title>
+        <title>Qiskit Pasqal Provider 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
+      <a href="#"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
 </div><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -187,7 +187,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
-<li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.Sampler.html">qiskit_pasqal_provider.providers.Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
 </ul>
@@ -253,7 +253,7 @@ What is required is the use of two classes found in this project, the <code clas
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">HamiltonianGate</span><span class="p">,</span>
                                                   <span class="n">InterpolatePoints</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
 
 <span class="c1"># We define the coordinates of the atoms, 6 in total.</span>
 <span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
@@ -283,7 +283,7 @@ What is required is the use of two classes found in this project, the <code clas
 
 <span class="n">provider_qutip</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
 <span class="n">backend_qutip</span> <span class="o">=</span> <span class="n">provider_qutip</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">)</span>
-<span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
+<span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
 <span class="n">results_qutip</span> <span class="o">=</span> <span class="n">sampler_qutip</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">results_qutip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
@@ -354,7 +354,7 @@ What is required is the use of two classes found in this project, the <code clas
   </div>
 </div><script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/documentation_options.js?v=a58bc63e"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

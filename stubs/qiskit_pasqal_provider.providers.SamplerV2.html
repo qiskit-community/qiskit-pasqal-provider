@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="qiskit_pasqal_provider.providers.PasqalProvider" href="qiskit_pasqal_provider.providers.PasqalProvider.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>qiskit_pasqal_provider.providers.Sampler - Qiskit Pasqal Provider 0.1.0</title>
+        <title>qiskit_pasqal_provider.providers.SamplerV2 - Qiskit Pasqal Provider 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -187,7 +187,7 @@
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">qiskit_pasqal_provider.providers.Sampler</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
 </ul>
@@ -224,22 +224,22 @@
           </label>
         </div>
         <article role="main">
-          <section id="qiskit-pasqal-provider-providers-sampler">
-<h1>qiskit_pasqal_provider.providers.Sampler<a class="headerlink" href="#qiskit-pasqal-provider-providers-sampler" title="Link to this heading">¶</a></h1>
+          <section id="qiskit-pasqal-provider-providers-samplerv2">
+<h1>qiskit_pasqal_provider.providers.SamplerV2<a class="headerlink" href="#qiskit-pasqal-provider-providers-samplerv2" title="Link to this heading">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="qiskit_pasqal_provider.providers.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qiskit_pasqal_provider/providers/sampler.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qiskit_pasqal_provider.providers.Sampler" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="qiskit_pasqal_provider.providers.SamplerV2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SamplerV2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qiskit_pasqal_provider/providers/sampler.html#SamplerV2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qiskit_pasqal_provider.providers.SamplerV2" title="Link to this definition">¶</a></dt>
 <dd><p>Pasqal’s sampler base class.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="qiskit_pasqal_provider.providers.Sampler.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qiskit_pasqal_provider/providers/sampler.html#Sampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qiskit_pasqal_provider.providers.Sampler.__init__" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="qiskit_pasqal_provider.providers.SamplerV2.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/qiskit_pasqal_provider/providers/sampler.html#SamplerV2.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qiskit_pasqal_provider.providers.SamplerV2.__init__" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_pasqal_provider.providers.Sampler.__init__" title="qiskit_pasqal_provider.providers.Sampler.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(backend)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qiskit_pasqal_provider.providers.SamplerV2.__init__" title="qiskit_pasqal_provider.providers.SamplerV2.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(backend)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">backend</span></code>()</p></td>
@@ -311,9 +311,9 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">qiskit_pasqal_provider.providers.Sampler</a><ul>
-<li><a class="reference internal" href="#qiskit_pasqal_provider.providers.Sampler"><code class="docutils literal notranslate"><span class="pre">Sampler</span></code></a><ul>
-<li><a class="reference internal" href="#qiskit_pasqal_provider.providers.Sampler.__init__"><code class="docutils literal notranslate"><span class="pre">Sampler.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#">qiskit_pasqal_provider.providers.SamplerV2</a><ul>
+<li><a class="reference internal" href="#qiskit_pasqal_provider.providers.SamplerV2"><code class="docutils literal notranslate"><span class="pre">SamplerV2</span></code></a><ul>
+<li><a class="reference internal" href="#qiskit_pasqal_provider.providers.SamplerV2.__init__"><code class="docutils literal notranslate"><span class="pre">SamplerV2.__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -329,7 +329,7 @@
   </div>
 </div><script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

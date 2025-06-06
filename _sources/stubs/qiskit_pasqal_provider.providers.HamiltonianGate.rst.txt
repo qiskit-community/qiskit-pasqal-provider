@@ -15,9 +15,7 @@
    
       ~HamiltonianGate.__init__
       ~HamiltonianGate.add_decomposition
-      ~HamiltonianGate.assemble
       ~HamiltonianGate.broadcast_arguments
-      ~HamiltonianGate.c_if
       ~HamiltonianGate.control
       ~HamiltonianGate.copy
       ~HamiltonianGate.inverse
@@ -41,13 +39,10 @@
       ~HamiltonianGate.amplitude
       ~HamiltonianGate.analog_register
       ~HamiltonianGate.base_class
-      ~HamiltonianGate.condition
-      ~HamiltonianGate.condition_bits
       ~HamiltonianGate.coords
       ~HamiltonianGate.decompositions
       ~HamiltonianGate.definition
       ~HamiltonianGate.detuning
-      ~HamiltonianGate.duration
       ~HamiltonianGate.label
       ~HamiltonianGate.mutable
       ~HamiltonianGate.name
@@ -55,6 +50,5 @@
       ~HamiltonianGate.num_qubits
       ~HamiltonianGate.params
       ~HamiltonianGate.phase
-      ~HamiltonianGate.unit
    
    

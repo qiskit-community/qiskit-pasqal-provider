@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>qiskit_pasqal_provider.providers.sampler - Qiskit Pasqal Provider 0.1.0</title>
+        <title>qiskit_pasqal_provider.providers.sampler - Qiskit Pasqal Provider 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
+      <a href="../../../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
 </div><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -187,7 +187,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../stubs/qiskit_pasqal_provider.providers.Sampler.html">qiskit_pasqal_provider.providers.Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
 </ul>
@@ -229,26 +229,26 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterExpression</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.providers.jobstatus</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">ParameterExpression</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BaseSamplerV2</span><span class="p">,</span>
-    <span class="n">SamplerPubLike</span><span class="p">,</span>
     <span class="n">BasePrimitiveJob</span><span class="p">,</span>
+    <span class="n">BaseSamplerV2</span><span class="p">,</span>
     <span class="n">PrimitiveResult</span><span class="p">,</span>
+    <span class="n">SamplerPubLike</span><span class="p">,</span>
     <span class="n">SamplerPubResult</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.providers.jobstatus</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobStatus</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.abstract_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalBackend</span><span class="p">,</span> <span class="n">PasqalJob</span>
 
 
-<div class="viewcode-block" id="Sampler">
-<a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.Sampler.html#qiskit_pasqal_provider.providers.Sampler">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Sampler</span><span class="p">(</span><span class="n">BaseSamplerV2</span><span class="p">):</span>
+<div class="viewcode-block" id="SamplerV2">
+<a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.SamplerV2.html#qiskit_pasqal_provider.providers.SamplerV2">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SamplerV2</span><span class="p">(</span><span class="n">BaseSamplerV2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pasqal&#39;s sampler base class.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Sampler.__init__">
-<a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.Sampler.html#qiskit_pasqal_provider.providers.Sampler.__init__">[docs]</a>
+<div class="viewcode-block" id="SamplerV2.__init__">
+<a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.SamplerV2.html#qiskit_pasqal_provider.providers.SamplerV2.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="n">PasqalBackend</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">backend</span></div>
 
@@ -361,7 +361,7 @@
   </div>
 </div><script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/thebelab-helper.js"></script>

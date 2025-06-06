@@ -909,7 +909,7 @@
    "outputs": [],
    "source": [
     "from qiskit_pasqal_provider.providers.provider import PasqalProvider\n",
-    "from qiskit_pasqal_provider.providers.sampler import Sampler"
+    "from qiskit_pasqal_provider.providers.sampler import SamplerV2"
    ]
   },
   {
@@ -978,7 +978,7 @@
     "\n",
     "provider_qutip = PasqalProvider()\n",
     "backend_qutip = provider_qutip.get_backend(\"qutip\")\n",
-    "sampler_qutip = Sampler(backend_qutip)\n",
+    "sampler_qutip = SamplerV2(backend_qutip)\n",
     "results_qutip = sampler_qutip.run([qc_qutip], shots=2000).result()\n",
     "\n",
     "res_qutip = results_qutip[0].data.counts"
@@ -1127,7 +1127,7 @@
     "\n",
     "provider_mps = PasqalProvider()\n",
     "backend_mps = provider_mps.get_backend(\"emu-mps\")\n",
-    "sampler_mps = Sampler(backend_mps)\n",
+    "sampler_mps = SamplerV2(backend_mps)\n",
     "results_mps = sampler_mps.run([qc_mps], shots=2000).result()\n",
     "\n",
     "res_mps = results_mps[0].data.counts"
@@ -1201,7 +1201,7 @@
     "\n",
     "    provider_free = PasqalProvider(remote_config=config)\n",
     "    backend_free = provider_free.get_backend(\"remote-emu-free\")\n",
-    "    sampler_free = Sampler(backend_free)\n",
+    "    sampler_free = SamplerV2(backend_free)\n",
     "    results_free = sampler_free.run([qc_free], shots=2000).result()\n",
     "\n",
     "    res_free = results_free[0].data.counts"
@@ -1239,7 +1239,7 @@
     "\n",
     "    provider_emu_fresnel = PasqalProvider(remote_config=config)\n",
     "    backend_emu_fresnel = provider_emu_fresnel.get_backend(\"remote-emu-fresnel\")\n",
-    "    sampler_emu_fresnel = Sampler(backend_emu_fresnel)\n",
+    "    sampler_emu_fresnel = SamplerV2(backend_emu_fresnel)\n",
     "    results_emu_fresnel = sampler_emu_fresnel.run([qc_emu_fresnel], shots=400).result()\n",
     "\n",
     "    res_rem_mps = results_emu_fresnel[0].data.counts"
@@ -1442,7 +1442,7 @@
     "\n",
     "# provider_qpu = PasqalProvider(remote_config=config)\n",
     "# backend_qpu = provider_qpu.get_backend(\"fresnel\")\n",
-    "# sampler_qpu = Sampler(backend_qpu)\n",
+    "# sampler_qpu = SamplerV2(backend_qpu)\n",
     "# results_qpu = sampler_qpu.run([qc_qpu], shots=100).result()\n",
     "\n",
     "# print(results_qpu[0].data.counts)"

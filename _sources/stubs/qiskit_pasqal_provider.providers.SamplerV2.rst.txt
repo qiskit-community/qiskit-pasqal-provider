@@ -1,9 +1,9 @@
-﻿qiskit\_pasqal\_provider.providers.Sampler
-==========================================
+﻿qiskit\_pasqal\_provider.providers.SamplerV2
+============================================
 
 .. currentmodule:: qiskit_pasqal_provider.providers
 
-.. autoclass:: Sampler
+.. autoclass:: SamplerV2
 
    
    .. automethod:: __init__
@@ -13,9 +13,9 @@
 
    .. autosummary::
    
-      ~Sampler.__init__
-      ~Sampler.backend
-      ~Sampler.run
+      ~SamplerV2.__init__
+      ~SamplerV2.backend
+      ~SamplerV2.run
    
    
 
@@ -25,6 +25,6 @@
 
    .. autosummary::
    
-      ~Sampler.mode
+      ~SamplerV2.mode
    
    

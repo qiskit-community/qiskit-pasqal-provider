@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="qiskit_pasqal_provider.providers.PasqalProvider" href="qiskit_pasqal_provider.providers.PasqalProvider.html" /><link rel="prev" title="Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)" href="../apidocs/qpp.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>qiskit_pasqal_provider.providers.HamiltonianGate - Qiskit Pasqal Provider 0.1.0</title>
+        <title>qiskit_pasqal_provider.providers.HamiltonianGate - Qiskit Pasqal Provider 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -187,7 +187,7 @@
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
-<li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.Sampler.html">qiskit_pasqal_provider.providers.Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
 </ul>
@@ -273,14 +273,8 @@ instead of amplitude, detuning and phase</p></li>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_decomposition</span></code>(decomposition)</p></td>
 <td><p>Add a decomposition of the instruction to the SessionEquivalenceLibrary.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">assemble</span></code>()</p></td>
-<td><p>Assemble a QasmQobjInstruction</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">broadcast_arguments</span></code>(qargs, cargs)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">broadcast_arguments</span></code>(qargs, cargs)</p></td>
 <td><p>Validation and handling of the arguments and its relationship.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">c_if</span></code>(classical, val)</p></td>
-<td><p>Set a classical equality condition on this instruction between the register or cbit <code class="docutils literal notranslate"><span class="pre">classical</span></code> and value <code class="docutils literal notranslate"><span class="pre">val</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">control</span></code>([num_ctrl_qubits, label, ...])</p></td>
 <td><p>Return the controlled version of itself.</p></td>
@@ -331,12 +325,6 @@ instead of amplitude, detuning and phase</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">base_class</span></code></p></td>
 <td><p>Get the base class of this instruction.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">condition</span></code></p></td>
-<td><p>The classical condition on the instruction.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">condition_bits</span></code></p></td>
-<td><p>Get Clbits in condition.</p></td>
-</tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">coords</span></code></p></td>
 <td><p>coordinates as a dictionary where the keys are the qubits ids and values are their (x, y) coordinates.</p></td>
 </tr>
@@ -349,32 +337,26 @@ instead of amplitude, detuning and phase</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">detuning</span></code></p></td>
 <td><p>Detuning waveform-like data.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration</span></code></p></td>
-<td><p>Get the duration.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></p></td>
 <td><p>Return instruction label</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mutable</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mutable</span></code></p></td>
 <td><p>Is this instance is a mutable unique instance or not.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
 <td><p>Return the name.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_clbits</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_clbits</span></code></p></td>
 <td><p>Return the number of clbits.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_qubits</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_qubits</span></code></p></td>
 <td><p>Return the number of qubits.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">params</span></code></p></td>
 <td><p>The parameters of this <code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">phase</span></code></p></td>
 <td><p>Phase of the pulse as float.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit</span></code></p></td>
-<td><p>Get the time unit of duration.</p></td>
 </tr>
 </tbody>
 </table>
@@ -455,7 +437,7 @@ instead of amplitude, detuning and phase</p></li>
   </div>
 </div><script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

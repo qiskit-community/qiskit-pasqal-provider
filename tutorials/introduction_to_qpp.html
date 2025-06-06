@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="QPP API References" href="../apidocs/index.html" /><link rel="prev" title="&lt;no title&gt;" href="index.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>Introduction to qiskit-pasqal-provider - Qiskit Pasqal Provider 0.1.0</title>
+        <title>Introduction to qiskit-pasqal-provider - Qiskit Pasqal Provider 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -144,7 +144,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.0</div></a>
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -171,7 +171,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -188,7 +188,7 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.Sampler.html">qiskit_pasqal_provider.providers.Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
 </ul>
@@ -437,7 +437,7 @@ Instruction(name=&#39;HG&#39;, num_qubits=4, num_clbits=0, params=[])
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;qiskit.circuit.instructionset.InstructionSet at 0x7f29389b9180&gt;
+&lt;qiskit.circuit.instructionset.InstructionSet at 0x7f72b9971090&gt;
 </pre></div></div>
 </div>
 <p>remarks:</p>
@@ -452,15 +452,6 @@ Instruction(name=&#39;HG&#39;, num_qubits=4, num_clbits=0, params=[])
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qc1</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>  <span class="c1"># not very exciting, I know</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/.tox/docs/lib/python3.12/site-packages/qiskit/visualization/circuit/text.py:1117: DeprecationWarning: The property ``qiskit.circuit.instruction.Instruction.condition`` is deprecated as of qiskit 1.3.0. It will be removed in 2.0.0.
-  if getattr(op, &#34;condition&#34;, None) is not None:
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
@@ -503,15 +494,6 @@ q_3: ┤3    ├
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/.tox/docs/lib/python3.12/site-packages/qiskit/visualization/circuit/text.py:1117: DeprecationWarning: The property ``qiskit.circuit.instruction.Instruction.condition`` is deprecated as of qiskit 1.3.0. It will be removed in 2.0.0.
-  if getattr(op, &#34;condition&#34;, None) is not None:
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -521,7 +503,7 @@ q_3: ┤3    ├
 q_0: ┤0         ├
      │          │
 q_1: ┤1         ├
-     │  Hg(d,p) │
+     │  Hg(p,d) │
 q_2: ┤2         ├
      │          │
 q_3: ┤3         ├
@@ -644,7 +626,7 @@ q_3: ┤3         ├
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;qiskit.circuit.instructionset.InstructionSet at 0x7f29377db8e0&gt;
+&lt;qiskit.circuit.instructionset.InstructionSet at 0x7f72b8fd8670&gt;
 </pre></div></div>
 </div>
 <section id="3.1-Running-on-pure-pulser-for-comparison">
@@ -677,7 +659,7 @@ q_3: ┤3         ├
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
 </pre></div>
 </div>
 </div>
@@ -698,7 +680,7 @@ q_3: ┤3         ├
 
 <span class="n">provider_qutip</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
 <span class="n">backend_qutip</span> <span class="o">=</span> <span class="n">provider_qutip</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">)</span>
-<span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
+<span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
 <span class="n">results_qutip</span> <span class="o">=</span> <span class="n">sampler_qutip</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc_qutip</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
 <span class="n">res_qutip</span> <span class="o">=</span> <span class="n">results_qutip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span>
@@ -716,7 +698,7 @@ q_3: ┤3         ├
 
 <span class="n">provider_mps</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
 <span class="n">backend_mps</span> <span class="o">=</span> <span class="n">provider_mps</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;emu-mps&quot;</span><span class="p">)</span>
-<span class="n">sampler_mps</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_mps</span><span class="p">)</span>
+<span class="n">sampler_mps</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_mps</span><span class="p">)</span>
 <span class="n">results_mps</span> <span class="o">=</span> <span class="n">sampler_mps</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc_mps</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
 <span class="n">res_mps</span> <span class="o">=</span> <span class="n">results_mps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span>
@@ -728,106 +710,106 @@ q_3: ┤3         ├
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-step = 1/100, χ = 1, |ψ| = 0.000 MB, RSS = 692.484 MB, Δt = 0.127 s
-step = 2/100, χ = 1, |ψ| = 0.000 MB, RSS = 692.484 MB, Δt = 0.026 s
-step = 3/100, χ = 1, |ψ| = 0.000 MB, RSS = 692.484 MB, Δt = 0.027 s
-step = 4/100, χ = 2, |ψ| = 0.000 MB, RSS = 692.612 MB, Δt = 0.027 s
-step = 5/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.037 s
-step = 6/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.041 s
-step = 7/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.041 s
-step = 8/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 9/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 10/100, χ = 3, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 11/100, χ = 4, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 12/100, χ = 4, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 13/100, χ = 4, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.042 s
-step = 14/100, χ = 4, |ψ| = 0.001 MB, RSS = 692.612 MB, Δt = 0.046 s
-step = 15/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 16/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 17/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 18/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 19/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 20/100, χ = 5, |ψ| = 0.002 MB, RSS = 693.056 MB, Δt = 0.042 s
-step = 21/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 22/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 23/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 24/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 25/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 26/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 27/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 28/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 29/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 30/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 31/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 32/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 33/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 34/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 35/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 36/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 37/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 38/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.046 s
-step = 39/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 40/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 41/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 42/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 43/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 44/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 45/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 46/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 47/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 48/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 49/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.040 s
-step = 50/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.038 s
-step = 51/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.039 s
-step = 52/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.038 s
-step = 53/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.038 s
-step = 54/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.038 s
-step = 55/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.039 s
-step = 56/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.036 s
-step = 57/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.033 s
-step = 58/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.033 s
-step = 59/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.034 s
-step = 60/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.034 s
-step = 61/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 62/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 63/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.045 s
-step = 64/100, χ = 6, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 65/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 66/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 67/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 68/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 69/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 70/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 71/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.041 s
-step = 72/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 73/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 74/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 75/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 76/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 77/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 78/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 79/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 80/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 81/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 82/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 83/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 84/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 85/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 86/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.044 s
-step = 87/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.047 s
-step = 88/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 89/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.042 s
-step = 90/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.044 s
-step = 91/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 92/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 93/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 94/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 95/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.044 s
-step = 96/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 97/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 98/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.044 s
-step = 99/100, χ = 7, |ψ| = 0.002 MB, RSS = 693.440 MB, Δt = 0.043 s
-step = 100/100, χ = 7, |ψ| = 0.002 MB, RSS = 694.336 MB, Δt = 0.205 s
+step = 1/100, χ = 1, |ψ| = 0.000 MB, RSS = 691.572 MB, Δt = 0.120 s
+step = 2/100, χ = 1, |ψ| = 0.000 MB, RSS = 691.572 MB, Δt = 0.028 s
+step = 3/100, χ = 1, |ψ| = 0.000 MB, RSS = 691.572 MB, Δt = 0.027 s
+step = 4/100, χ = 2, |ψ| = 0.000 MB, RSS = 691.740 MB, Δt = 0.028 s
+step = 5/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.039 s
+step = 6/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 7/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 8/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 9/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 10/100, χ = 3, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.043 s
+step = 11/100, χ = 4, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 12/100, χ = 4, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 13/100, χ = 4, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 14/100, χ = 4, |ψ| = 0.001 MB, RSS = 691.740 MB, Δt = 0.042 s
+step = 15/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.042 s
+step = 16/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.042 s
+step = 17/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.043 s
+step = 18/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.043 s
+step = 19/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.042 s
+step = 20/100, χ = 5, |ψ| = 0.002 MB, RSS = 691.996 MB, Δt = 0.042 s
+step = 21/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 22/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 23/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 24/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 25/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 26/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 27/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 28/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.045 s
+step = 29/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.059 s
+step = 30/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.055 s
+step = 31/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 32/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 33/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 34/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 35/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 36/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 37/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 38/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 39/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 40/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 41/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 42/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 43/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 44/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 45/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.045 s
+step = 46/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 47/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 48/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 49/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.040 s
+step = 50/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.039 s
+step = 51/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.039 s
+step = 52/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.040 s
+step = 53/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.039 s
+step = 54/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.039 s
+step = 55/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.039 s
+step = 56/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.038 s
+step = 57/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.033 s
+step = 58/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.033 s
+step = 59/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.034 s
+step = 60/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.034 s
+step = 61/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.041 s
+step = 62/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.041 s
+step = 63/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.041 s
+step = 64/100, χ = 6, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.041 s
+step = 65/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.041 s
+step = 66/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 67/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 68/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 69/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 70/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 71/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 72/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 73/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 74/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 75/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 76/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 77/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 78/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 79/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 80/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 81/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 82/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 83/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 84/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 85/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 86/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 87/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.042 s
+step = 88/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 89/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.045 s
+step = 90/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 91/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 92/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 93/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 94/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 95/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 96/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.043 s
+step = 97/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 98/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 99/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.124 MB, Δt = 0.044 s
+step = 100/100, χ = 7, |ψ| = 0.002 MB, RSS = 692.764 MB, Δt = 0.199 s
 </pre></div></div>
 </div>
 </section>
@@ -857,7 +839,7 @@ step = 100/100, χ = 7, |ψ| = 0.002 MB, RSS = 694.336 MB, Δt = 0.205 s
 
     <span class="n">provider_free</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">(</span><span class="n">remote_config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
     <span class="n">backend_free</span> <span class="o">=</span> <span class="n">provider_free</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;remote-emu-free&quot;</span><span class="p">)</span>
-    <span class="n">sampler_free</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_free</span><span class="p">)</span>
+    <span class="n">sampler_free</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_free</span><span class="p">)</span>
     <span class="n">results_free</span> <span class="o">=</span> <span class="n">sampler_free</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc_free</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
     <span class="n">res_free</span> <span class="o">=</span> <span class="n">results_free</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span>
@@ -876,7 +858,7 @@ step = 100/100, χ = 7, |ψ| = 0.002 MB, RSS = 694.336 MB, Δt = 0.205 s
 
     <span class="n">provider_emu_fresnel</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">(</span><span class="n">remote_config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
     <span class="n">backend_emu_fresnel</span> <span class="o">=</span> <span class="n">provider_emu_fresnel</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;remote-emu-fresnel&quot;</span><span class="p">)</span>
-    <span class="n">sampler_emu_fresnel</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">backend_emu_fresnel</span><span class="p">)</span>
+    <span class="n">sampler_emu_fresnel</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_emu_fresnel</span><span class="p">)</span>
     <span class="n">results_emu_fresnel</span> <span class="o">=</span> <span class="n">sampler_emu_fresnel</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc_emu_fresnel</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
     <span class="n">res_rem_mps</span> <span class="o">=</span> <span class="n">results_emu_fresnel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span>
@@ -993,7 +975,7 @@ qc_qpu = deepcopy(qc)
 
 # provider_qpu = PasqalProvider(remote_config=config)
 # backend_qpu = provider_qpu.get_backend("fresnel")
-# sampler_qpu = Sampler(backend_qpu)
+# sampler_qpu = SamplerV2(backend_qpu)
 # results_qpu = sampler_qpu.run([qc_qpu], shots=100).result()
 
 # print(results_qpu[0].data.counts)<div class="nbinput nblast docutils container">
@@ -1058,7 +1040,7 @@ qc_qpu = deepcopy(qc)
   </div>
 </div><script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>
