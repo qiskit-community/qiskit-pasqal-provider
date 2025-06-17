@@ -5,7 +5,6 @@ from functools import reduce
 
 from typing import Any, Literal
 import numpy as np
-from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
 from pulser.devices._device_datacls import BaseDevice
@@ -19,7 +18,7 @@ from qiskit_pasqal_provider.providers.target import PasqalDevice
 
 # defining handy type aliases
 GridLiteralType = Literal["linear", "triangular", "square"]
-CoordsType = ArrayLike | list[ArrayLike] | tuple[ArrayLike]
+CoordsType = np.ArrayLike | list[np.ArrayLike] | tuple[np.ArrayLike]
 
 
 class PasqalRegister(Register):
