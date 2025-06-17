@@ -38,17 +38,17 @@ def test_interpolate_points() -> None:
     assert wf2.times is not None
 
 
+@pytest.mark.parametrize("phase", [0.0, null_interpolate_points])
 def test_analog_gate(
+    phase: float | InterpolatePoints,
     constant_interpolate_points: InterpolatePoints,
     linear_interpolate_points: InterpolatePoints,
-    null_interpolate_points: InterpolatePoints,
     square_coords: list,
 ) -> None:
     """testing `HamiltonianGate` class correctness"""
 
     ampl = constant_interpolate_points
     det = linear_interpolate_points
-    phase = 0.0
 
     hg = HamiltonianGate(ampl, det, phase, coords=square_coords)
 

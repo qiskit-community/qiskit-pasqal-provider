@@ -1,10 +1,10 @@
 """Pasqal backend utilities"""
 
 from dataclasses import dataclass
+from functools import reduce
 
-from typing import Literal, Any
+from typing import Any, Literal, Iterable
 import numpy as np
-from numpy._typing import ArrayLike
 from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
@@ -12,7 +12,7 @@ from pulser.devices._device_datacls import BaseDevice
 from pulser.math.abstract_array import AbstractArray
 from pulser.parametrized import Variable, ParamObj
 from pulser.register import Register
-from pulser.waveforms import InterpolatedWaveform, CustomWaveform
+from pulser.waveforms import InterpolatedWaveform, CustomWaveform, Waveform
 from qiskit.circuit import QuantumCircuit, ParameterExpression, Parameter
 
 from qiskit_pasqal_provider.providers.target import PasqalDevice
@@ -87,11 +87,11 @@ class InterpolatePoints:
         assert isinstance(interpolator, str)
 
         if n is None:
-            values = np.array(values)
             n = len(values)
+            values = values if isinstance(values, list | tuple) else [values]
 
         elif isinstance(values, ParameterExpression) and None is not n:
-            values = np.full(shape=n, fill_value=values)
+            values = [values for _ in range(n)]
 
         else:
             raise ValueError("Argument 'n' must be the size of values argument.")
@@ -162,72 +162,186 @@ class InterpolatePoints:
         return len(self.values)
 
 
-def _get_phase(
+class ParamCustomWaveform(ParamObj):
+    """
+    Parametrized custom waveform class. To be used when parametrizing custom
+    waveform is needed.
+    """
+
+    def __init__(
+        self,
+        amp_wf: Waveform | ParamObj,
+        det_wf: Waveform | ParamObj,
+        phase_wf: Waveform | ParamObj | AbstractArray
+    ):
+        """
+        Parametrizing custom waveform based on detuning waveforms and phase
+        pulses/parametric objects.
+
+        Args:
+            amp_wf: a pulser Waveform or ParamObj object
+            det_wf: a pulser Waveform or ParamObj object
+            phase: a pulser Waveform or ParamObj object
+        """
+
+        self._amp_wf = amp_wf
+        self._det_wf = det_wf
+        self._phase_wf = phase_wf
+        self._phase_mod = Pulse.ArbitraryPhase(self._amp_wf, self._phase_wf)
+
+        variables: dict = {}
+
+        if isinstance(det_wf, ParamObj):
+            variables.update(det_wf.variables)
+
+        if isinstance(phase_wf, ParamObj):
+            variables.update(phase_wf.variables)
+
+        super().__init__(
+            CustomWaveform,
+            samples=[0, 1],
+            # vars=variables
+        )
+
+    @property
+    def phase_mod(self) -> Pulse | None:
+        """Phase modulation. Optional"""
+        return self._phase_mod
+
+    def build(self) -> Any:
+        """Builds the object with its variables last assigned values."""
+
+        det_obj = self._det_wf.build() if isinstance(self._det_wf, ParamObj) else self._det_wf
+
+        # if isinstance(self._phase_wf, ParamObj):
+        #     phase_obj = self._phase_wf.build()
+        #
+        # else:
+        #     phase_obj = self._phase_wf
+        #
+
+        self._phase_mod = self._phase_mod.build() if isinstance(self._phase_mod, ParamObj) else self._phase_mod
+
+        self.kwargs["samples"] = det_obj.samples + self._phase_mod.detuning.samples
+
+        if "vars" in self.kwargs:
+            self.kwargs.pop("vars")
+
+        return super().build()
+
+
+class ObjWrapper:
+    """Object wrapper class. Used for wrapping `pulser` `Variable` and array-like objects."""
+
+    def __init__(self, var: Variable | tuple | None, value: ArrayLike | None):
+        """
+        A wrapper class to handle parametric and array-like data.
+
+        Args:
+            var: a `pulser`'s `Variable` object to represent parametric data. Can be None.
+            value: an array-like object to represent non-parametric data. Can be None.
+        """
+
+        self._var = var if isinstance(var, Variable) else ()
+        self._value = value if isinstance(var, np.ndarray | tuple) else ()
+
+        lsize = var.size if isinstance(var, np.ndarray | Variable) else len(var)
+        rsize = value.size if isinstance(value, np.ndarray | Variable) else len(value)
+
+        self._size = lsize or rsize
+        self._data = self._var if not isinstance(self._var, tuple) else self._value
+
+    @property
+    def var(self) -> Variable | None | tuple:
+        """Variable data"""
+        return self._var
+
+    @property
+    def value(self) -> np.ndarray | tuple[Any, ...] | tuple:
+        """Value data (array-like)"""
+        return self._value
+
+    @property
+    def data(self) -> tuple[Any, ...]:
+        """A non-empty data, from either var or value attributes class"""
+        return self._data
+
+    @property
+    def size(self) -> int:
+        """Size of the non-empty data"""
+        return self._size
+
+
+def _gen_phase_pulse(
+    seq: Sequence,
+    duration: int | float | Variable,
     ampl_wf: InterpolatedWaveform,
-    det_wf: InterpolatedWaveform,
-    phase: float | InterpolatePoints | ParameterExpression,
-    duration: int | float,
-) -> tuple[CustomWaveform, AbstractArray]:
+    phase: float | InterpolatePoints,
+    det_wrapper: ObjWrapper,
+) -> Pulse:
     """
     Get phase and transform into a waveform, with a new detuning from the two sources.
+    Either `det_var` or `det_values` must be present, but not both.
 
     Args:
+        seq: the pulse Sequence object.
         ampl_wf: amplitude waveform (InterpolatedWaveform).
-        det_wf: detuning waveform (InterpolatedWaveform).
+        det_wrapper: ObjWrapper object for detuning waveforms containing either pulser
+            Variables or array-like data
         phase: phase (either InterpolatePoints, float or ParameterExpression).
-        duration: float
+        duration: float or pulser.parametrized.Variable.
 
     Returns:
-        A tuple containing the CustomWaveform made of the two-source detuning and a phase as array
+        A parametric pulse with the phase InterpolatedWaveform containing detuning Variables.
     """
 
-    # Pasqal's CUDA-Q `_setup_phase` function code used here
-    # credits: Aleksander Wennersteen and Kaonan Micadei
+    phase_wrapper = _get_param_values(seq, phase.values, True)
 
-    interpolator = "PchipInterpolator"
-
-    # check phase type
-
-    if isinstance(phase, InterpolatePoints):
-        interpolator = phase.interpolator
-        phases = phase.values
-        times = (
-            phase.times
-            if phase.times is not None
-            else np.linspace(0, 1, num=len(phase.values))
-        )
-
-    elif isinstance(phase, float):
-        phases = [phase for _ in det_wf.samples]
-        times = np.linspace(0, 1, num=len(det_wf.samples))
-
-    elif isinstance(phase, Parameter):
-        phases = [phase.name for _ in det_wf.samples]
-        times = np.linspace(0, 1, num=len(det_wf.samples))
-
-    else:
-        raise ValueError(
-            f"phase type is not supported for building pulses ({type(phase)});"
-            f" must be InterpolatePoints, float or Parameter."
-        )
-
-    phase_wf = CustomWaveform(
-        InterpolatedWaveform(
-            duration,
-            values=phases,
-            times=times,
-            interpolator=interpolator,
-        ).samples  # type: ignore
+    phase_wf = _gen_phase_wf(
+        det_wrapper,
+        phase_wrapper,
+        duration=duration,
+        times=phase.times,
+        interpolator=phase.interpolator,
+        **phase.interpolator_options
     )
+
     # Use a phase modulated pulse to calculate the corresponding
     # detuning waveform and phase offset of phase_wf
-    phase_mod = pulser.Pulse.ArbitraryPhase(ampl_wf, phase_wf)
-    # Sum the detunings from the two sources
-    full_det_wf = CustomWaveform(det_wf.samples + phase_mod.detuning.samples)
-    # Extract the phase offset
-    phase = phase_mod.phase
+    return pulser.Pulse.ArbitraryPhase(ampl_wf, phase_wf)
 
-    return full_det_wf, phase  # type: ignore
+
+def _gen_phase_wf(
+    *values: ObjWrapper,
+    duration: int | float | Variable,
+    times: ArrayLike | None,
+    interpolator: str,
+    **interpolator_kwargs: Any,
+) -> InterpolatedWaveform:
+    """
+    Generate phase waveform from ObjWrapper data (parametric or array-like data)
+    and waveform data such as duration, times and interpolator.
+
+    Args:
+        *values: ObjWrapper data to build the phase waveform (usually detuning and phase values).
+        duration: phase waveform duration.
+        times: array-like data to build the waveform time series.
+        interpolator: SciPy interpolation class to use.
+        **interpolator_kwargs: extra parameters to give to the chosen interpolator class.
+
+    Returns:
+        An InterpolatedWaveform object for the phase waveform, given detuning and phase data.
+    """
+
+    new_values = reduce(lambda x, y: x+y.data, values[1:], values[0].data)
+
+    return InterpolatedWaveform(
+        duration=duration,
+        values=new_values,
+        times=times,
+        interpolator=interpolator,
+        **interpolator_kwargs
+    )
 
 
 def _get_wf_values(
@@ -252,17 +366,23 @@ def _get_wf_values(
 
         case tuple() | list() | np.ndarray():
 
+            # check if parameter is unique
             if all(isinstance(k, Parameter) for k in values) and len(set(values)) == 1:
-                var = seq.declare_variable(
-                    values[0].name, size=len(values), dtype=float
-                )
-                return var
+                if values[0].name not in seq.declared_variables:
+                    var = seq.declare_variable(
+                        values[0].name, size=len(values), dtype=float
+                    )
+                    return var
 
+                return seq.declared_variables[values[0].name]
+
+            # it may be an iterable of parameters
             new_values: (
                 tuple[ParamObj | int | float | Variable | np.integer | np.floating]
                 | tuple
             ) = ()
 
+            # iterating over each element to retrieve the parameter(s)
             for value in values:
                 res = _get_wf_values(seq, value)
 
@@ -318,50 +438,82 @@ def gen_seq(
     seq.declare_channel(channel_name, channel_name)
 
     for instr in circuit.data:
-        # gate.operation must be an analog gate
         gate = instr.operation
 
-        if (
+        # gate.operation must be an analog gate
+        assert (
             hasattr(gate, "amplitude")
             and hasattr(gate, "detuning")
-            and hasattr(gate, "phase")
-        ):
-            amp_wf = InterpolatedWaveform(
-                duration=_get_wf_values(seq, gate.amplitude.duration),
-                values=_get_wf_values(seq, gate.amplitude.values),
-                times=_get_wf_values(seq, gate.amplitude.times) or None,
-                interpolator=gate.amplitude.interpolator,
-                **gate.amplitude.interpolator_options,
-            )
+            and hasattr(gate, "phase"),
+            f"gate {gate} has no waveform properties and "
+            "therefore cannot be used for analog computing."
+        )
 
-            det_wf = InterpolatedWaveform(
-                duration=_get_wf_values(seq, gate.detuning.duration),
-                values=_get_wf_values(seq, gate.detuning.values),
-                times=_get_wf_values(seq, gate.detuning.times) or None,
-                interpolator=gate.detuning.interpolator,
-                **gate.detuning.interpolator_options,
-            )
+        amp_duration: int | float | Variable = _get_wf_values(seq, gate.amplitude.duration)
 
-            if isinstance(gate.phase, float):
-                # in case phase is scalar
-                phase = gate.phase
+        amp_wf = InterpolatedWaveform(
+            duration=amp_duration,
+            values=_get_wf_values(seq, gate.amplitude.values),
+            times=_get_wf_values(seq, gate.amplitude.times) or None,
+            interpolator=gate.amplitude.interpolator,
+            **gate.amplitude.interpolator_options,
+        )
 
-            else:
-                det_wf, phase = _get_phase(amp_wf, det_wf, gate.phase, amp_wf.duration)
+        det_values = _get_wf_values(seq, gate.detuning.values)
 
+        det_wf = InterpolatedWaveform(
+            duration=_get_wf_values(seq, gate.detuning.duration),
+            values=det_values,
+            times=_get_wf_values(seq, gate.detuning.times) or None,
+            interpolator=gate.detuning.interpolator,
+            **gate.detuning.interpolator_options,
+        )
+
+        if isinstance(gate.phase, float):
+            # in case phase is scalar
+            phase = gate.phase
             pulse = Pulse(amp_wf, det_wf, phase)
 
-            seq.add(pulse, channel_name)
-
         else:
-            raise ValueError(
-                f"gate {gate} has no waveform properties and "
-                "therefore cannot be used for analog computing."
+            # otherwise, it's InterpolatePoints
+            det_wrapper = _get_param_values(seq, det_values)
+
+            pulse = _gen_phase_pulse(
+                seq=seq,
+                duration=amp_duration,
+                ampl_wf=amp_wf,
+                phase=gate.phase,
+                det_wrapper=det_wrapper,
             )
 
-    assert isinstance(seq, Sequence)
+        seq.add(pulse, channel_name)
 
     return seq
+
+
+def _get_param_values(
+    seq: Sequence,
+    values: np.ndarray | tuple,
+    check_wf: bool = False,
+) -> ObjWrapper:
+    """
+    Retrieve parameters and values from a given InterpolatePoints object.
+
+    Args:
+        seq: a pulser Sequence object
+        values: an iterable of elements to be sorted out as parameters or
+            numeric values.
+
+    Returns:
+        An ObjWrapper instance containing parametric or non-parametric values.
+    """
+
+    wf_values = _get_wf_values(seq, values) if check_wf else values
+
+    if isinstance(wf_values, Variable):
+        return ObjWrapper(wf_values, ())
+
+    return ObjWrapper((), wf_values)
 
 
 def get_register_from_circuit(run_input: QuantumCircuit) -> PasqalRegister:

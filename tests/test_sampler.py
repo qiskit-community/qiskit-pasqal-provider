@@ -16,6 +16,20 @@ from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 
 
 @pytest.mark.parametrize(
+    "phase",
+    [
+        0.0,
+        InterpolatePoints(
+            values=[
+                0.0,
+                0.0,
+            ]
+        ),
+        InterpolatePoints(values=[0, 1.0]),
+        InterpolatePoints(values=[0.0, 0.0, 0.0]),
+    ],
+)
+@pytest.mark.parametrize(
     "backend_name",
     [
         "qutip",
@@ -25,13 +39,14 @@ from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
         ),
     ],
 )
-def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
+def test_local_sampler_backends(
+    backend_name: str, phase: float | InterpolatePoints, square_coords: list
+) -> None:
     """Testing sampler instance with qutip and emu-mps emulators (local provider)."""
 
     # analog gate properties
     ampl = InterpolatePoints(values=[1, 1, 1])
     det = InterpolatePoints(values=[0, 0.5, 1])
-    phase = 0.0
 
     # analog gate
     gate = HamiltonianGate(
@@ -55,6 +70,14 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
 
 
 @pytest.mark.parametrize(
+    "phase,extra",
+    [
+        (0.0, ()),
+        (InterpolatePoints(values=Parameter("p"), n=3), (0, 1, 0)),
+        (InterpolatePoints(values=[0, 1.0, 0]), ()),
+    ]
+)
+@pytest.mark.parametrize(
     "backend_name",
     [
         "qutip",
@@ -65,20 +88,19 @@ def test_local_sampler_backends(backend_name: str, square_coords: list) -> None:
     ],
 )
 def test_local_sampler_backends_parametric(
-    backend_name: str, square_coords: list
+    backend_name: str, phase: float | InterpolatePoints, extra: tuple, square_coords: list
 ) -> None:
     """
     Testing sampler instance with qutip and emu-mps emulators (local provider) with
     parametric values.
     """
 
-    p = Parameter("p")
+    a = Parameter("a")
     d = Parameter("d")
 
     # analog gate properties
-    ampl = InterpolatePoints(values=p, n=4)
-    det = InterpolatePoints(values=d, n=4)
-    phase = 0.0
+    ampl = InterpolatePoints(values=a, n=3)
+    det = InterpolatePoints(values=d, n=3)
 
     # analog gate
     gate = HamiltonianGate(
@@ -92,6 +114,16 @@ def test_local_sampler_backends_parametric(
     provider = PasqalProvider()
     backend = provider.get_backend(backend_name)
     sampler = Sampler(backend)
-    results = sampler.run([(qc, {p: [1, 1, 1, 1], d: [0, 1 / 3, 2 / 3, 1]})]).result()
+
+    if isinstance(phase, InterpolatePoints):
+        if isinstance(phase.values[0], Parameter):
+            p = phase.values[0]
+            results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: extra})]).result()
+
+        else:
+            results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1]})]).result()
+
+    else:
+        results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1]})]).result()
 
     assert isinstance(results, PasqalResult)
