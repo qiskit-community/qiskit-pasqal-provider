@@ -18,7 +18,7 @@ from qiskit_pasqal_provider.providers.target import PasqalDevice
 
 # defining handy type aliases
 GridLiteralType = Literal["linear", "triangular", "square"]
-CoordsType = list | tuple | np.ndarray | tuple[tuple[int | float ], ...]
+CoordsType = list | tuple | np.ndarray | tuple[tuple[int | float], ...]
 
 
 class PasqalRegister(Register):
