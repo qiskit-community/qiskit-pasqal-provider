@@ -11,7 +11,6 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
     InterpolatePoints,
 )
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate
-from tests.conftest import null_interpolate_points
 
 
 def test_interpolate_points() -> None:
@@ -35,7 +34,7 @@ def test_interpolate_points() -> None:
     assert wf2.times is not None
 
 
-@pytest.mark.parametrize("phase", [0.0, null_interpolate_points])
+@pytest.mark.parametrize("phase", [0.0, InterpolatePoints([0, 0])])
 def test_analog_gate(
     phase: float | InterpolatePoints,
     constant_interpolate_points: InterpolatePoints,
@@ -67,14 +66,14 @@ def test_analog_gate(
         )
 
     # should work with phase as InterpolatePoints as well
-    assert HamiltonianGate(ampl, det, null_interpolate_points, coords=square_coords)
+    assert HamiltonianGate(ampl, det, InterpolatePoints([0, 0]), coords=square_coords)
 
     with pytest.raises(TypeError):
         # amplitude must be InterpolatePoints
         HamiltonianGate(
             [0, 0, 0],  # type: ignore [arg-type]
             det,
-            null_interpolate_points,  # type ignore [arg-type]
+            InterpolatePoints([0, 0]),  # type ignore [arg-type]
             coords=square_coords,
         )
 
@@ -83,7 +82,7 @@ def test_analog_gate(
         HamiltonianGate(
             ampl,
             [0, 0, 0],  # type: ignore [arg-type]
-            null_interpolate_points,
+            InterpolatePoints([0, 0]),
             coords=square_coords,
         )
 
