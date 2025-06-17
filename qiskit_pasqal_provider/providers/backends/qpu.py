@@ -3,23 +3,23 @@
 from copy import deepcopy
 from typing import Any
 
-from qiskit import QuantumCircuit
-from qiskit.providers import Options
 from pasqal_cloud.job import CreateJob
 from pulser_pasqal import PasqalCloud
+from qiskit import QuantumCircuit
+from qiskit.providers import Options
 
-from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
-from qiskit_pasqal_provider.utils import RemoteConfig
-from qiskit_pasqal_provider.providers.pulse_utils import (
-    get_register_from_circuit,
-    gen_seq,
-)
-from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackend,
     PasqalBackendType,
     PasqalJob,
 )
+from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
+from qiskit_pasqal_provider.providers.pulse_utils import (
+    gen_seq,
+    get_register_from_circuit,
+)
+from qiskit_pasqal_provider.providers.target import PasqalTarget
+from qiskit_pasqal_provider.utils import RemoteConfig
 
 
 class QPUBackend(PasqalBackend):
@@ -68,7 +68,7 @@ class QPUBackend(PasqalBackend):
         **options: Any,
     ) -> PasqalJob:
         """
-        Run a quantum circuit for a given execution interface, namely `Sampler`.
+        Run a quantum circuit for a given execution interface, namely `SampleV2`.
 
         Args:
             run_input: the quantum circuit to be run.

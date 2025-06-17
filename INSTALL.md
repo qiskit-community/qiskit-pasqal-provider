@@ -1,26 +1,30 @@
-# Quantum Prototype Installation Guide
+# Qiskit Pasqal Provider Installation Guide
 
-This document should walk users through the process of setting up their Python environment, installing dependencies, and installing the prototype software.
 
 ## Setting up Python Environment
 
-Show the user how to create a fresh Python environment
+We recommend using a virtual environment, for which there are many alternatives.
+Most widely available is using the built in `venv`.
 
-## Installing Depencencies
+```bash
+python3 -m venv qpp-venv
+source qpp-venv/bin/activate
+```
 
-Show the user how to install the *required* quantum prototype dependencies
 
-## Installing Optional Dependencies
+## Installing Qiskit Pasqal Provider
 
-Tell the user about some optional packages they may want to install. Explain what functionality is provided by each optional package in this section.
+Install the project from PyPi:
+```bash
+python3 -m pip install qiskit-pasqal-provider
+```
 
-## Installing Quantum Prototype Software
+## Installing tensor network emulators
 
-Tell the user how to install the prototype software.
-
-## Testing the Installation
-
-Give the user some steps to validate that the installation was successful.
-
-Example:
-`$ quantum_prototype --help`
+Note that since the analog paradigm is different from the digital paradigm usually programmed with Qiskit, this provider cannot use the normal Qiskit numerical simulators.
+Built in we support a [QuTiP](https://qutip.org/) based backend, known as `pulser-simulator` in the Pasqal's Pulser.
+For running larger local simulations we recommend installing [emu-mps](https://pasqal-io.github.io/emulators/latest/emu_mps/), a tensor network backend.
+You can install this together with qiskit-pasqal-provider as:
+```bash
+python3 -m pip install qiskit-pasqal-provider[mps]
+```
