@@ -75,7 +75,7 @@ def test_local_sampler_backends(
         (0.0, ()),
         (InterpolatePoints(values=Parameter("p"), n=3), (0, 1, 0)),
         (InterpolatePoints(values=[0, 1.0, 0]), ()),
-    ]
+    ],
 )
 @pytest.mark.parametrize(
     "backend_name",
@@ -88,7 +88,10 @@ def test_local_sampler_backends(
     ],
 )
 def test_local_sampler_backends_parametric(
-    backend_name: str, phase: float | InterpolatePoints, extra: tuple, square_coords: list
+    backend_name: str,
+    phase: float | InterpolatePoints,
+    extra: tuple,
+    square_coords: list,
 ) -> None:
     """
     Testing sampler instance with qutip and emu-mps emulators (local provider) with
@@ -118,7 +121,9 @@ def test_local_sampler_backends_parametric(
     if isinstance(phase, InterpolatePoints):
         if isinstance(phase.values[0], Parameter):
             p = phase.values[0]
-            results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: extra})]).result()
+            results = sampler.run(
+                [(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: extra})]
+            ).result()
 
         else:
             results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1]})]).result()

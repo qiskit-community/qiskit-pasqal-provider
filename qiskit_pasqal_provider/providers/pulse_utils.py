@@ -3,13 +3,12 @@
 from dataclasses import dataclass
 from functools import reduce
 
-from typing import Any, Literal, Iterable
+from typing import Any, Literal
 import numpy as np
 from numpy.typing import ArrayLike
 import pulser
 from pulser import Sequence, Pulse
 from pulser.devices._device_datacls import BaseDevice
-from pulser.math.abstract_array import AbstractArray
 from pulser.parametrized import Variable, ParamObj
 from pulser.register import Register
 from pulser.waveforms import InterpolatedWaveform, CustomWaveform, Waveform
@@ -58,9 +57,9 @@ class InterpolatePoints:
 
     def __init__(
         self,
-        values: ArrayLike | ParameterExpression,
+        values: list | tuple | np.ndarray | ParameterExpression,
         duration: int | float | ParameterExpression = 1000,
-        times: ArrayLike | None = None,
+        times: list | tuple | np.ndarray | None = None,
         n: int | None = None,
         interpolator: str = "PchipInterpolator",
         **interpolator_kwargs: Any,
@@ -87,8 +86,10 @@ class InterpolatePoints:
         assert isinstance(interpolator, str)
 
         if n is None:
+            values = (
+                values if isinstance(values, list | tuple | np.ndarray) else [values]
+            )
             n = len(values)
-            values = values if isinstance(values, list | tuple) else [values]
 
         elif isinstance(values, ParameterExpression) and None is not n:
             values = [values for _ in range(n)]
@@ -110,12 +111,12 @@ class InterpolatePoints:
         return self._duration
 
     @property
-    def values(self) -> ArrayLike:
+    def values(self) -> list | tuple | np.ndarray:
         """data points for interpolation"""
         return self._values
 
     @property
-    def times(self) -> ArrayLike | None:
+    def times(self) -> list | tuple | np.ndarray | None:
         """normalized fraction of the total duration. Can be None"""
         return self._times
 
@@ -138,7 +139,7 @@ class InterpolatePoints:
         """Extract the parameters list from values, duration and times arguments."""
 
         values_params = []
-        for k in self.values:  # type: ignore [union-attr]
+        for k in self.values:
             if isinstance(k, Parameter | ParameterExpression):
                 values_params.extend(k.parameters)
 
@@ -151,7 +152,7 @@ class InterpolatePoints:
         times_params = []
 
         if self.times is not None:
-            for k in self.times:  # type: ignore [union-attr]
+            for k in self.times:
                 if isinstance(k, Parameter | ParameterExpression):
                     times_params.extend(k.parameters)
 
@@ -172,7 +173,7 @@ class ParamCustomWaveform(ParamObj):
         self,
         amp_wf: Waveform | ParamObj,
         det_wf: Waveform | ParamObj,
-        phase_wf: Waveform | ParamObj | AbstractArray
+        phase_wf: Waveform | ParamObj,
     ):
         """
         Parametrizing custom waveform based on detuning waveforms and phase
@@ -211,7 +212,9 @@ class ParamCustomWaveform(ParamObj):
     def build(self) -> Any:
         """Builds the object with its variables last assigned values."""
 
-        det_obj = self._det_wf.build() if isinstance(self._det_wf, ParamObj) else self._det_wf
+        det_obj = (
+            self._det_wf.build() if isinstance(self._det_wf, ParamObj) else self._det_wf
+        )
 
         # if isinstance(self._phase_wf, ParamObj):
         #     phase_obj = self._phase_wf.build()
@@ -220,7 +223,11 @@ class ParamCustomWaveform(ParamObj):
         #     phase_obj = self._phase_wf
         #
 
-        self._phase_mod = self._phase_mod.build() if isinstance(self._phase_mod, ParamObj) else self._phase_mod
+        self._phase_mod = (
+            self._phase_mod.build()
+            if isinstance(self._phase_mod, ParamObj)
+            else self._phase_mod
+        )
 
         self.kwargs["samples"] = det_obj.samples + self._phase_mod.detuning.samples
 
@@ -233,7 +240,7 @@ class ParamCustomWaveform(ParamObj):
 class ObjWrapper:
     """Object wrapper class. Used for wrapping `pulser` `Variable` and array-like objects."""
 
-    def __init__(self, var: Variable | tuple | None, value: ArrayLike | None):
+    def __init__(self, var: Variable | tuple | None, value: np.ndarray | tuple | None):
         """
         A wrapper class to handle parametric and array-like data.
 
@@ -262,7 +269,7 @@ class ObjWrapper:
         return self._value
 
     @property
-    def data(self) -> tuple[Any, ...]:
+    def data(self) -> tuple[Any, ...] | Variable | np.ndarray:
         """A non-empty data, from either var or value attributes class"""
         return self._data
 
@@ -276,7 +283,7 @@ def _gen_phase_pulse(
     seq: Sequence,
     duration: int | float | Variable,
     ampl_wf: InterpolatedWaveform,
-    phase: float | InterpolatePoints,
+    phase: InterpolatePoints,
     det_wrapper: ObjWrapper,
 ) -> Pulse:
     """
@@ -295,7 +302,7 @@ def _gen_phase_pulse(
         A parametric pulse with the phase InterpolatedWaveform containing detuning Variables.
     """
 
-    phase_wrapper = _get_param_values(seq, phase.values, True)
+    phase_wrapper = _get_param_values(seq, phase.values, True)  # type: ignore [arg-type]
 
     phase_wf = _gen_phase_wf(
         det_wrapper,
@@ -303,7 +310,7 @@ def _gen_phase_pulse(
         duration=duration,
         times=phase.times,
         interpolator=phase.interpolator,
-        **phase.interpolator_options
+        **phase.interpolator_options,
     )
 
     # Use a phase modulated pulse to calculate the corresponding
@@ -314,7 +321,7 @@ def _gen_phase_pulse(
 def _gen_phase_wf(
     *values: ObjWrapper,
     duration: int | float | Variable,
-    times: ArrayLike | None,
+    times: list | tuple | np.ndarray | None,
     interpolator: str,
     **interpolator_kwargs: Any,
 ) -> InterpolatedWaveform:
@@ -333,19 +340,19 @@ def _gen_phase_wf(
         An InterpolatedWaveform object for the phase waveform, given detuning and phase data.
     """
 
-    new_values = reduce(lambda x, y: x+y.data, values[1:], values[0].data)
+    new_values = reduce(lambda x, y: x + y.data, values[1:], values[0].data)
 
     return InterpolatedWaveform(
-        duration=duration,
+        duration=duration,  # type: ignore [arg-type]
         values=new_values,
         times=times,
         interpolator=interpolator,
-        **interpolator_kwargs
+        **interpolator_kwargs,
     )
 
 
 def _get_wf_values(
-    seq: Sequence, values: int | float | Parameter | ArrayLike
+    seq: Sequence, values: int | float | Parameter | list | tuple | np.ndarray
 ) -> ParamObj | int | float | Variable | np.integer | np.floating | tuple | None:
     """
     Get waveform parameters to transform into number or pulser parametric variable. For now,
@@ -444,25 +451,27 @@ def gen_seq(
         assert (
             hasattr(gate, "amplitude")
             and hasattr(gate, "detuning")
-            and hasattr(gate, "phase"),
-            f"gate {gate} has no waveform properties and "
-            "therefore cannot be used for analog computing."
+            and hasattr(gate, "phase")
+        ), (
+            f"gate {gate} has no waveform properties and therefore cannot"
+            f" be used for analog computing."
         )
 
-        amp_duration: int | float | Variable = _get_wf_values(seq, gate.amplitude.duration)
+        amp_duration = _get_wf_values(seq, gate.amplitude.duration)
 
         amp_wf = InterpolatedWaveform(
-            duration=amp_duration,
+            duration=amp_duration,  # type: ignore [arg-type]
             values=_get_wf_values(seq, gate.amplitude.values),
             times=_get_wf_values(seq, gate.amplitude.times) or None,
             interpolator=gate.amplitude.interpolator,
             **gate.amplitude.interpolator_options,
         )
 
+        det_duration = _get_wf_values(seq, gate.detuning.duration)
         det_values = _get_wf_values(seq, gate.detuning.values)
 
         det_wf = InterpolatedWaveform(
-            duration=_get_wf_values(seq, gate.detuning.duration),
+            duration=det_duration,  # type: ignore [arg-type]
             values=det_values,
             times=_get_wf_values(seq, gate.detuning.times) or None,
             interpolator=gate.detuning.interpolator,
@@ -476,11 +485,11 @@ def gen_seq(
 
         else:
             # otherwise, it's InterpolatePoints
-            det_wrapper = _get_param_values(seq, det_values)
+            det_wrapper = _get_param_values(seq, det_values)  # type: ignore [arg-type]
 
             pulse = _gen_phase_pulse(
                 seq=seq,
-                duration=amp_duration,
+                duration=amp_duration,  # type: ignore [arg-type]
                 ampl_wf=amp_wf,
                 phase=gate.phase,
                 det_wrapper=det_wrapper,
@@ -513,7 +522,7 @@ def _get_param_values(
     if isinstance(wf_values, Variable):
         return ObjWrapper(wf_values, ())
 
-    return ObjWrapper((), wf_values)
+    return ObjWrapper((), wf_values)  # type: ignore [arg-type]
 
 
 def get_register_from_circuit(run_input: QuantumCircuit) -> PasqalRegister:

@@ -23,10 +23,7 @@ def test_interpolate_points() -> None:
 
     wf = InterpolatePoints(values=values, duration=t)
 
-    assert all(
-        k == p == v
-        for k, p, v in zip(wf.values, np.array(values), values)  # type: ignore [arg-type]
-    )
+    assert all(k == p == v for k, p, v in zip(wf.values, np.array(values), values))
     assert wf.times is None
 
     with pytest.raises(AssertionError):
@@ -74,11 +71,21 @@ def test_analog_gate(
 
     with pytest.raises(TypeError):
         # amplitude must be InterpolatePoints
-        HamiltonianGate([0, 0, 0], det, null_interpolate_points, coords=square_coords)
+        HamiltonianGate(
+            [0, 0, 0],  # type: ignore [arg-type]
+            det,
+            null_interpolate_points,  # type ignore [arg-type]
+            coords=square_coords,
+        )
 
     with pytest.raises(TypeError):
         # detuning must be InterpolatePoints
-        HamiltonianGate(ampl, [0, 0, 0], null_interpolate_points, coords=square_coords)
+        HamiltonianGate(
+            ampl,
+            [0, 0, 0],  # type: ignore [arg-type]
+            null_interpolate_points,
+            coords=square_coords,
+        )
 
     with pytest.raises(TypeError):
         # phase must be either InterpolatePoints, float or ParameterExpression
