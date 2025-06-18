@@ -109,7 +109,7 @@ class HamiltonianGate(Gate):
         )
 
         self._analog_register = PasqalRegister.from_coordinates(
-            coords=new_coords, prefix="q"  # type: ignore [arg-type]
+            coords=new_coords, prefix="q"
         )
 
     @property
