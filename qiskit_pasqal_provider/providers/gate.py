@@ -54,7 +54,7 @@ class HamiltonianGate(Gate):
 
         if not isinstance(amplitude, InterpolatePoints):
             raise TypeError(
-                f"amplitude must be InterpolatePoints, not {type(amplitude)}."
+                f"The amplitude parameter must be `InterpolatePoints` type, not {type(amplitude)}."
             )
 
         if not isinstance(detuning, InterpolatePoints):
