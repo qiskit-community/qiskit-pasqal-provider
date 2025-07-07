@@ -29,7 +29,7 @@ from pulser.backend.remote import (
 )
 from pulser.devices import Device
 
-from qiskit_pasqal_provider.providers.gate import InterpolatePoints
+from qiskit_pasqal_provider.providers.pulse_utils import InterpolatePoints
 from qiskit_pasqal_provider.providers.layouts import (
     SquareLayout,
 )
