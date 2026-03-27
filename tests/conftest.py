@@ -182,6 +182,7 @@ class MockServer:
             self.jobs[job_id]._full_result = {  # pylint: disable=protected-access
                 "counter": deepcopy(DEFAULT_DICT_RESULT),
                 "raw": [],
+                "serialised_results": None,
             }
         self.jobs_progress_counter[job_id] += 1
 
@@ -215,7 +216,7 @@ class MockSDK:
         open: bool | None = None,  # pylint: disable=redefined-builtin
         emulator: EmulatorType | None = None,
         configuration: BaseConfig | None = None,
-        wait: bool = False,
+        wait: bool = False,  # pylint: disable=unused-argument
     ) -> Batch:
         """Create a batch of jobs and simulate its creation in the mock server."""
         batch_id = str(uuid.uuid4())

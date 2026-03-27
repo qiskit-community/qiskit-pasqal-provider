@@ -52,9 +52,7 @@ class SamplerV2(BaseSamplerV2):
 
         if isinstance(pubs, list | tuple):
             if len(pubs) != 1:
-                raise ValueError(
-                    "Pasqal SamplerV2 supports exactly one pub per run."
-                )
+                raise ValueError("Pasqal SamplerV2 supports exactly one pub per run.")
 
             if isinstance(pubs[0], tuple):
 

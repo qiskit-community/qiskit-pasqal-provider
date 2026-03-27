@@ -6,7 +6,7 @@ from qiskit.providers.jobstatus import JobStatus
 from pasqal_cloud import SDK as PasqalSDK
 from pasqal_cloud.batch import Batch as PasqalBatch
 from pasqal_cloud.job import CreateJob
-from pulser.backend.remote import JobParams, Sequence
+from pulser.backend.remote import Sequence
 
 from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, PasqalJob
 from qiskit_pasqal_provider.providers.result import PasqalResult
@@ -76,7 +76,7 @@ class PasqalRemoteJob(PasqalJob):
         self,
         backend: PasqalBackend,
         seq: Sequence,
-        job_params: list[JobParams] | list[CreateJob],
+        job_params: list[CreateJob],
         wait: bool = False,
         **kwargs: Any,
     ):
@@ -124,11 +124,11 @@ class PasqalRemoteJob(PasqalJob):
             )
         job_id = job_ids[0]
 
-        batch_status = getattr(self._batch, "status", None)
+        job_status = getattr(self._batch.ordered_jobs[0], "status", None)
         status = (
-            batch_status.name
-            if hasattr(batch_status, "name")
-            else (str(batch_status) if batch_status is not None else "")
+            job_status.name
+            if hasattr(job_status, "name")
+            else (str(job_status) if job_status is not None else "")
         )
         self.metadata = {"batch": self._batch, "status": status}
         self._job_id = job_id
