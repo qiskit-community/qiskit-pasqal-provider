@@ -9,7 +9,8 @@ from qiskit import QuantumCircuit
 from qiskit.primitives import BasePrimitiveJob
 from qiskit.providers import BackendV2, JobStatus
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
-from pasqal_cloud import SDK as PasqalSDK, EmulatorType
+from pasqal_cloud import SDK as PasqalSDK
+from pasqal_cloud.device import EmulatorType
 from pulser.backend.remote import JobParams, RemoteResults
 from pulser.register.register_layout import RegisterLayout
 from pulser_simulation.simresults import SimulationResults

@@ -3,7 +3,8 @@
 from copy import deepcopy
 from typing import Any
 
-from pasqal_cloud import CreateJob, EmulatorType
+from pasqal_cloud.device import EmulatorType
+from pasqal_cloud.job import CreateJob
 from pulser.register import Register
 from pulser_pasqal import PasqalCloud
 from qiskit import QuantumCircuit

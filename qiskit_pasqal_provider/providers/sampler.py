@@ -40,7 +40,8 @@ class SamplerV2(BaseSamplerV2):
 
         Args:
             pubs: An iterable of pub-like objects. For example, a list of circuits
-                or tuples ``(circuit, parameter_values)``.
+                or tuples ``(circuit, parameter_values)``. Exactly one pub is
+                supported per run.
 
         Returns:
             A tuple of circuit and optional parameter values
@@ -50,6 +51,8 @@ class SamplerV2(BaseSamplerV2):
             return pubs, {}
 
         if isinstance(pubs, list | tuple):
+            if len(pubs) != 1:
+                raise ValueError("Pasqal SamplerV2 supports exactly one pub per run.")
 
             if isinstance(pubs[0], tuple):
 
@@ -80,7 +83,8 @@ class SamplerV2(BaseSamplerV2):
 
         Args:
             pubs: An iterable of pub-like objects. For example, a list of circuits
-                  or tuples ``(circuit, parameter_values)``.
+                  or tuples ``(circuit, parameter_values)``. Exactly one pub is
+                  supported per run.
             shots: The total number of shots to sample for each sampler pub that does
                    not specify its own shots. If ``None``, the primitive's default
                    shots value will be used, which can vary by implementation.

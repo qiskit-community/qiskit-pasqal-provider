@@ -182,6 +182,7 @@ class MockServer:
             self.jobs[job_id]._full_result = {  # pylint: disable=protected-access
                 "counter": deepcopy(DEFAULT_DICT_RESULT),
                 "raw": [],
+                "serialised_results": None,
             }
         self.jobs_progress_counter[job_id] += 1
 
@@ -215,7 +216,7 @@ class MockSDK:
         open: bool | None = None,  # pylint: disable=redefined-builtin
         emulator: EmulatorType | None = None,
         configuration: BaseConfig | None = None,
-        _wait: bool = False,
+        wait: bool = False,  # pylint: disable=unused-argument
     ) -> Batch:
         """Create a batch of jobs and simulate its creation in the mock server."""
         batch_id = str(uuid.uuid4())
@@ -248,13 +249,17 @@ class MockSDK:
         self.mock_server.set_job(batch.ordered_jobs[0])
         return batch
 
-    def get_jobs(self, filters: JobFilters) -> PaginatedResponse:
+    def get_jobs(self, filters: JobFilters | None = None) -> PaginatedResponse:
         """Retrieve jobs based on filters, simulating the SDK's get_jobs call."""
         items: list[Job] = []
 
-        assert isinstance(filters.id, list)
-        for job_id in filters.id:
-            items.append(self.mock_server.get_job(str(job_id)))
+        if filters is not None and filters.id is not None:
+            assert isinstance(filters.id, list)
+            for job_id in filters.id:
+                items.append(self.mock_server.get_job(str(job_id)))
+
+        else:
+            items.extend(self.mock_server.jobs.values())
 
         return PaginatedResponse(
             results=items,
