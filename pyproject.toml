@@ -18,8 +18,9 @@ dependencies = [
     "certifi>=2021.5.30",
     "importlib_metadata>=4.8.1",
     "qiskit>=1.0,<3",
-    "pulser>=1.5",
-    "pasqal-cloud~=0.12.5",
+    "pulser>=1.6,<2",
+    "pulser-pasqal>=0.20,<1",
+    "pasqal-cloud>=0.20,<1",
 ]
 
 [project.optional-dependencies]

@@ -44,6 +44,9 @@ What is required is the use of two classes found in this project, the ``PasqalPr
 
   HamiltonianGate(amplitude=ampl, detuning=det, phase=phase, coords=coords)
 
+``SamplerV2.run(...)`` currently accepts exactly one pub per call.
+For example, use ``[qc]`` or ``[(qc, parameter_values)]``.
+
 
 Let us see a simple example
 

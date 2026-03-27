@@ -3,10 +3,12 @@
 import uuid
 from copy import deepcopy
 
+import pytest
 from pasqal_cloud.job import CreateJob, Job
 from pulser.backend.remote import RemoteConnection, RemoteResults
 from pulser.result import Result
 
+from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
 from qiskit_pasqal_provider.providers.result import PasqalResult
 from tests import DEFAULT_DICT_RESULT
 from tests.conftest import MockSDK
@@ -60,3 +62,44 @@ def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Result) -> None:
     counts = result[0].data.counts
 
     assert counts == mock_result.sampling_dist
+
+
+def test_remote_job_rejects_multi_job_batch(mock_sdk: MockSDK) -> None:
+    """Test that remote jobs enforce a single-job batch contract."""
+
+    class MockBackend:
+        """Minimal backend stub to build a PasqalRemoteJob."""
+
+        def __init__(self, executor: MockSDK) -> None:
+            self._executor = executor
+            self.name = "MockBackend"
+            self.emulator = None
+
+        @property
+        def executor(self) -> MockSDK:
+            """Backend executor."""
+            return self._executor
+
+    class MockSequence:
+        """Minimal sequence stub for remote job submission."""
+
+        @staticmethod
+        def to_abstract_repr() -> str:
+            """Serialized sequence placeholder."""
+            return ""
+
+    backend = MockBackend(mock_sdk)
+    job = PasqalRemoteJob(
+        backend=backend,  # type: ignore[arg-type]
+        seq=MockSequence(),  # type: ignore[arg-type]
+        job_params=[
+            CreateJob(runs=1000, variables={}),
+            CreateJob(runs=1000, variables={}),
+        ],
+        wait=False,
+    )
+
+    with pytest.raises(
+        ValueError, match="supports exactly one job per batch"
+    ):
+        job.submit()

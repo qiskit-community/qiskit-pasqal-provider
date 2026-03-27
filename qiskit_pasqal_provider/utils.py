@@ -3,7 +3,8 @@
 from enum import Enum
 from typing import Mapping, Optional, Protocol, Any, Iterable
 
-from pasqal_cloud import TokenProvider, Endpoints, Auth0Conf
+from pasqal_cloud.authentication import TokenProvider
+from pasqal_cloud.endpoints import Endpoints, Auth0Conf
 
 
 class StrEnum(str, Enum):

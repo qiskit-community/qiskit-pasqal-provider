@@ -16,6 +16,10 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        qiskit-track: ["qiskit1", "qiskit2"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.12
@@ -35,4 +39,4 @@ jobs:
         shell: bash
         run: |
           source test-job/bin/activate
-          tox -epy312
+          tox -e${{ matrix.qiskit-track }}
