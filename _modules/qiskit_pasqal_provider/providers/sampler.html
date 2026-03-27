@@ -271,7 +271,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            pubs: An iterable of pub-like objects. For example, a list of circuits</span>
-<span class="sd">                or tuples ``(circuit, parameter_values)``.</span>
+<span class="sd">                or tuples ``(circuit, parameter_values)``. Exactly one pub is</span>
+<span class="sd">                supported per run.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple of circuit and optional parameter values</span>
@@ -281,6 +282,8 @@
             <span class="k">return</span> <span class="n">pubs</span><span class="p">,</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pubs</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pubs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Pasqal SamplerV2 supports exactly one pub per run.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pubs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
 
@@ -311,7 +314,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            pubs: An iterable of pub-like objects. For example, a list of circuits</span>
-<span class="sd">                  or tuples ``(circuit, parameter_values)``.</span>
+<span class="sd">                  or tuples ``(circuit, parameter_values)``. Exactly one pub is</span>
+<span class="sd">                  supported per run.</span>
 <span class="sd">            shots: The total number of shots to sample for each sampler pub that does</span>
 <span class="sd">                   not specify its own shots. If ``None``, the primitive&#39;s default</span>
 <span class="sd">                   shots value will be used, which can vary by implementation.</span>
