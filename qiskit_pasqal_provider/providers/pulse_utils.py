@@ -249,10 +249,19 @@ class ObjWrapper:
         """
 
         self._var = var if isinstance(var, Variable) else ()
-        self._value = value if isinstance(var, np.ndarray | tuple) else ()
+        self._value = value if isinstance(value, np.ndarray | tuple) else ()
 
-        lsize = var.size if isinstance(var, np.ndarray | Variable) else len(var)
-        rsize = value.size if isinstance(value, np.ndarray | Variable) else len(value)
+        lsize = 0
+        if isinstance(var, np.ndarray | Variable):
+            lsize = var.size
+        elif isinstance(var, tuple):
+            lsize = len(var)
+
+        rsize = 0
+        if isinstance(value, np.ndarray | Variable):
+            rsize = value.size
+        elif isinstance(value, tuple):
+            rsize = len(value)
 
         self._size = lsize or rsize
         self._data = self._var if not isinstance(self._var, tuple) else self._value
@@ -545,10 +554,13 @@ def get_register_from_circuit(run_input: QuantumCircuit) -> PasqalRegister:
         else:
             raise ValueError("'run_input' argument must only contain analog gate.")
 
-    # for now, it does not support multiple analog gates and multiple registers
+    # for now, it does not support multiple analog gates nor multiple registers
+    if len(registers) == 0:
+        raise ValueError("'run_input' argument must include at least one analog gate.")
+
     if len(registers) > 1:
         raise ValueError(
-            "Pasqal's QPU backend supports only a single analog gate with one coordinates set"
+            "The Qiskit-Pasqal-Provider expects exactly one analog gate with one coordinates set."
         )
 
     return registers[0]

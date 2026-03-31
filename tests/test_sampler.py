@@ -161,3 +161,33 @@ def test_sampler_rejects_multiple_pubs(square_coords: list) -> None:
     sampler = SamplerV2(PasqalProvider().get_backend("qutip"))
     with pytest.raises(ValueError, match="exactly one pub per run"):
         sampler.run([qc1, qc2], shots=10)
+
+
+def test_sampler_rejects_empty_circuit() -> None:
+    """Test sampler rejects circuits without analog gates."""
+
+    sampler = SamplerV2(PasqalProvider().get_backend("qutip"))
+    with pytest.raises(ValueError, match="at least one analog gate"):
+        sampler.run([QuantumCircuit(1)], shots=10)
+
+
+def test_qutip_metadata_uses_qobj_id(square_coords: list) -> None:
+    """Test qutip run metadata uses `qobj_id` key."""
+
+    gate = HamiltonianGate(
+        InterpolatePoints(values=[1, 1, 1]),
+        InterpolatePoints(values=[0, 0.5, 1]),
+        0.0,
+        square_coords,
+        grid_transform="square",
+        transform=True,
+    )
+
+    qc = QuantumCircuit(4)
+    qc.append(gate, qc.qubits)
+
+    result = (
+        SamplerV2(PasqalProvider().get_backend("qutip")).run([qc], shots=10).result()
+    )
+    assert "qobj_id" in result.metadata
+    assert "qojb_id" not in result.metadata

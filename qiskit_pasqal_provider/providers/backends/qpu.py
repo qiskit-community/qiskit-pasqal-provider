@@ -84,7 +84,8 @@ class QPUBackend(PasqalBackend):
             A PasqalJob instance containing the results from the execution interface.
         """
 
-        assert shots is not None, "shots must not be None. Choose an integer value."
+        if shots is None:
+            raise ValueError("shots must not be None. Choose an integer value.")
 
         analog_register = get_register_from_circuit(run_input)
 

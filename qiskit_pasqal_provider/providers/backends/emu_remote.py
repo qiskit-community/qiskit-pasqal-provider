@@ -81,7 +81,8 @@ class EmuRemoteBackend(PasqalBackend):
             A `PasqalJob` object containing the results from the execution interface.
         """
 
-        assert shots is not None, "shots must not be None. Choose an integer value."
+        if shots is None:
+            raise ValueError("shots must not be None. Choose an integer value.")
 
         analog_register: Register | PasqalRegister = get_register_from_circuit(
             run_input

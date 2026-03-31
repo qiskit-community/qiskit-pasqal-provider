@@ -1,7 +1,7 @@
 """Overall util classes and functions"""
 
 from enum import Enum
-from typing import Mapping, Optional, Protocol, Any, Iterable
+from typing import Optional, Protocol, Any
 
 from pasqal_cloud.authentication import TokenProvider
 from pasqal_cloud.endpoints import Endpoints, Auth0Conf
@@ -24,7 +24,7 @@ class StrEnum(str, Enum):
         return [c.value for c in cls]
 
 
-class RemoteConfig(Mapping):
+class RemoteConfig:
     """Remote configuration class for Pasqal provider access."""
 
     def __init__(
@@ -59,25 +59,6 @@ class RemoteConfig(Mapping):
         self.endpoints = endpoints
         self.auth0 = auth0
         self.webhook = webhook
-
-    def __getitem__(self, x: str) -> str:
-        """Retrieve configuration data"""
-        return self.__dict__[x]
-
-    def __iter__(self) -> Iterable:  # type: ignore [override]
-        """Iterate over RemoteConfig attributes"""
-        yield from self.__dict__.items()
-
-    def __len__(self) -> int:
-        """Number of RemoteConfig attributes"""
-        return len(self.__dict__)
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare the objects equality"""
-        if isinstance(other, RemoteConfig):
-            return all(k == v for k, v in zip(self, other))
-
-        return False
 
 
 class PasqalExecutor(Protocol):
