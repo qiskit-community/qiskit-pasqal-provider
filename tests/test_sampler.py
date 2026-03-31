@@ -232,3 +232,83 @@ def test_local_sampler_backends_parametric_phase_parameter(
     results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: 0.1})]).result()
 
     assert isinstance(results, PasqalResult)
+
+
+@pytest.mark.parametrize(
+    "backend_name",
+    [
+        "qutip",
+        pytest.param(
+            "emu-mps",
+            marks=pytest.mark.skipif(
+                platform in ["win32", "cygwin"] or not HAS_EMU_MPS,
+                reason="Windows or missing emu_mps dependency",
+            ),
+        ),
+    ],
+)
+def test_local_sampler_backends_parametric_phase_expression(
+    backend_name: str, square_coords: list
+) -> None:
+    """Testing sampler instance with qiskit.ParameterExpression as scalar phase."""
+
+    a = Parameter("a")
+    d = Parameter("d")
+    p = Parameter("p")
+
+    gate = HamiltonianGate(
+        InterpolatePoints(values=a, n=3),
+        InterpolatePoints(values=d, n=3),
+        0.5 * p + 0.1,
+        square_coords,
+        grid_transform="square",
+        transform=True,
+    )
+
+    qc = QuantumCircuit(4)
+    qc.append(gate, qc.qubits)
+
+    provider = PasqalProvider()
+    sampler = SamplerV2(provider.get_backend(backend_name))
+    results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: 0.2})]).result()
+
+    assert isinstance(results, PasqalResult)
+
+
+@pytest.mark.parametrize(
+    "backend_name",
+    [
+        "qutip",
+        pytest.param(
+            "emu-mps",
+            marks=pytest.mark.skipif(
+                platform in ["win32", "cygwin"] or not HAS_EMU_MPS,
+                reason="Windows or missing emu_mps dependency",
+            ),
+        ),
+    ],
+)
+def test_local_sampler_backends_parametric_duration_expression(
+    backend_name: str, square_coords: list
+) -> None:
+    """Testing sampler instance with qiskit.ParameterExpression as waveform duration."""
+
+    t = Parameter("t")
+    duration = 2 * t + 100
+    gate = HamiltonianGate(
+        InterpolatePoints(values=[1, 1, 1], duration=duration),
+        InterpolatePoints(values=[0, 0.5, 1], duration=duration),
+        0.0,
+        square_coords,
+        grid_transform="square",
+        transform=True,
+    )
+
+    qc = QuantumCircuit(4)
+    qc.append(gate, qc.qubits)
+
+    provider = PasqalProvider()
+    sampler = SamplerV2(provider.get_backend(backend_name))
+    results = sampler.run([(qc, {t: 1000})]).result()
+
+    assert isinstance(results, PasqalResult)

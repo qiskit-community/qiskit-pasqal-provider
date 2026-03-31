@@ -69,8 +69,8 @@ Counter({'100110': 139, '010001': 127, '010100': 111, '001000': 92, '100001': 92
 
 ### Parameterized example (single pub)
 
-`qiskit` `Parameter` is supported for parameterized runs.
-Arbitrary `ParameterExpression` (for example `p + 0.1`) is not supported.
+`qiskit` `Parameter` and `ParameterExpression` are supported for parameterized runs.
+This includes scalar phase expressions and waveform duration expressions.
 
 ```python
 from qiskit.circuit import Parameter, QuantumCircuit

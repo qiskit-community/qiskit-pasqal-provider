@@ -4,7 +4,7 @@ from typing import Any, Union
 
 from numpy.typing import ArrayLike
 from pulser.math import AbstractArray
-from qiskit.circuit import Parameter, ParameterExpression
+from qiskit.circuit import ParameterExpression
 from qiskit.circuit.gate import Gate
 
 from qiskit_pasqal_provider.providers.pulse_utils import (
@@ -24,7 +24,7 @@ class HamiltonianGate(Gate):
         self,
         amplitude: InterpolatePoints,
         detuning: InterpolatePoints,
-        phase: float | InterpolatePoints | Parameter,
+        phase: float | InterpolatePoints | ParameterExpression,
         coords: ArrayLike,
         grid_transform: GridLiteralType = "triangular",
         composed_wf: Any | None = None,
@@ -37,7 +37,7 @@ class HamiltonianGate(Gate):
         Args:
             amplitude: an InterpolatePoints instance to represent an amplitude waveform.
             detuning: an InterpolatePoints instance to represent a detuning waveform.
-            phase: a float number value to represent the phase.
+            phase: a float, InterpolatePoints or qiskit ParameterExpression value.
             coords: an array-like containing (x, y) coordinates of the qubits.
             grid_transform: a string of which grid transform to use. Default to "triangular".
             composed_wf: alternative approach to generate a sequence of waveforms
@@ -62,15 +62,9 @@ class HamiltonianGate(Gate):
                 f"detuning must be InterpolatePoints, not {type(detuning)}."
             )
 
-        if isinstance(phase, ParameterExpression) and not isinstance(phase, Parameter):
-            raise NotImplementedError(
-                "phase as a ParameterExpression is not supported. "
-                "Use float, InterpolatePoints or qiskit's Parameter."
-            )
-
-        if not isinstance(phase, InterpolatePoints | float | Parameter):
+        if not isinstance(phase, InterpolatePoints | float | ParameterExpression):
             raise TypeError(
-                f"phase must be either InterpolatePoints, float or Parameter, not "
+                f"phase must be either InterpolatePoints, float or ParameterExpression, not "
                 f"{type(phase)}."
             )
 
@@ -89,7 +83,9 @@ class HamiltonianGate(Gate):
             )
 
         num_qubits = len(coords)  # type: ignore [arg-type]
-        phase_params = list(phase.parameters) if isinstance(phase, Parameter) else []
+        phase_params = (
+            list(phase.parameters) if isinstance(phase, ParameterExpression) else []
+        )
 
         super().__init__(
             name="HG",
@@ -127,7 +123,7 @@ class HamiltonianGate(Gate):
         return self._detuning
 
     @property
-    def phase(self) -> float | InterpolatePoints | Parameter:
+    def phase(self) -> float | InterpolatePoints | ParameterExpression:
         """Phase of the pulse as float."""
         return self._phase
 

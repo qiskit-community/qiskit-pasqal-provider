@@ -96,13 +96,12 @@ def test_analog_gate(
         )
 
     with pytest.raises(TypeError):
-        # phase must be either InterpolatePoints, float or Parameter
+        # phase must be either InterpolatePoints, float or ParameterExpression
         HamiltonianGate(ampl, det, [0, 0, 0], coords=square_coords)
 
-    with pytest.raises(NotImplementedError, match="ParameterExpression"):
-        # phase does not support arbitrary qiskit expressions (e.g. p + 0.1)
-        p = Parameter("p")
-        HamiltonianGate(ampl, det, p + 0.1, coords=square_coords)
+    p = Parameter("p")
+    phase_expr_gate = HamiltonianGate(ampl, det, p + 0.1, coords=square_coords)
+    assert p in phase_expr_gate.params
 
     _analog_register = PasqalRegister.from_coordinates(square_coords, prefix="q")
 
