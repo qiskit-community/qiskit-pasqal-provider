@@ -99,6 +99,9 @@ Local emulator example (qutip)
 Parameterized example (single pub)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+`qiskit` `Parameter` is supported for parameterized runs.
+Arbitrary `ParameterExpression` (for example `p + 0.1`) is not supported.
+
 .. code-block:: python3
 
     from qiskit.circuit import Parameter, QuantumCircuit

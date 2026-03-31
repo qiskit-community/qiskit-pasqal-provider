@@ -3,6 +3,7 @@
 import json
 import uuid
 from copy import deepcopy
+from typing import Any, cast
 
 import pytest
 from pasqal_cloud.job import CreateJob, Job
@@ -111,7 +112,7 @@ def test_mock_cloud_result_rejects_malformed_counter(mock_sdk: MockSDK) -> None:
         _client=None,
     )
     job._full_result = {  # pylint: disable=protected-access
-        "counter": "not-a-dict",
+        "counter": cast(Any, "not-a-dict"),
         "raw": [],
         "serialised_results": None,
     }
@@ -236,7 +237,9 @@ def test_remote_job_wait_false_is_non_blocking() -> None:
 
         def refresh(self) -> None:
             """Guard against eager polling in submit."""
-            raise AssertionError("submit() should not poll cloud results when wait=False.")
+            raise AssertionError(
+                "submit() should not poll cloud results when wait=False."
+            )
 
     class MockExecutor:
         """Minimal executor stub."""

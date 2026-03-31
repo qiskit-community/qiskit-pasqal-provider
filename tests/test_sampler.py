@@ -191,3 +191,44 @@ def test_qutip_metadata_uses_qobj_id(square_coords: list) -> None:
     )
     assert "qobj_id" in result.metadata
     assert "qojb_id" not in result.metadata
+
+
+@pytest.mark.parametrize(
+    "backend_name",
+    [
+        "qutip",
+        pytest.param(
+            "emu-mps",
+            marks=pytest.mark.skipif(
+                platform in ["win32", "cygwin"] or not HAS_EMU_MPS,
+                reason="Windows or missing emu_mps dependency",
+            ),
+        ),
+    ],
+)
+def test_local_sampler_backends_parametric_phase_parameter(
+    backend_name: str, square_coords: list
+) -> None:
+    """Testing sampler instance with qiskit.Parameter as scalar phase."""
+
+    a = Parameter("a")
+    d = Parameter("d")
+    p = Parameter("p")
+
+    gate = HamiltonianGate(
+        InterpolatePoints(values=a, n=3),
+        InterpolatePoints(values=d, n=3),
+        p,
+        square_coords,
+        grid_transform="square",
+        transform=True,
+    )
+
+    qc = QuantumCircuit(4)
+    qc.append(gate, qc.qubits)
+
+    provider = PasqalProvider()
+    sampler = SamplerV2(provider.get_backend(backend_name))
+    results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: 0.1})]).result()
+
+    assert isinstance(results, PasqalResult)

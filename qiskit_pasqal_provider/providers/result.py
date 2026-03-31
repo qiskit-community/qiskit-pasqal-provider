@@ -58,9 +58,10 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
             case list() | tuple():
                 _data = self._fetch_legacy_payload_results(results)
 
-            # this branch is for counts dictionary, which can be used for both local and remote results
+            # this branch is for count dictionaries used by local and remote
+            # execution paths
             case dict():
-                # if the metadata includes "batch", it cines from remote execution
+                # if metadata includes "batch", it comes from remote execution
                 if metadata is not None and "batch" in metadata:
                     _data = self._fetch_cloud_results(results, metadata)
                 else:  # Local execution with direct counts dictionary
@@ -204,7 +205,9 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         return DataBin(counts=Counter(counts))
 
     @classmethod
-    def _fetch_legacy_payload_results(cls, results: list[Any] | tuple[Any, ...]) -> DataBin:
+    def _fetch_legacy_payload_results(
+        cls, results: list[Any] | tuple[Any, ...]
+    ) -> DataBin:
         """Build a data bin from legacy wait=True payload lists."""
 
         if not results:

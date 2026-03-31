@@ -419,7 +419,8 @@ def _get_wf_values(
 
         case ParameterExpression():
             raise NotImplementedError(
-                "Current Pasqal provider version does not support parametric expressions."
+                "Current Pasqal provider version supports qiskit's Parameter "
+                "but does not support arbitrary ParameterExpression values."
             )
 
         case None:
@@ -486,12 +487,7 @@ def gen_seq(
             **gate.detuning.interpolator_options,
         )
 
-        if isinstance(gate.phase, float):
-            # in case phase is scalar
-            phase = gate.phase
-            pulse = Pulse(amp_wf, det_wf, phase)
-
-        else:
+        if isinstance(gate.phase, InterpolatePoints):
             # otherwise, it's InterpolatePoints
             det_wrapper = _get_param_values(seq, det_values)  # type: ignore [arg-type]
 
@@ -502,6 +498,10 @@ def gen_seq(
                 phase=gate.phase,
                 det_wrapper=det_wrapper,
             )
+        else:
+            # scalar phase can be float or qiskit Parameter
+            phase = _get_wf_values(seq, gate.phase)
+            pulse = Pulse(amp_wf, det_wf, phase)  # type: ignore [arg-type]
 
         seq.add(pulse, channel_name)
 
