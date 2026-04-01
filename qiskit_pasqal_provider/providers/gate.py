@@ -37,7 +37,7 @@ class HamiltonianGate(Gate):
         Args:
             amplitude: an InterpolatePoints instance to represent an amplitude waveform.
             detuning: an InterpolatePoints instance to represent a detuning waveform.
-            phase: a float number value to represent the phase.
+            phase: a float, InterpolatePoints or qiskit ParameterExpression value.
             coords: an array-like containing (x, y) coordinates of the qubits.
             grid_transform: a string of which grid transform to use. Default to "triangular".
             composed_wf: alternative approach to generate a sequence of waveforms

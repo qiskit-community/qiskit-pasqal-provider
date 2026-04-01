@@ -6,12 +6,14 @@ from functools import reduce
 from typing import Any, Literal
 import numpy as np
 import pulser
-from pulser import Sequence, Pulse
+from pulser import Pulse, Sequence
 from pulser.devices._device_datacls import BaseDevice
-from pulser.parametrized import Variable, ParamObj
+from pulser.parametrized import ParamObj, Variable
+from pulser.parametrized.variable import VariableItem
 from pulser.register import Register
-from pulser.waveforms import InterpolatedWaveform, CustomWaveform, Waveform
-from qiskit.circuit import QuantumCircuit, ParameterExpression, Parameter
+from pulser.waveforms import CustomWaveform, InterpolatedWaveform, Waveform
+from qiskit.circuit import Parameter, ParameterExpression, QuantumCircuit
+from sympy import lambdify
 
 from qiskit_pasqal_provider.providers.target import PasqalDevice
 
@@ -19,6 +21,16 @@ from qiskit_pasqal_provider.providers.target import PasqalDevice
 # defining handy type aliases
 GridLiteralType = Literal["linear", "triangular", "square"]
 CoordsType = list | tuple | np.ndarray | tuple[tuple[int | float], ...]
+WaveformValueType = (
+    ParamObj
+    | Variable
+    | VariableItem
+    | int
+    | float
+    | np.integer
+    | np.floating
+    | tuple["WaveformValueType", ...]
+)
 
 
 class PasqalRegister(Register):
@@ -105,7 +117,7 @@ class InterpolatePoints:
         self._interpolator_kwargs = interpolator_kwargs
 
     @property
-    def duration(self) -> int | float | Parameter:
+    def duration(self) -> int | float | ParameterExpression:
         """duration of the waveform (in ns)"""
         return self._duration
 
@@ -249,10 +261,19 @@ class ObjWrapper:
         """
 
         self._var = var if isinstance(var, Variable) else ()
-        self._value = value if isinstance(var, np.ndarray | tuple) else ()
+        self._value = value if isinstance(value, np.ndarray | tuple) else ()
 
-        lsize = var.size if isinstance(var, np.ndarray | Variable) else len(var)
-        rsize = value.size if isinstance(value, np.ndarray | Variable) else len(value)
+        lsize = 0
+        if isinstance(var, np.ndarray | Variable):
+            lsize = var.size
+        elif isinstance(var, tuple):
+            lsize = len(var)
+
+        rsize = 0
+        if isinstance(value, np.ndarray | Variable):
+            rsize = value.size
+        elif isinstance(value, tuple):
+            rsize = len(value)
 
         self._size = lsize or rsize
         self._data = self._var if not isinstance(self._var, tuple) else self._value
@@ -351,15 +372,16 @@ def _gen_phase_wf(
 
 
 def _get_wf_values(
-    seq: Sequence, values: int | float | Parameter | list | tuple | np.ndarray
-) -> ParamObj | int | float | Variable | np.integer | np.floating | tuple | None:
+    seq: Sequence,
+    values: int | float | ParameterExpression | list | tuple | np.ndarray,
+) -> WaveformValueType | None:
     """
     Get waveform parameters to transform into number or pulser parametric variable. For now,
     it is assumed that parametric values are single-sized.
 
     Args:
         seq: A pulser Sequence.
-        values: int, float, qiskit Parameter or an array-like object.
+        values: int, float, qiskit Parameter/ParameterExpression or an array-like object.
 
     Returns:
         A tuple containing the python base type values.
@@ -371,53 +393,79 @@ def _get_wf_values(
             return values
 
         case tuple() | list() | np.ndarray():
-
-            # check if parameter is unique
-            if all(isinstance(k, Parameter) for k in values) and len(set(values)) == 1:
-                if values[0].name not in seq.declared_variables:
-                    var = seq.declare_variable(
-                        values[0].name, size=len(values), dtype=float
-                    )
-                    return var
-
-                return seq.declared_variables[values[0].name]
-
-            # it may be an iterable of parameters
-            new_values: (
-                tuple[ParamObj | int | float | Variable | np.integer | np.floating]
-                | tuple
-            ) = ()
-
-            # iterating over each element to retrieve the parameter(s)
-            for value in values:
-                res = _get_wf_values(seq, value)
-
-                if res is not None:
-                    new_values += (res,)
-
-            return new_values[0] if len(new_values) == 1 else new_values
+            return _get_wf_values_iterable(seq, values)
 
         case np.integer() | np.floating():
             return values
 
         case Parameter():
-            if values.name not in seq.declared_variables:
-                # single parameters must be of size 1
-                var = seq.declare_variable(values.name, size=1, dtype=float)
-                return var
-
-            return seq.declared_variables[values.name]
+            return _get_wf_values_parameter(seq, values)
 
         case ParameterExpression():
-            raise NotImplementedError(
-                "Current Pasqal provider version does not support parametric expressions."
-            )
+            return _get_wf_values_parameter_expression(seq, values)
 
         case None:
             return None
 
         case _:
             raise NotImplementedError(f"values {type(values)} not supported.")
+
+
+def _get_wf_values_iterable(
+    seq: Sequence,
+    values: tuple | list | np.ndarray,
+) -> WaveformValueType:
+    """Get waveform values from an iterable parameter."""
+
+    # check if parameter is unique
+    if all(isinstance(k, Parameter) for k in values) and len(set(values)) == 1:
+        if values[0].name not in seq.declared_variables:
+            return seq.declare_variable(values[0].name, size=len(values), dtype=float)
+        return seq.declared_variables[values[0].name]
+
+    # it may be an iterable of parameters
+    new_values: tuple[WaveformValueType, ...] = ()
+
+    # iterating over each element to retrieve the parameter(s)
+    for value in values:
+        res = _get_wf_values(seq, value)
+        if res is not None:
+            new_values += (res,)
+
+    return new_values[0] if len(new_values) == 1 else new_values
+
+
+def _get_wf_values_parameter(
+    seq: Sequence, value: Parameter
+) -> Variable | VariableItem:
+    """Get waveform values from a qiskit Parameter."""
+
+    if value.name not in seq.declared_variables:
+        # single parameters must be of size 1
+        return seq.declare_variable(value.name, size=1, dtype=float)[0]
+
+    declared_var = seq.declared_variables[value.name]
+    return (
+        declared_var[0]
+        if isinstance(declared_var, Variable) and declared_var.size == 1
+        else declared_var
+    )
+
+
+def _get_wf_values_parameter_expression(
+    seq: Sequence, value: ParameterExpression
+) -> WaveformValueType:
+    """Get waveform values from a qiskit ParameterExpression."""
+
+    if not value.parameters:
+        return value.numeric()
+
+    params = sorted(value.parameters, key=lambda p: p.name)
+    param_values = [_get_wf_values_parameter(seq, param) for param in params]
+    expr_fn = lambdify(
+        [param.name for param in params], value.sympify(), modules="numpy"
+    )
+    return expr_fn(*param_values)
 
 
 def gen_seq(
@@ -460,8 +508,8 @@ def gen_seq(
 
         amp_wf = InterpolatedWaveform(
             duration=amp_duration,  # type: ignore [arg-type]
-            values=_get_wf_values(seq, gate.amplitude.values),
-            times=_get_wf_values(seq, gate.amplitude.times) or None,
+            values=_get_wf_values(seq, gate.amplitude.values),  # type: ignore [arg-type]
+            times=_get_wf_values(seq, gate.amplitude.times) or None,  # type: ignore [arg-type]
             interpolator=gate.amplitude.interpolator,
             **gate.amplitude.interpolator_options,
         )
@@ -471,18 +519,13 @@ def gen_seq(
 
         det_wf = InterpolatedWaveform(
             duration=det_duration,  # type: ignore [arg-type]
-            values=det_values,
-            times=_get_wf_values(seq, gate.detuning.times) or None,
+            values=det_values,  # type: ignore [arg-type]
+            times=_get_wf_values(seq, gate.detuning.times) or None,  # type: ignore [arg-type]
             interpolator=gate.detuning.interpolator,
             **gate.detuning.interpolator_options,
         )
 
-        if isinstance(gate.phase, float):
-            # in case phase is scalar
-            phase = gate.phase
-            pulse = Pulse(amp_wf, det_wf, phase)
-
-        else:
+        if isinstance(gate.phase, InterpolatePoints):
             # otherwise, it's InterpolatePoints
             det_wrapper = _get_param_values(seq, det_values)  # type: ignore [arg-type]
 
@@ -493,6 +536,10 @@ def gen_seq(
                 phase=gate.phase,
                 det_wrapper=det_wrapper,
             )
+        else:
+            # scalar phase can be float or qiskit Parameter
+            phase = _get_wf_values(seq, gate.phase)
+            pulse = Pulse(amp_wf, det_wf, phase)  # type: ignore [arg-type]
 
         seq.add(pulse, channel_name)
 
@@ -545,10 +592,13 @@ def get_register_from_circuit(run_input: QuantumCircuit) -> PasqalRegister:
         else:
             raise ValueError("'run_input' argument must only contain analog gate.")
 
-    # for now, it does not support multiple analog gates and multiple registers
+    # for now, it does not support multiple analog gates nor multiple registers
+    if len(registers) == 0:
+        raise ValueError("'run_input' argument must include at least one analog gate.")
+
     if len(registers) > 1:
         raise ValueError(
-            "Pasqal's QPU backend supports only a single analog gate with one coordinates set"
+            "The Qiskit-Pasqal-Provider expects exactly one analog gate with one coordinates set."
         )
 
     return registers[0]

@@ -9,6 +9,7 @@ from qiskit.circuit.exceptions import CircuitError
 from qiskit_pasqal_provider.providers.pulse_utils import (
     PasqalRegister,
     InterpolatePoints,
+    ObjWrapper,
 )
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate
 
@@ -32,6 +33,14 @@ def test_interpolate_points() -> None:
     wf2 = InterpolatePoints(values=values, duration=t, times=times)
 
     assert wf2.times is not None
+
+
+def test_obj_wrapper_handles_none_inputs() -> None:
+    """testing `ObjWrapper` with None inputs."""
+
+    wrapper = ObjWrapper(None, None)
+    assert wrapper.data == ()
+    assert wrapper.size == 0
 
 
 @pytest.mark.parametrize("phase", [0.0, InterpolatePoints([0, 0])])
@@ -89,6 +98,10 @@ def test_analog_gate(
     with pytest.raises(TypeError):
         # phase must be either InterpolatePoints, float or ParameterExpression
         HamiltonianGate(ampl, det, [0, 0, 0], coords=square_coords)
+
+    p = Parameter("p")
+    phase_expr_gate = HamiltonianGate(ampl, det, p + 0.1, coords=square_coords)
+    assert p in phase_expr_gate.params
 
     _analog_register = PasqalRegister.from_coordinates(square_coords, prefix="q")
 

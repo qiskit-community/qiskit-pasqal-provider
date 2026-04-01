@@ -1,17 +1,18 @@
 """Pasqal's result class tools"""
 
 import copy
+import json
 import time
 from collections import Counter
+from collections.abc import Mapping
 from typing import Any
 
-from pasqal_cloud.job import Job as PasqalJobData
 from pasqal_cloud.batch import Batch as PasqalBatchData
+from pasqal_cloud.job import Job as PasqalJobData
 from pulser.backend import Results
-from pulser.backend.remote import RemoteResults, BatchStatus
+from pulser.backend.remote import BatchStatus, RemoteResults
 from pulser_simulation.simresults import SimulationResults
-
-from qiskit.primitives import SamplerPubResult, PrimitiveResult, DataBin
+from qiskit.primitives import DataBin, PrimitiveResult, SamplerPubResult
 from qiskit.result.models import ExperimentResult
 
 
@@ -22,7 +23,7 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         self,
         backend_name: str,
         job_id: str | list[str],
-        results: SimulationResults | RemoteResults | dict | None,
+        results: SimulationResults | RemoteResults | dict | list | tuple | None,
         metadata: dict[str, Any] | None = None,
     ):
         """
@@ -52,12 +53,26 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
                     # this branch must fetch remote simulated results
                     _data = self._fetch_remote_pulser_sim_results(results, metadata)
 
-            case dict() | None:
+            # this branch supports legacy wait=True payloads,
+            # for example ['{"counter": {...}}']
+            case list() | tuple():
+                _data = self._fetch_legacy_payload_results(results)
+
+            # this branch is for count dictionaries used by local and remote
+            # execution paths
+            case dict():
+                # if metadata includes "batch", it comes from remote execution
+                if metadata is not None and "batch" in metadata:
+                    _data = self._fetch_cloud_results(results, metadata)
+                else:  # Local execution with direct counts dictionary
+                    _data = self._fetch_counter_results(results)
+
+            case None:  # this branch is for remote execution with no direct results
                 _data = self._fetch_cloud_results(results, metadata)
 
             case _:
                 raise ValueError(
-                    "results must be either locally simulated or remote ones."
+                    f"Unknown results format. Received {results} of type {type(results)}."
                 )
 
         # feed the data bin into the sampler result with the metadata
@@ -163,14 +178,14 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         job_obj: PasqalJobData = batch.ordered_jobs[-1]
 
         if job_obj.status == "DONE":
-            return DataBin(counts=Counter(job_obj.result))
+            return cls._fetch_counter_results(job_obj.result)
 
         while job_obj.status in {"PENDING", "RUNNING"}:
             batch.refresh()
             time.sleep(metadata.get("sleep_sec", None) or 15)
 
             if job_obj.status == "DONE":
-                return DataBin(counts=Counter(job_obj.result))
+                return cls._fetch_counter_results(job_obj.result)
 
             if job_obj.status in {"TIMED_OUT", "ERROR"}:
                 break
@@ -178,6 +193,37 @@ class PasqalResult(PrimitiveResult[list[ExperimentResult]]):
         raise ValueError(
             "Something went wrong. Please check the cloud project page for more information."
         )
+
+    @classmethod
+    def _fetch_counter_results(cls, results: Mapping[str, Any] | Any) -> DataBin:
+        """Build a data bin from a direct counts dictionary."""
+        if not isinstance(results, Mapping):
+            raise ValueError("results must include a dictionary of counts.")
+        counts = results.get("counter", results.get("counts", results))
+        if not isinstance(counts, dict):
+            raise ValueError("results must include a dictionary of counts.")
+        return DataBin(counts=Counter(counts))
+
+    @classmethod
+    def _fetch_legacy_payload_results(
+        cls, results: list[Any] | tuple[Any, ...]
+    ) -> DataBin:
+        """Build a data bin from legacy wait=True payload lists."""
+
+        if not results:
+            raise ValueError("results list must contain at least one payload.")
+
+        payload = results[0]
+        if isinstance(payload, str):
+            try:
+                payload = json.loads(payload)
+            except json.JSONDecodeError as err:
+                raise ValueError("results payload is not valid JSON.") from err
+
+        if not isinstance(payload, Mapping):
+            raise ValueError("results payload must be a dictionary.")
+
+        return cls._fetch_counter_results(payload)
 
     @classmethod
     def _fetch_qpu_results(

@@ -101,6 +101,37 @@ class PasqalRemoteJob(PasqalJob):
         self._job_params = job_params
         self._wait = wait
         self._batch = None
+        self._result = None
+        self._status = JobStatus.INITIALIZING
+
+    @staticmethod
+    def _status_to_job_status(status: str) -> JobStatus:
+        """Map Pasqal cloud job statuses into Qiskit job statuses."""
+
+        match status:
+            case "DONE":
+                return JobStatus.DONE
+            case "TIMED_OUT" | "ERROR":
+                return JobStatus.ERROR
+            case "CANCELED":
+                return JobStatus.CANCELLED
+            case "PENDING" | "RUNNING" | "PAUSED":
+                return JobStatus.RUNNING
+            case _:
+                return JobStatus.ERROR
+
+    def _cloud_job_status(self) -> str:
+        """Read the status of the single cloud job in the active batch."""
+
+        if self._batch is None:
+            return ""
+
+        job_status = getattr(self._batch.ordered_jobs[0], "status", None)
+        if hasattr(job_status, "name"):
+            return str(job_status.name)
+        if job_status is None:
+            return ""
+        return str(job_status)
 
     def submit(self) -> None:
         """To submit a job to a remote backend."""
@@ -133,31 +164,43 @@ class PasqalRemoteJob(PasqalJob):
         self.metadata = {"batch": self._batch, "status": status}
         self._job_id = job_id
 
-        self._result = PasqalResult(
-            backend_name=self.backend().name,
-            job_id=job_id,
-            results=None,
-            metadata=self.metadata,
-        )
+        self._status = self._status_to_job_status(status)
 
-        match status:
+        # Non-blocking submissions should not force immediate result retrieval.
+        if self._wait:
+            self._result = PasqalResult(
+                backend_name=self.backend().name,
+                job_id=job_id,
+                results=None,
+                metadata=self.metadata,
+            )
+            self._status = JobStatus.DONE
 
-            case "DONE":
-                self._status = JobStatus.DONE
+    def status(self) -> JobStatus:
+        """Return the latest known remote status."""
 
-            case "TIMED_OUT" | "ERROR":
-                self._status = JobStatus.ERROR
+        status = self._cloud_job_status()
+        if status:
+            self.metadata["status"] = status
+            self._status = self._status_to_job_status(status)
+        return self._status
 
-            case "CANCELED":
-                self._status = JobStatus.CANCELLED
+    def result(self) -> PasqalResult:
+        """Return the result of the remote job, waiting if still running."""
 
-            case "PENDING" | "RUNNING" | "PAUSED":
-                self._status = JobStatus.RUNNING
+        if self._result is None:
+            self._result = PasqalResult(
+                backend_name=self.backend().name,
+                job_id=self._job_id,
+                results=None,
+                metadata=self.metadata,
+            )
+            self._status = JobStatus.DONE
 
-            case _:
-                self._status = JobStatus.ERROR
+        return self._result
 
     def cancel(self) -> Any:
         """Attempt to cancel the job."""
-
+        if self._batch is None:
+            raise ValueError("Cannot cancel a job that has not been submitted yet.")
         self._batch.cancel()

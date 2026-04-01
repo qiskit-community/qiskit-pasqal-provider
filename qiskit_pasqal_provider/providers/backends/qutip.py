@@ -100,7 +100,7 @@ class QutipEmulatorBackend(PasqalBackend):
             backend=backend,
             job_id=job_id,
             shots=shots,
-            qojb_id=job_id,
+            qobj_id=job_id,
             backend_version=self._version,
         )
         job.submit()
