@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="&lt;no title&gt;" href="tutorials/index.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>Qiskit Pasqal Provider 0.1.1</title>
+        <title>Qiskit Pasqal Provider 0.2.0</title>
       <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">Qiskit Pasqal Provider 0.1.1</div></a>
+      <a href="#"><div class="brand">Qiskit Pasqal Provider 0.2.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.1.1</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.2.0</span>
 </div><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -183,6 +183,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/introduction_to_qpp.html">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/introduction_to_qpp.html#QPP">QPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/qubo_with_qpp.html">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="apidocs/index.html">API References</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API References</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
@@ -190,6 +191,7 @@
 <li class="toctree-l3"><a class="reference internal" href="stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="apidocs/qpp.html#compile-time-parameters">Compile-time parameters</a></li>
 </ul>
 </li>
 </ul>
@@ -231,7 +233,7 @@
 <div class="toctree-wrapper compound">
 </div>
 <p>This project contains the appropriate abstraction to program <a class="reference external" href="https://pasqal.com">Pasqal</a>’s analog neutral atom QPUs from Qiskit.</p>
-<p>We encourage the user to check out specialized resources, such as the <a class="reference external" href="https://docs.pasqal.com/pulser/">Pulser Documentation</a>, to discover how to best take program analog neutral atom QPUs.</p>
+<p>We encourage the user to check out specialized resources, such as the <a class="reference external" href="https://pulser.readthedocs.io/en/stable/">Pulser documentation</a>, to discover how to best program analog neutral atom QPUs.</p>
 <p>To target Pasqal’s QPUs or cloud based emulators, sign up for <a class="reference external" href="https://www.pasqal.com/solutions/cloud/">Pasqal cloud</a>.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
@@ -243,13 +245,15 @@ python3 -m pip install qiskit-pasqal-provider
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 <p>The Qiskit Pasqal Provider works with regular Qiskit functions like the <code class="docutils literal notranslate"><span class="pre">SamplerV2</span></code>.
-What is required is the use of two classes found in this project, the <code class="docutils literal notranslate"><span class="pre">PasqalProvider`</span></code> and:</p>
+What is required is the use of two classes found in this project, the <code class="docutils literal notranslate"><span class="pre">PasqalProvider</span></code> and:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="n">ampl</span><span class="p">,</span> <span class="n">detuning</span><span class="o">=</span><span class="n">det</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">SamplerV2.run(...)</span></code> currently accepts exactly one pub per call.
-For example, use <code class="docutils literal notranslate"><span class="pre">[qc]</span></code> or <code class="docutils literal notranslate"><span class="pre">[(qc,</span> <span class="pre">parameter_values)]</span></code>.</p>
-<p>Let us see a simple example</p>
+<p>Qiskit Pasqal Provider supports both Qiskit 1.x and Qiskit 2.x.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SamplerV2.run(...)</span></code> accepts exactly one pub per call.
+Use <code class="docutils literal notranslate"><span class="pre">[qc]</span></code> or <code class="docutils literal notranslate"><span class="pre">[(qc,</span> <span class="pre">parameter_values)]</span></code>.</p>
+<section id="local-emulator-example-qutip">
+<h3>Local emulator example (qutip)<a class="headerlink" href="#local-emulator-example-qutip" title="Link to this heading">¶</a></h3>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">HamiltonianGate</span><span class="p">,</span>
@@ -293,6 +297,71 @@ For example, use <code class="docutils literal notranslate"><span class="pre">[q
 <span class="c1"># Counter({&#39;100110&#39;: 139, &#39;010001&#39;: 127, &#39;010100&#39;: 111, &#39;001000&#39;: 92, &#39;100001&#39;: 92, ... })</span>
 </pre></div>
 </div>
+</section>
+<section id="parameterized-example-single-pub">
+<h3>Parameterized example (single pub)<a class="headerlink" href="#parameterized-example-single-pub" title="Link to this heading">¶</a></h3>
+<p><cite>qiskit</cite> <cite>Parameter</cite> and <cite>ParameterExpression</cite> are supported for parameterized runs.
+This includes scalar phase expressions and waveform duration expressions.</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">QuantumCircuit</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="n">HamiltonianGate</span><span class="p">,</span> <span class="n">InterpolatePoints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
+
+<span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">amplitude</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">detuning</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+
+<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">detuning</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">)</span>
+
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">))</span>
+
+<span class="c1"># Exactly one pub: [(circuit, parameter_values)]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([(</span><span class="n">qc</span><span class="p">,</span> <span class="p">{</span><span class="n">phase</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="remote-cloud-emulator-example">
+<h3>Remote cloud emulator example<a class="headerlink" href="#remote-cloud-emulator-example" title="Link to this heading">¶</a></h3>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteConfig</span>
+
+<span class="c1"># Use your Pasqal Cloud credentials</span>
+<span class="n">remote_config</span> <span class="o">=</span> <span class="n">RemoteConfig</span><span class="p">(</span>
+    <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_USERNAME&quot;</span><span class="p">],</span>
+    <span class="n">password</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_PASSWORD&quot;</span><span class="p">],</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_PROJECT_ID&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">provider</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">(</span><span class="n">remote_config</span><span class="o">=</span><span class="n">remote_config</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;remote-emu-fresnel&quot;</span><span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+
+<span class="c1"># Reuse `qc` from the local example (or build a new circuit in the same way).</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">job_id</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">status</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="qrmi">
+<h2>QRMI<a class="headerlink" href="#qrmi" title="Link to this heading">¶</a></h2>
+<p>To run this provider through a workload manager (for example in HPC environments),
+see <a class="reference external" href="https://github.com/qiskit-community/qrmi">QRMI</a>.
+QRMI provides queue and scheduler integrations around Qiskit workloads, and can be
+used with this provider in those environments.</p>
 </section>
 </section>
 
@@ -342,7 +411,13 @@ For example, use <code class="docutils literal notranslate"><span class="pre">[q
             <ul>
 <li><a class="reference internal" href="#">Qiskit Pasqal Provider documentation</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#local-emulator-example-qutip">Local emulator example (qutip)</a></li>
+<li><a class="reference internal" href="#parameterized-example-single-pub">Parameterized example (single pub)</a></li>
+<li><a class="reference internal" href="#remote-cloud-emulator-example">Remote cloud emulator example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#qrmi">QRMI</a></li>
 </ul>
 </li>
 </ul>
@@ -356,7 +431,7 @@ For example, use <code class="docutils literal notranslate"><span class="pre">[q
   </div>
 </div><script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

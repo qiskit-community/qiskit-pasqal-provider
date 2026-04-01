@@ -1,0 +1,728 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="QPP API References" href="../apidocs/index.html" /><link rel="prev" title="Introduction to qiskit-pasqal-provider" href="introduction_to_qpp.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
+        <title>QAA to Solve a QUBO Problem with qiskit-pasqal-provider - Qiskit Pasqal Provider 0.2.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-ecosystem.css?v=745c5aa7" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<script src="../_static/js/web-components/top-nav-bar.js"></script></head>
+  <body>
+    
+    <script>document.body.dataset.theme = "light";</script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs><style>.cls-1{fill:none;}</style></defs>
+      <path d="M28,4H4A2,2,0,0,0,2,6V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V6A2,2,0,0,0,28,4ZM4,6H20V26H4ZM28,26H22V6h6Z"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs><style>.cls-1{fill:none;}</style></defs>
+      <rect x="4" y="6" width="24" height="2"/>
+      <rect x="4" y="24" width="24" height="2"/>
+      <rect x="4" y="12" width="24" height="2"/>
+      <rect x="4" y="18" width="24" height="2"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+         viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><polygon points="22,16 12,26 10.6,24.6 19.2,16 10.6,7.4 12,6 " stroke="currentColor"/>
+      <rect id="_x3C_Transparent_Rectangle_x3E_" fill="none" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-new-tab" viewBox="0 0 32 32">
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+      <defs>
+        <style>
+          .cls-1 {
+            fill: none;
+          }
+        </style>
+      </defs>
+      <path fill="#6929C4" d="M26,28H6a2.0027,2.0027,0,0,1-2-2V6A2.0027,2.0027,0,0,1,6,4H16V6H6V26H26V16h2V26A2.0027,2.0027,0,0,1,26,28Z"/>
+      <polygon fill="#6929C4" points="20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 12 30 2 20 2"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.2.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-brand">
+  <a href="https://www.qiskit.org/ecosystem">
+    <div class="sidebar-logo-container">
+      <img class="sidebar-logo" src="../_static/images/ecosystem-logo.svg" alt="Qiskit Ecosystem logo"/>
+    </div>
+  </a>
+  
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.2.0</span>
+</div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_qpp.html">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_qpp.html#QPP">QPP</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../apidocs/index.html">API References</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API References</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/qpp.html#compile-time-parameters">Compile-time parameters</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="QAA-to-Solve-a-QUBO-Problem-with-qiskit-pasqal-provider">
+<h1>QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code><a class="headerlink" href="#QAA-to-Solve-a-QUBO-Problem-with-qiskit-pasqal-provider" title="Link to this heading">¶</a></h1>
+<p>This notebook presents a complete workflow to solve a QUBO instance with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code> on a local <code class="docutils literal notranslate"><span class="pre">qutip</span></code> backend.</p>
+<p>Further reading:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pulser.readthedocs.io/en/stable/tutorials/qubo.html">QAA to solve a QUBO problem</a></p></li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pylint: disable=missing-module-docstring,missing-function-docstring,pointless-statement,redefined-outer-name,invalid-name,expression-not-assigned</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pulser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Register</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pulser.devices</span><span class="w"> </span><span class="kn">import</span> <span class="n">DigitalAnalogDevice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.layouts</span><span class="w"> </span><span class="kn">import</span> <span class="n">FreeLayout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="n">HamiltonianGate</span><span class="p">,</span> <span class="n">InterpolatePoints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.target</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalTarget</span>
+</pre></div>
+</div>
+</div>
+<section id="Introduction">
+<h2>Introduction<a class="headerlink" href="#Introduction" title="Link to this heading">¶</a></h2>
+<p>In this notebook, we solve a Quadratic Unconstrained Binary Optimization (QUBO) problem with neutral-atom analog evolution.</p>
+<p>A QUBO instance is defined by a symmetric matrix <span class="math notranslate nohighlight">\(Q\)</span>. The optimization task is to find <span class="math notranslate nohighlight">\(z \in \{0,1\}^N\)</span> that minimizes:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[f(z) = z^TQz\]</div>
+</div>
+<p>The matrix below is a compact 5-variable example. Since this problem is small, we first compute the exact classical optimum by brute force and use it as a reference.</p>
+<p>This instance is convenient for neutral-atom encoding because:</p>
+<ol class="arabic simple">
+<li><p>off-diagonal entries are positive (compatible with positive Rydberg interactions),</p></li>
+<li><p>diagonal entries are equal (global detuning is enough).</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">19.7365809</span><span class="p">,</span> <span class="mf">19.7365809</span><span class="p">,</span> <span class="mf">5.42015853</span><span class="p">,</span> <span class="mf">5.42015853</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">19.7365809</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.67626392</span><span class="p">,</span> <span class="mf">0.17675796</span><span class="p">,</span> <span class="mf">0.85604541</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">19.7365809</span><span class="p">,</span> <span class="mf">20.67626392</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.85604541</span><span class="p">,</span> <span class="mf">0.17675796</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">5.42015853</span><span class="p">,</span> <span class="mf">0.17675796</span><span class="p">,</span> <span class="mf">0.85604541</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.32306662</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">5.42015853</span><span class="p">,</span> <span class="mf">0.85604541</span><span class="p">,</span> <span class="mf">0.17675796</span><span class="p">,</span> <span class="mf">0.32306662</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">],</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">Q</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[-10.        ,  19.7365809 ,  19.7365809 ,   5.42015853,
+          5.42015853],
+       [ 19.7365809 , -10.        ,  20.67626392,   0.17675796,
+          0.85604541],
+       [ 19.7365809 ,  20.67626392, -10.        ,   0.85604541,
+          0.17675796],
+       [  5.42015853,   0.17675796,   0.85604541, -10.        ,
+          0.32306662],
+       [  5.42015853,   0.85604541,   0.17675796,   0.32306662,
+        -10.        ]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">bitstring_cost</span><span class="p">(</span><span class="n">bitstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">qubo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">bitstring</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">qubo</span> <span class="o">@</span> <span class="n">z</span><span class="p">)</span>
+
+
+<span class="n">bitstrings</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">))]</span>
+<span class="n">ranked</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(((</span><span class="n">b</span><span class="p">,</span> <span class="n">bitstring_cost</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">Q</span><span class="p">))</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bitstrings</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">optimal_bitstrings</span> <span class="o">=</span> <span class="p">[</span><span class="n">b</span> <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ranked</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ranked</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Top 5 classical solutions:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ranked</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">.9f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optimal bitstrings:&quot;</span><span class="p">,</span> <span class="n">optimal_bitstrings</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Top 5 classical solutions:
+01011: -27.288260020
+00111: -27.288260020
+00101: -19.646484080
+01010: -19.646484080
+00011: -19.353866760
+
+Optimal bitstrings: [&#39;01011&#39;, &#39;00111&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Solving-the-QUBO-with-qiskit-pasqal-provider">
+<h2>Solving the QUBO with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code><a class="headerlink" href="#Solving-the-QUBO-with-qiskit-pasqal-provider" title="Link to this heading">¶</a></h2>
+<p>Pulser-style Ising dynamics can be programmed through <code class="docutils literal notranslate"><span class="pre">HamiltonianGate</span></code> and executed with <code class="docutils literal notranslate"><span class="pre">SamplerV2</span></code>.</p>
+<p>The mapping idea is:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\left[\frac{C_6}{R_{ij}^6}\right]_{i \neq j} \leftrightarrow Q_{\text{off-diagonal}}\]</div>
+</div>
+<section id="1.-Pick-a-Device">
+<h3>1. Pick a Device<a class="headerlink" href="#1.-Pick-a-Device" title="Link to this heading">¶</a></h3>
+<p>We explicitly target <code class="docutils literal notranslate"><span class="pre">DigitalAnalogDevice</span></code>.</p>
+</section>
+<section id="2.-Create-the-Register">
+<h3>2. Create the Register<a class="headerlink" href="#2.-Create-the-Register" title="Link to this heading">¶</a></h3>
+<p>We optimize atom coordinates so that pairwise interaction strengths approximate the QUBO couplings. The resulting coordinates define the register used by the analog gate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">provider</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
+<span class="n">layout</span> <span class="o">=</span> <span class="n">FreeLayout</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)],</span> <span class="n">slug</span><span class="o">=</span><span class="s2">&quot;qubo-layout&quot;</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">PasqalTarget</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">DigitalAnalogDevice</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">device</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Backend:&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interaction coefficient:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">interaction_coeff</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Max sequence duration (ns):&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">max_sequence_duration</span><span class="p">)</span>
+
+<span class="c1"># Real QPU execution options:</span>
+<span class="c1"># 1) Pasqal Cloud (FRESNEL QPU)</span>
+<span class="c1"># from qiskit_pasqal_provider.utils import RemoteConfig</span>
+<span class="c1"># remote_config = RemoteConfig(</span>
+<span class="c1">#     username=&quot;&lt;PASQAL_USERNAME&gt;&quot;,</span>
+<span class="c1">#     password=&quot;&lt;PASQAL_PASSWORD&gt;&quot;,</span>
+<span class="c1">#     project_id=&quot;&lt;PASQAL_PROJECT_ID&gt;&quot;,</span>
+<span class="c1"># )</span>
+<span class="c1"># provider = PasqalProvider(remote_config=remote_config)</span>
+<span class="c1"># backend = provider.get_backend(&quot;fresnel&quot;)</span>
+<span class="c1"># sampler = SamplerV2(backend)</span>
+<span class="c1">#</span>
+<span class="c1"># 2) On-prem scheduler via QRMI</span>
+<span class="c1"># Keep the same circuit construction and sampling flow, and submit through QRMI.</span>
+<span class="c1"># https://github.com/qiskit-community/qrmi</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Backend: QutipEmulatorBackend
+Device: DigitalAnalogDevice
+Interaction coefficient: 5420158.53
+Max sequence duration (ns): None
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_mapping</span><span class="p">(</span>
+    <span class="n">new_coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">qubo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">interaction_coeff</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">new_coords</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qubo</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">mapped</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">interaction_coeff</span> <span class="o">/</span> <span class="n">pdist</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mapped</span> <span class="o">-</span> <span class="n">qubo</span><span class="p">))</span>
+
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+    <span class="n">evaluate_mapping</span><span class="p">,</span>
+    <span class="n">x0</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">interaction_coeff</span><span class="p">),</span>
+    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Nelder-Mead&quot;</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+    <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">100000</span><span class="p">,</span> <span class="s2">&quot;maxfev&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">coords</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[ 2.31281516, -0.23002871],
+       [-2.93655481, -6.36935057],
+       [-5.62649393,  1.15594212],
+       [ 8.49894067, -8.25563437],
+       [ 3.34198769,  9.94592252]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">qubits</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;q</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">coord</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords</span><span class="p">)}</span>
+<span class="n">reg</span> <span class="o">=</span> <span class="n">Register</span><span class="p">(</span><span class="n">qubits</span><span class="p">)</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span>
+    <span class="n">blockade_radius</span><span class="o">=</span><span class="n">device</span><span class="o">.</span><span class="n">rydberg_blockade_radius</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">draw_graph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">draw_half_radius</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_qubo_with_qpp_8_0.png" src="../_images/tutorials_qubo_with_qpp_8_0.png" />
+</div>
+</div>
+</section>
+<section id="3.-Pick-the-channels">
+<h3>3. Pick the channels<a class="headerlink" href="#3.-Pick-the-channels" title="Link to this heading">¶</a></h3>
+<p>In the Pulser sequence this would be a <code class="docutils literal notranslate"><span class="pre">rydberg_global</span></code> channel declaration. With <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code>, this channel selection is handled internally when building the sequence from <code class="docutils literal notranslate"><span class="pre">HamiltonianGate</span></code>.</p>
+</section>
+<section id="4.-Add-the-Pulses">
+<h3>4. Add the Pulses<a class="headerlink" href="#4.-Add-the-Pulses" title="Link to this heading">¶</a></h3>
+<p>Following the same adiabatic idea, we use a pulse schedule that:</p>
+<ul class="simple">
+<li><p>starts from low amplitude and negative detuning,</p></li>
+<li><p>ramps through an intermediate region,</p></li>
+<li><p>ends at low amplitude and positive detuning.</p></li>
+</ul>
+<p>If the evolution is slow enough, sampled bitstrings concentrate near low-energy (low-cost) QUBO solutions.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Omega</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">Q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]))</span>
+<span class="n">delta_0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">5.0</span>
+<span class="n">delta_f</span> <span class="o">=</span> <span class="mf">5.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_qubo_circuit</span><span class="p">(</span><span class="n">duration_ns</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span>
+        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">Omega</span><span class="p">,</span> <span class="mf">1e-9</span><span class="p">],</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">duration_ns</span><span class="p">,</span>
+        <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">detuning</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span>
+        <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">delta_0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">delta_f</span><span class="p">],</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">duration_ns</span><span class="p">,</span>
+        <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">detuning</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">coords</span><span class="p">)</span>
+    <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Q</span><span class="p">))</span>
+    <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">qc</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duration_ns</span> <span class="o">=</span> <span class="mi">4000</span>
+<span class="n">shots</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">qubo_qc</span> <span class="o">=</span> <span class="n">build_qubo_circuit</span><span class="p">(</span><span class="n">duration_ns</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qubo_qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="n">shots</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">list</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;00111&#39;, 566),
+ (&#39;01011&#39;, 321),
+ (&#39;00011&#39;, 83),
+ (&#39;01001&#39;, 14),
+ (&#39;00110&#39;, 7),
+ (&#39;10000&#39;, 3),
+ (&#39;10010&#39;, 2),
+ (&#39;00001&#39;, 2),
+ (&#39;10001&#39;, 1),
+ (&#39;10011&#39;, 1)]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bar_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tab:red&quot;</span> <span class="k">if</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">optimal_bitstrings</span> <span class="k">else</span> <span class="s2">&quot;tab:green&quot;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="n">bar_colors</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;bitstrings&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Sampled distribution (optimal bitstrings in red)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_qubo_with_qpp_12_0.png" src="../_images/tutorials_qubo_with_qpp_12_0.png" />
+</div>
+</div>
+<p>The red bars correspond to the exact classical optima (<code class="docutils literal notranslate"><span class="pre">01011</span></code> and <code class="docutils literal notranslate"><span class="pre">00111</span></code>).</p>
+<p>With a good adiabatic schedule, these low-cost bitstrings dominate the sampled distribution.</p>
+</section>
+</section>
+<section id="How-does-the-time-evolution-affect-the-quality-of-the-results?">
+<h2>How does the time evolution affect the quality of the results?<a class="headerlink" href="#How-does-the-time-evolution-affect-the-quality-of-the-results?" title="Link to this heading">¶</a></h2>
+<p>We evaluate quality through the sampled, count-weighted QUBO cost:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\sum_i \frac{c_i}{\sum_j c_j} z_i^TQz_i\]</div>
+</div>
+<p>We sweep total evolution time from 1 to 10 microseconds and track how this average cost changes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">average_qubo_cost</span><span class="p">(</span><span class="n">counter</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">qubo</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">weighted</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">counter</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">*</span> <span class="n">bitstring_cost</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">qubo</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">counter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weighted</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+
+<span class="n">time_grid_us</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">costs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">t_us</span> <span class="ow">in</span> <span class="n">time_grid_us</span><span class="p">:</span>
+    <span class="n">qc_t</span> <span class="o">=</span> <span class="n">build_qubo_circuit</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">t_us</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
+    <span class="n">counts_t</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc_t</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span>
+    <span class="n">costs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_qubo_cost</span><span class="p">(</span><span class="n">counts_t</span><span class="p">,</span> <span class="n">Q</span><span class="p">))</span>
+<span class="n">costs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[-18.757088925906665,
+ -21.6228470171,
+ -23.412233603906667,
+ -26.161913006379997,
+ -25.866347384106664,
+ -26.34293043648,
+ -26.734600752413332,
+ -26.860708759186664,
+ -26.929201589659996,
+ -27.075046053393333]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_grid_us</span><span class="p">,</span> <span class="n">costs</span><span class="p">,</span> <span class="s2">&quot;--o&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;total time evolution (µs)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;average QUBO cost&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Adiabatic trend&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/tutorials_qubo_with_qpp_16_0.png" src="../_images/tutorials_qubo_with_qpp_16_0.png" />
+</div>
+</div>
+</section>
+<section id="To-go-further">
+<h2>To go further<a class="headerlink" href="#To-go-further" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>The simple heuristic used here for <code class="docutils literal notranslate"><span class="pre">Omega</span></code> and detuning works for this QUBO, but other instances can require retuning.</p></li>
+<li><p>A practical next step is to wrap schedule parameters in an outer optimization loop minimizing the sampled average cost.</p></li>
+<li><p>For more general QUBOs (for example, mixed-sign or structure requiring local control), local addressability strategies may be needed.</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        <div class="related-pages">
+          <a class="next-page" href="../apidocs/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">QPP API References</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="introduction_to_qpp.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a><ul>
+<li><a class="reference internal" href="#Introduction">Introduction</a></li>
+<li><a class="reference internal" href="#Solving-the-QUBO-with-qiskit-pasqal-provider">Solving the QUBO with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a><ul>
+<li><a class="reference internal" href="#1.-Pick-a-Device">1. Pick a Device</a></li>
+<li><a class="reference internal" href="#2.-Create-the-Register">2. Create the Register</a></li>
+<li><a class="reference internal" href="#3.-Pick-the-channels">3. Pick the channels</a></li>
+<li><a class="reference internal" href="#4.-Add-the-Pulses">4. Add the Pulses</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#How-does-the-time-evolution-affect-the-quality-of-the-results?">How does the time evolution affect the quality of the results?</a></li>
+<li><a class="reference internal" href="#To-go-further">To go further</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=938c9ccc"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>
