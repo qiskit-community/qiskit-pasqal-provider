@@ -21,7 +21,7 @@ jobs:
       matrix:
         qiskit-track: ["qiskit1", "qiskit2"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:
