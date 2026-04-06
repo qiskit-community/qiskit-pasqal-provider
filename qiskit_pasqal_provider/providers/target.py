@@ -1,4 +1,4 @@
-"""Defines the Pasqal Target and Device classes"""
+"""Define Pulser-oriented Pasqal target and device wrappers."""
 
 try:
     from enum import StrEnum
@@ -50,8 +50,11 @@ class PasqalDevice(Device):
 
 class PasqalTarget:
     """
-    `PasqalDevice` class defines `Pulser`'s device and register layouts
-    to be used by `PasqalBackend` instances.
+    Wrap Pulser device and layout objects for Pasqal backends.
+
+    This class intentionally stays Pulser-oriented instead of inheriting
+    ``qiskit.transpiler.Target``. Backends in this provider consume Pulser
+    ``Device`` and ``RegisterLayout`` objects directly when building sequences.
     """
 
     _device: PasqalDevice | Device
@@ -67,18 +70,14 @@ class PasqalTarget:
         cloud: PasqalCloud | None = None,
     ):
         """
-        PasqalDevice constructor defines device and register layout used by
-        PasqalBackend instance.
+        Define the device and register layout used by Pasqal backends.
 
         Args:
-            device (PasqalDeviceType, Device, str): `PasqalDeviceType` value or string
-                with the name of the device when the device is known; Use `PasqalDevice`
-                when providing custom device instance. Default to `"analog"`.
-            layout (PasqalLayout, None): Optional parameter to define the layout of the
-                device, if the device does not provide one. It will try to retrieve the
-                layout from the device, unless it provides `PasqalLayout` instance. If
-                `None` is provided and no layout is found, an error raises. Default to
-                `None`.
+            device (PasqalDeviceType | PasqalDevice | Device | str): Device selector
+                or explicit Pulser device instance. Use this with local Pulser devices,
+                or pass a `PasqalTarget` originating from integrations such as QRMI.
+            layout (PasqalLayout | RegisterLayout, optional): Optional layout to use
+                when the selected device does not expose one.
             cloud (PasqalCloud): Optional cloud object that retrieves the available QPU.
                 Default to `None`.
         """
