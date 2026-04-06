@@ -1,9 +1,9 @@
-"""Remote emulator backend"""
+"""Remote cloud backend."""
 
 from copy import deepcopy
 from typing import Any
 
-from pasqal_cloud.device import EmulatorType
+from pasqal_cloud.device import DeviceTypeName
 from pasqal_cloud.job import CreateJob
 from pulser.register import Register
 from pulser_pasqal import PasqalCloud
@@ -22,12 +22,12 @@ from qiskit_pasqal_provider.utils import RemoteConfig
 
 
 class EmuRemoteBackend(PasqalBackend):
-    """Remotely emulate backends. It gathers the remote backends."""
+    """Remote cloud backend for EMU device types."""
 
     def __init__(
         self,
         backend_name: str,
-        emulator: EmulatorType,
+        device_type: DeviceTypeName,
         remote_config: RemoteConfig,
         target: PasqalTarget | None = None,
     ):
@@ -36,7 +36,7 @@ class EmuRemoteBackend(PasqalBackend):
         super().__init__()
 
         self._backend_name = backend_name
-        self._emulator = emulator
+        self._device_type = device_type
         self._cloud = PasqalCloud(
             username=remote_config.username,
             password=remote_config.password,
@@ -88,7 +88,7 @@ class EmuRemoteBackend(PasqalBackend):
             run_input
         )
 
-        if self._emulator == EmulatorType.EMU_FRESNEL:
+        if self._device_type == DeviceTypeName.EMU_FRESNEL:
             # define automatic layout based on register (limited functionality)
             analog_register = analog_register.with_automatic_layout(
                 device=self.target.device

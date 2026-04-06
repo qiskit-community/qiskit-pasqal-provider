@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 
 from pasqal_cloud.batch import Batch
-from pasqal_cloud.device import EmulatorType, BaseConfig
+from pasqal_cloud.device import BaseConfig, DeviceTypeName
 from pasqal_cloud.job import CreateJob, Job
 from pasqal_cloud.utils.responses import PaginatedResponse
 from pasqal_cloud.utils.filters import JobFilters
@@ -214,7 +214,7 @@ class MockSDK:
         _serialized_sequence: str,
         jobs: list[CreateJob],
         open: bool | None = None,  # pylint: disable=redefined-builtin
-        emulator: EmulatorType | None = None,
+        device_type: DeviceTypeName | None = None,
         configuration: BaseConfig | None = None,
         wait: bool = False,  # pylint: disable=unused-argument
     ) -> Batch:
@@ -226,7 +226,7 @@ class MockSDK:
             complete=bool(open),
             created_at="",
             updated_at="",
-            device_type=emulator if emulator else "FRESNEL",
+            device_type=(device_type or DeviceTypeName.FRESNEL).value,
             project_id="",
             user_id="",
             status="DONE",

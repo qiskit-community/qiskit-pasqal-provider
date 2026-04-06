@@ -140,7 +140,7 @@ def test_remote_job_rejects_multi_job_batch(mock_sdk: MockSDK) -> None:
         def __init__(self, executor: MockSDK) -> None:
             self._executor = executor
             self.name = "MockBackend"
-            self.emulator = None
+            self.device_type = None
 
         @property
         def executor(self) -> MockSDK:
@@ -199,7 +199,7 @@ def test_remote_job_uses_job_status_for_metadata() -> None:
         def __init__(self) -> None:
             self._executor = MockExecutor()
             self.name = "MockBackend"
-            self.emulator = None
+            self.device_type = None
 
         @property
         def executor(self) -> MockExecutor:
@@ -257,7 +257,7 @@ def test_remote_job_wait_false_is_non_blocking() -> None:
         def __init__(self) -> None:
             self._executor = MockExecutor()
             self.name = "MockBackend"
-            self.emulator = None
+            self.device_type = None
 
         @property
         def executor(self) -> MockExecutor:
