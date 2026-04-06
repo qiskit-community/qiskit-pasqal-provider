@@ -6,10 +6,10 @@ from sys import platform
 import pytest
 from pulser import Register, Sequence
 from qiskit.circuit import Parameter, QuantumCircuit
+from qiskit.primitives import PrimitiveResult
 
 from qiskit_pasqal_provider.providers.gate import HamiltonianGate, InterpolatePoints
 from qiskit_pasqal_provider.providers.provider import PasqalProvider
-from qiskit_pasqal_provider.providers.result import PasqalResult
 from qiskit_pasqal_provider.providers.sampler import SamplerV2
 from qiskit_pasqal_provider.providers.target import AVAILABLE_DEVICES
 
@@ -66,7 +66,7 @@ def test_local_sampler_backends(
     sampler = SamplerV2(backend)
     results = sampler.run([qc]).result()
 
-    assert isinstance(results, PasqalResult)
+    assert isinstance(results, PrimitiveResult)
 
     with pytest.raises(ValueError):
         seq = Sequence(Register({"q0": (2, -1)}), device=AVAILABLE_DEVICES["analog"])
@@ -138,7 +138,7 @@ def test_local_sampler_backends_parametric(
     else:
         results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1]})]).result()
 
-    assert isinstance(results, PasqalResult)
+    assert isinstance(results, PrimitiveResult)
 
 
 def test_sampler_rejects_multiple_pubs(square_coords: list) -> None:
@@ -231,7 +231,7 @@ def test_local_sampler_backends_parametric_phase_parameter(
     sampler = SamplerV2(provider.get_backend(backend_name))
     results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: 0.1})]).result()
 
-    assert isinstance(results, PasqalResult)
+    assert isinstance(results, PrimitiveResult)
 
 
 @pytest.mark.parametrize(
@@ -272,7 +272,7 @@ def test_local_sampler_backends_parametric_phase_expression(
     sampler = SamplerV2(provider.get_backend(backend_name))
     results = sampler.run([(qc, {a: [1, 1, 1], d: [0, 0.5, 1], p: 0.2})]).result()
 
-    assert isinstance(results, PasqalResult)
+    assert isinstance(results, PrimitiveResult)
 
 
 @pytest.mark.parametrize(
@@ -311,4 +311,4 @@ def test_local_sampler_backends_parametric_duration_expression(
     sampler = SamplerV2(provider.get_backend(backend_name))
     results = sampler.run([(qc, {t: 1000})]).result()
 
-    assert isinstance(results, PasqalResult)
+    assert isinstance(results, PrimitiveResult)

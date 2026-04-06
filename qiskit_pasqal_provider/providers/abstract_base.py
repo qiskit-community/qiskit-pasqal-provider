@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, cast
 
 from qiskit import QuantumCircuit
-from qiskit.primitives import BasePrimitiveJob
+from qiskit.primitives import BasePrimitiveJob, PrimitiveResult, SamplerPubResult
 from qiskit.providers import BackendV2, JobStatus
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
 from pasqal_cloud import SDK as PasqalSDK
@@ -16,7 +16,6 @@ from pulser.register.register_layout import RegisterLayout
 from pulser_simulation.simresults import SimulationResults
 
 from .layouts import PasqalLayout
-from .result import PasqalResult
 from .target import PasqalTarget
 from ..utils import PasqalExecutor
 
@@ -101,11 +100,11 @@ class PasqalBackend(BackendV2, ABC):
         """
 
 
-class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
+class PasqalJob(BasePrimitiveJob[PrimitiveResult[SamplerPubResult], JobStatus], ABC):
     """ABC for Pasqal Jobs"""
 
     _backend: PasqalBackend
-    _result: PasqalResult | None
+    _result: PrimitiveResult[SamplerPubResult] | None
     _status: JobStatus
     _executor: PasqalExecutor | PasqalSDK
 
@@ -113,7 +112,7 @@ class PasqalJob(BasePrimitiveJob[PasqalResult, JobStatus], ABC):
         """Pasqal backend instance."""
         return self._backend
 
-    def result(self) -> PasqalResult:
+    def result(self) -> PrimitiveResult[SamplerPubResult]:
         """Return the result of the job."""
         return self._result
 

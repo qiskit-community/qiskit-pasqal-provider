@@ -51,7 +51,9 @@ class PasqalProvider:
 
         Args:
             backend_name: a string containing the name of the desired backend.
-            target: the optional Pasqal target device.
+            target: optional `PasqalTarget` used by backend sequence execution.
+                This provider expects Pulser-oriented target data (`device` and
+                `layout`), including objects built through QRMI integrations.
 
         Returns:
             A PasqalBackend instance. It will be a local or remote backend

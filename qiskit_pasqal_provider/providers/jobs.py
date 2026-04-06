@@ -2,6 +2,7 @@
 
 from typing import Any, cast
 
+from qiskit.primitives import PrimitiveResult, SamplerPubResult
 from qiskit.providers.jobstatus import JobStatus
 from pasqal_cloud import SDK as PasqalSDK
 from pasqal_cloud.batch import Batch as PasqalBatch
@@ -9,7 +10,7 @@ from pasqal_cloud.job import CreateJob
 from pulser.backend.remote import Sequence
 
 from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, PasqalJob
-from qiskit_pasqal_provider.providers.result import PasqalResult
+from qiskit_pasqal_provider.providers.result import build_primitive_result
 from qiskit_pasqal_provider.utils import PasqalExecutor
 
 
@@ -20,7 +21,7 @@ class PasqalLocalJob(PasqalJob):
     """Class to encapsulate local jobs submitted to Pasqal backends."""
 
     _backend: PasqalBackend
-    _result: PasqalResult | None
+    _result: PrimitiveResult[SamplerPubResult] | None
     _status: JobStatus
     _executor: PasqalExecutor
 
@@ -50,7 +51,7 @@ class PasqalLocalJob(PasqalJob):
         self.metadata["success"] = True
         self.metadata["config"] = getattr(self._executor, "_config", None)
 
-        self._result = PasqalResult(
+        self._result = build_primitive_result(
             backend_name=self.backend().name,
             job_id=self._job_id,
             results=results,
@@ -67,7 +68,7 @@ class PasqalRemoteJob(PasqalJob):
     """A Pasqal job for remote executors (emulator or QPU)."""
 
     _backend: PasqalBackend
-    _result: PasqalResult | None
+    _result: PrimitiveResult[SamplerPubResult] | None
     _status: JobStatus
     _executor: PasqalSDK
     _batch: PasqalBatch | None
@@ -168,7 +169,7 @@ class PasqalRemoteJob(PasqalJob):
 
         # Non-blocking submissions should not force immediate result retrieval.
         if self._wait:
-            self._result = PasqalResult(
+            self._result = build_primitive_result(
                 backend_name=self.backend().name,
                 job_id=job_id,
                 results=None,
@@ -185,11 +186,11 @@ class PasqalRemoteJob(PasqalJob):
             self._status = self._status_to_job_status(status)
         return self._status
 
-    def result(self) -> PasqalResult:
+    def result(self) -> PrimitiveResult[SamplerPubResult]:
         """Return the result of the remote job, waiting if still running."""
 
         if self._result is None:
-            self._result = PasqalResult(
+            self._result = build_primitive_result(
                 backend_name=self.backend().name,
                 job_id=self._job_id,
                 results=None,
