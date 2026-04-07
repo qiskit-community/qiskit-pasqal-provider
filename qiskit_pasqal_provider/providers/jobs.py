@@ -27,12 +27,11 @@ class PasqalLocalJob(PasqalJob):
 
     def __init__(self, backend: PasqalBackend, job_id: str, **kwargs: Any):
         """
-        A Pasqal job for local emulators.
+        A Pasqal job for local backends.
 
         Args:
-            backend: Pasqal backends (must be an emulator)
+            backend: Pasqal backend instance
             job_id: job id of the execution
-            emulator: which emulator to use
             **kwargs: extra arguments if needed
         """
 
@@ -65,7 +64,7 @@ class PasqalLocalJob(PasqalJob):
 
 
 class PasqalRemoteJob(PasqalJob):
-    """A Pasqal job for remote executors (emulator or QPU)."""
+    """A Pasqal job for remote cloud executors."""
 
     _backend: PasqalBackend
     _result: PrimitiveResult[SamplerPubResult] | None
@@ -82,7 +81,7 @@ class PasqalRemoteJob(PasqalJob):
         **kwargs: Any,
     ):
         """
-        A Pasqal job for remote executors (emulator or QPU).
+        A Pasqal job for remote cloud executors.
 
         Args:
             job_id: job id of the execution
@@ -140,8 +139,8 @@ class PasqalRemoteJob(PasqalJob):
         self._status = JobStatus.RUNNING
 
         create_batch_kwargs: dict[str, Any] = {"wait": self._wait}
-        if self._backend.emulator is not None:
-            create_batch_kwargs["emulator"] = self._backend.emulator
+        if self._backend.device_type is not None:
+            create_batch_kwargs["device_type"] = self._backend.device_type
 
         self._batch = self._executor.create_batch(
             self._seq.to_abstract_repr(),

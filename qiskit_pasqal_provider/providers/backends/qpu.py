@@ -27,7 +27,6 @@ class QPUBackend(PasqalBackend):
 
     _version: str = "0.1.0"
     _backend_name = PasqalBackendType.FRESNEL
-    _emulator = None
 
     def __init__(self, remote_config: RemoteConfig):
         """initialize and instantiate PasqalCloud."""

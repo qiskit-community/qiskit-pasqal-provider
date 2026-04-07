@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from pasqal_cloud.device import EmulatorType
+from pasqal_cloud.device import DeviceTypeName
 from qiskit import QuantumCircuit
 
 from qiskit_pasqal_provider.providers.abstract_base import (
@@ -30,17 +30,17 @@ class PasqalRemoteBackend(PasqalBackend):
         match backend:
             case "remote-emu-free":
                 return EmuRemoteBackend(
-                    backend, EmulatorType.EMU_FREE, remote_config, target
+                    backend, DeviceTypeName.EMU_FREE, remote_config, target
                 )
 
             case "remote-emu-mps":
                 return EmuRemoteBackend(
-                    backend, EmulatorType.EMU_MPS, remote_config, target
+                    backend, DeviceTypeName.EMU_MPS, remote_config, target
                 )
 
             case "remote-emu-fresnel":
                 return EmuRemoteBackend(
-                    backend, EmulatorType.EMU_FRESNEL, remote_config, target
+                    backend, DeviceTypeName.EMU_FRESNEL, remote_config, target
                 )
 
             case "fresnel":

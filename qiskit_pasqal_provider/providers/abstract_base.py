@@ -10,7 +10,7 @@ from qiskit.primitives import BasePrimitiveJob, PrimitiveResult, SamplerPubResul
 from qiskit.providers import BackendV2, JobStatus
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
 from pasqal_cloud import SDK as PasqalSDK
-from pasqal_cloud.device import EmulatorType
+from pasqal_cloud.device import DeviceTypeName
 from pulser.backend.remote import JobParams, RemoteResults
 from pulser.register.register_layout import RegisterLayout
 from pulser_simulation.simresults import SimulationResults
@@ -61,7 +61,7 @@ class PasqalBackend(BackendV2, ABC):
     _backend_name: str | PasqalBackendType
     _version: str
     _executor: PasqalExecutor | PasqalSDK  # pylint: disable=E0601
-    _emulator: EmulatorType | None
+    _device_type: DeviceTypeName | None = None
 
     @property
     def backend_name(self) -> str | PasqalBackendType:
@@ -70,13 +70,13 @@ class PasqalBackend(BackendV2, ABC):
 
     @property
     def executor(self) -> PasqalExecutor | PasqalSDK:
-        """Pasqal emulator or QPU instance"""
+        """Pasqal executor instance."""
         return self._executor
 
     @property
-    def emulator(self) -> EmulatorType | None:
-        """Emulator object"""
-        return self._emulator
+    def device_type(self) -> DeviceTypeName | None:
+        """Pasqal cloud device type for remote runs."""
+        return self._device_type
 
     @abstractmethod
     def run(

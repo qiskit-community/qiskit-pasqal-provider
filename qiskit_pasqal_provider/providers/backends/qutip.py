@@ -26,7 +26,6 @@ class QutipEmulatorBackend(PasqalBackend):
 
     _version: str = "0.1.0"
     backend_name = PasqalBackendType.QUTIP
-    _emulator = None
 
     def __init__(self, target: PasqalTarget, **options: Any):
         """
