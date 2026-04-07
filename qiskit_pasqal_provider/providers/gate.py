@@ -4,6 +4,8 @@ from typing import Any, Union
 
 from numpy.typing import ArrayLike
 from pulser.math import AbstractArray
+from qiskit import qasm3
+from qiskit.circuit import QuantumCircuit
 from qiskit.circuit import ParameterExpression
 from qiskit.circuit.gate import Gate
 
@@ -15,6 +17,87 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
 )
 
 CoordsKey = Union[str, int, float]
+GridCodeType = float
+_QASM3_TRANSPORT_SCHEMA_VERSION = 1.0
+_GRID_TO_CODE: dict[GridLiteralType, GridCodeType] = {
+    "linear": 0.0,
+    "triangular": 1.0,
+    "square": 2.0,
+}
+_CODE_TO_GRID: dict[GridCodeType, GridLiteralType] = {
+    code: grid for grid, code in _GRID_TO_CODE.items()
+}
+
+
+def _to_float(value: Any, label: str) -> float:
+    if isinstance(value, ParameterExpression):
+        if value.parameters:
+            raise ValueError(
+                f"{label} must be numeric for OpenQASM3 transport serialization."
+            )
+        value = value.numeric()
+
+    try:
+        return float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{label} must be numeric.") from exc
+
+
+def _to_float_list(values: Any, label: str) -> list[float]:
+    if isinstance(values, ParameterExpression):
+        raise ValueError(
+            f"{label} must be numeric for OpenQASM3 transport serialization."
+        )
+
+    if isinstance(values, str):
+        raise ValueError(f"{label} must be an array-like sequence.")
+
+    try:
+        items = list(values)
+    except TypeError:
+        raise ValueError(f"{label} must be an array-like sequence.")
+
+    return [_to_float(value, f"{label}[{idx}]") for idx, value in enumerate(items)]
+
+
+def _encode_interpolate_points(
+    points: InterpolatePoints, label: str
+) -> tuple[list[float], list[float], float]:
+    values = _to_float_list(points.values, f"{label}.values")
+    times = (
+        []
+        if points.times is None
+        else _to_float_list(points.times, f"{label}.times")
+    )
+    if times and len(values) != len(times):
+        raise ValueError(f"{label}.times must have the same length as {label}.values.")
+    duration = _to_float(points.duration, f"{label}.duration")
+    return values, times, duration
+
+
+def _take_slice(
+    params: list[float], idx: int, size: int, label: str
+) -> tuple[list[float], int]:
+    end = idx + size
+    if end > len(params):
+        raise ValueError(
+            f"OpenQASM3 transport payload is truncated while reading {label}."
+        )
+    return params[idx:end], end
+
+
+def _insert_gate_declaration(
+    program: str, gate_name: str, num_params: int, num_qubits: int
+) -> str:
+    lines = program.splitlines()
+    declaration_params = ", ".join(f"p{k}" for k in range(num_params))
+    declaration_qubits = ", ".join(f"q{k}" for k in range(num_qubits))
+    declaration = f"gate {gate_name}({declaration_params}) {declaration_qubits} {{}}"
+    insert_idx = next(
+        (idx for idx, line in enumerate(lines) if line.startswith("qubit[")), len(lines)
+    )
+    lines.insert(insert_idx, declaration)
+    return "\n".join(lines) + "\n"
 
 
 class HamiltonianGate(Gate):
@@ -152,3 +235,214 @@ class HamiltonianGate(Gate):
         annotated: bool | None = None,
     ):
         raise AttributeError("Cannot have a control on an analog gate.")
+
+    def to_openqasm3_transport_params(self) -> list[float]:
+        """Encode this gate as a numeric payload for OpenQASM3 transport."""
+
+        amp_values, amp_times, amp_duration = _encode_interpolate_points(
+            self.amplitude, "amplitude"
+        )
+        det_values, det_times, det_duration = _encode_interpolate_points(
+            self.detuning, "detuning"
+        )
+        if abs(amp_duration - det_duration) > 1e-12:
+            raise ValueError(
+                "Amplitude and detuning duration must match for OpenQASM3 transport."
+            )
+
+        phase_mode = 0.0
+        phase_scalar = 0.0
+        phase_values: list[float] = []
+        phase_times: list[float] = []
+        if isinstance(self.phase, InterpolatePoints):
+            phase_mode = 1.0
+            phase_values, phase_times, _ = _encode_interpolate_points(
+                self.phase, "phase"
+            )
+        else:
+            phase_scalar = _to_float(self.phase, "phase")
+
+        payload = [
+            _QASM3_TRANSPORT_SCHEMA_VERSION,
+            float(self.num_qubits),
+            _GRID_TO_CODE[self._grid],
+            phase_mode,
+            phase_scalar,
+            amp_duration,
+            float(len(amp_values)),
+            float(len(det_values)),
+            float(len(phase_values)),
+            float(len(amp_times)),
+            float(len(det_times)),
+            float(len(phase_times)),
+        ]
+
+        for idx, coord in enumerate(self.analog_register.qubits.values()):
+            payload.extend(
+                [
+                    _to_float(coord[0], f"coords[{idx}].x"),
+                    _to_float(coord[1], f"coords[{idx}].y"),
+                ]
+            )
+
+        payload.extend(amp_values)
+        payload.extend(amp_times)
+        payload.extend(det_values)
+        payload.extend(det_times)
+        payload.extend(phase_values)
+        payload.extend(phase_times)
+        return payload
+
+    @classmethod
+    def from_openqasm3_transport_params(
+        cls, params: list[float]
+    ) -> "HamiltonianGate":
+        """Build a HamiltonianGate from an OpenQASM3 numeric payload."""
+
+        numeric_params = [_to_float(value, "transport parameter") for value in params]
+        if len(numeric_params) < 12:
+            raise ValueError("OpenQASM3 transport payload is too short.")
+
+        idx = 0
+        schema = int(round(numeric_params[idx]))
+        idx += 1
+        if schema != int(_QASM3_TRANSPORT_SCHEMA_VERSION):
+            raise ValueError(
+                f"Unsupported OpenQASM3 transport schema version: {schema}."
+            )
+
+        num_qubits = int(round(numeric_params[idx]))
+        idx += 1
+
+        grid_code = numeric_params[idx]
+        idx += 1
+        if grid_code not in _CODE_TO_GRID:
+            raise ValueError(f"Unknown grid code in OpenQASM3 payload: {grid_code}.")
+        grid = _CODE_TO_GRID[grid_code]
+
+        phase_mode = int(round(numeric_params[idx]))
+        idx += 1
+        phase_scalar = numeric_params[idx]
+        idx += 1
+
+        duration = numeric_params[idx]
+        idx += 1
+        amp_size = int(round(numeric_params[idx]))
+        idx += 1
+        det_size = int(round(numeric_params[idx]))
+        idx += 1
+        phase_size = int(round(numeric_params[idx]))
+        idx += 1
+        amp_times_size = int(round(numeric_params[idx]))
+        idx += 1
+        det_times_size = int(round(numeric_params[idx]))
+        idx += 1
+        phase_times_size = int(round(numeric_params[idx]))
+        idx += 1
+
+        if amp_size < 1 or det_size < 1:
+            raise ValueError("OpenQASM3 transport payload requires non-empty waveforms.")
+
+        coords_flat, idx = _take_slice(
+            numeric_params, idx, 2 * num_qubits, "coordinates"
+        )
+        coords = [
+            [coords_flat[2 * atom_idx], coords_flat[2 * atom_idx + 1]]
+            for atom_idx in range(num_qubits)
+        ]
+
+        amp_values, idx = _take_slice(numeric_params, idx, amp_size, "amplitude values")
+        amp_times, idx = _take_slice(
+            numeric_params, idx, amp_times_size, "amplitude times"
+        )
+        det_values, idx = _take_slice(numeric_params, idx, det_size, "detuning values")
+        det_times, idx = _take_slice(
+            numeric_params, idx, det_times_size, "detuning times"
+        )
+        phase_values, idx = _take_slice(
+            numeric_params, idx, phase_size, "phase values"
+        )
+        phase_times, idx = _take_slice(
+            numeric_params, idx, phase_times_size, "phase times"
+        )
+
+        if idx != len(numeric_params):
+            raise ValueError("OpenQASM3 transport payload has extra trailing values.")
+
+        amplitude = InterpolatePoints(
+            values=amp_values,
+            duration=duration,
+            times=amp_times or None,
+        )
+        detuning = InterpolatePoints(
+            values=det_values,
+            duration=duration,
+            times=det_times or None,
+        )
+
+        if phase_mode == 0:
+            phase: float | InterpolatePoints = phase_scalar
+        elif phase_mode == 1:
+            phase = InterpolatePoints(
+                values=phase_values,
+                duration=duration,
+                times=phase_times or None,
+            )
+        else:
+            raise ValueError(f"Unsupported phase mode in OpenQASM3 payload: {phase_mode}.")
+
+        return cls(
+            amplitude=amplitude,
+            detuning=detuning,
+            phase=phase,
+            coords=coords,
+            grid_transform=grid,
+        )
+
+
+def dumps_qpp_openqasm3(
+    circuit: QuantumCircuit, gate_name: str = "HG"
+) -> str:
+    """Serialize a one-gate Hamiltonian circuit to OpenQASM3 transport format."""
+
+    if len(circuit.data) != 1:
+        raise ValueError("OpenQASM3 transport expects a circuit with exactly one gate.")
+
+    operation = circuit.data[0].operation
+    if not isinstance(operation, HamiltonianGate):
+        raise ValueError(
+            "OpenQASM3 transport expects a circuit with one HamiltonianGate."
+        )
+
+    payload = operation.to_openqasm3_transport_params()
+    transport_circuit = QuantumCircuit(operation.num_qubits)
+    transport_circuit.append(
+        Gate(gate_name, operation.num_qubits, payload), transport_circuit.qubits
+    )
+    program = qasm3.dumps(transport_circuit, basis_gates=("U", gate_name))
+    return _insert_gate_declaration(
+        program, gate_name=gate_name, num_params=len(payload), num_qubits=operation.num_qubits
+    )
+
+
+def loads_qpp_openqasm3(
+    program: str, gate_name: str = "HG"
+) -> QuantumCircuit:
+    """Deserialize an OpenQASM3 transport program into a Hamiltonian circuit."""
+
+    transport_circuit = qasm3.loads(program)
+    if len(transport_circuit.data) != 1:
+        raise ValueError("OpenQASM3 transport expects exactly one gate call.")
+
+    operation = transport_circuit.data[0].operation
+    if operation.name != gate_name:
+        raise ValueError(
+            f"OpenQASM3 transport expected gate '{gate_name}', found '{operation.name}'."
+        )
+
+    gate = HamiltonianGate.from_openqasm3_transport_params(
+        [_to_float(value, "transport parameter") for value in operation.params]
+    )
+    circuit = QuantumCircuit(gate.num_qubits)
+    circuit.append(gate, circuit.qubits)
+    return circuit

@@ -22,6 +22,7 @@ dependencies = [
     "pulser-pasqal>=0.20,<1",
     "pasqal-cloud>=0.20,<1",
     "sympy",
+    "openqasm3>=1,<2",
 ]
 
 [project.optional-dependencies]

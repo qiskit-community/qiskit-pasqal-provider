@@ -131,3 +131,30 @@ To run this provider through a workload manager (for example in HPC environments
 see [QRMI](https://github.com/qiskit-community/qrmi).
 QRMI provides queue and scheduler integrations around Qiskit workloads, and can be
 used with this provider in those environments.
+
+
+### OpenQASM3 Serialization
+
+For serializing Qiskit programs we can use the OpenQASM3 format.
+Since we have a custom gate, we need custom serialize and deserialize methods.
+
+```python
+from qiskit.circuit import QuantumCircuit
+from qiskit_pasqal_provider.providers.gate import (
+    HamiltonianGate,
+    InterpolatePoints,
+    dumps_qpp_openqasm3,
+    loads_qpp_openqasm3,
+)
+
+coords = [[0, 0], [3, 5.2], [6, 0], [9, -5.2], [9, 5.2], [12, 0]]
+times = [0, 0.2, 0.8, 1]
+ampl = InterpolatePoints(values=[0, 4, 4, 0], times=times)
+det = InterpolatePoints(values=[-10, -10, -5, -5], times=times)
+
+qc = QuantumCircuit(len(coords))
+qc.append(HamiltonianGate(ampl, det, 0.0, coords), qc.qubits)
+
+program = dumps_qpp_openqasm3(qc)
+restored = loads_qpp_openqasm3(program)
+```

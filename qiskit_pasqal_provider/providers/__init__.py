@@ -13,10 +13,17 @@ Qiskit Pasqal Provider classes and functions
     :toctree: ../stubs/
 
     HamiltonianGate
+    dumps_qpp_openqasm3
+    loads_qpp_openqasm3
     PasqalProvider
     SamplerV2
 """
 
-from .gate import HamiltonianGate
-from .provider import PasqalProvider
-from .sampler import SamplerV2
+# Explicit `as X` aliases mark intentional public re-exports for Ruff (F401).
+from .gate import (
+    HamiltonianGate as HamiltonianGate,
+    dumps_qpp_openqasm3 as dumps_qpp_openqasm3,
+    loads_qpp_openqasm3 as loads_qpp_openqasm3,
+)
+from .provider import PasqalProvider as PasqalProvider
+from .sampler import SamplerV2 as SamplerV2
