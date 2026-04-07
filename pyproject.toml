@@ -23,6 +23,7 @@ dependencies = [
     "pasqal-cloud>=0.20,<1",
     "sympy",
     "openqasm3>=1,<2",
+    "qiskit_qasm3_import>=0.6,<1",
 ]
 
 [project.optional-dependencies]

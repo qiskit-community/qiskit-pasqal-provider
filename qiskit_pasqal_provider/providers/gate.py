@@ -54,8 +54,8 @@ def _to_float_list(values: Any, label: str) -> list[float]:
 
     try:
         items = list(values)
-    except TypeError:
-        raise ValueError(f"{label} must be an array-like sequence.")
+    except TypeError as exc:
+        raise ValueError(f"{label} must be an array-like sequence.") from exc
 
     return [_to_float(value, f"{label}[{idx}]") for idx, value in enumerate(items)]
 
@@ -65,9 +65,7 @@ def _encode_interpolate_points(
 ) -> tuple[list[float], list[float], float]:
     values = _to_float_list(points.values, f"{label}.values")
     times = (
-        []
-        if points.times is None
-        else _to_float_list(points.times, f"{label}.times")
+        [] if points.times is None else _to_float_list(points.times, f"{label}.times")
     )
     if times and len(values) != len(times):
         raise ValueError(f"{label}.times must have the same length as {label}.values.")
@@ -294,10 +292,9 @@ class HamiltonianGate(Gate):
         return payload
 
     @classmethod
-    def from_openqasm3_transport_params(
-        cls, params: list[float]
-    ) -> "HamiltonianGate":
+    def from_openqasm3_transport_params(cls, params: list[float]) -> "HamiltonianGate":
         """Build a HamiltonianGate from an OpenQASM3 numeric payload."""
+        # pylint: disable=too-many-locals,too-many-statements
 
         numeric_params = [_to_float(value, "transport parameter") for value in params]
         if len(numeric_params) < 12:
@@ -341,7 +338,9 @@ class HamiltonianGate(Gate):
         idx += 1
 
         if amp_size < 1 or det_size < 1:
-            raise ValueError("OpenQASM3 transport payload requires non-empty waveforms.")
+            raise ValueError(
+                "OpenQASM3 transport payload requires non-empty waveforms."
+            )
 
         coords_flat, idx = _take_slice(
             numeric_params, idx, 2 * num_qubits, "coordinates"
@@ -359,9 +358,7 @@ class HamiltonianGate(Gate):
         det_times, idx = _take_slice(
             numeric_params, idx, det_times_size, "detuning times"
         )
-        phase_values, idx = _take_slice(
-            numeric_params, idx, phase_size, "phase values"
-        )
+        phase_values, idx = _take_slice(numeric_params, idx, phase_size, "phase values")
         phase_times, idx = _take_slice(
             numeric_params, idx, phase_times_size, "phase times"
         )
@@ -389,7 +386,9 @@ class HamiltonianGate(Gate):
                 times=phase_times or None,
             )
         else:
-            raise ValueError(f"Unsupported phase mode in OpenQASM3 payload: {phase_mode}.")
+            raise ValueError(
+                f"Unsupported phase mode in OpenQASM3 payload: {phase_mode}."
+            )
 
         return cls(
             amplitude=amplitude,
@@ -400,9 +399,7 @@ class HamiltonianGate(Gate):
         )
 
 
-def dumps_qpp_openqasm3(
-    circuit: QuantumCircuit, gate_name: str = "HG"
-) -> str:
+def dumps_qpp_openqasm3(circuit: QuantumCircuit, gate_name: str = "HG") -> str:
     """Serialize a one-gate Hamiltonian circuit to OpenQASM3 transport format."""
 
     if len(circuit.data) != 1:
@@ -421,13 +418,14 @@ def dumps_qpp_openqasm3(
     )
     program = qasm3.dumps(transport_circuit, basis_gates=("U", gate_name))
     return _insert_gate_declaration(
-        program, gate_name=gate_name, num_params=len(payload), num_qubits=operation.num_qubits
+        program,
+        gate_name=gate_name,
+        num_params=len(payload),
+        num_qubits=operation.num_qubits,
     )
 
 
-def loads_qpp_openqasm3(
-    program: str, gate_name: str = "HG"
-) -> QuantumCircuit:
+def loads_qpp_openqasm3(program: str, gate_name: str = "HG") -> QuantumCircuit:
     """Deserialize an OpenQASM3 transport program into a Hamiltonian circuit."""
 
     transport_circuit = qasm3.loads(program)

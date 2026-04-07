@@ -177,9 +177,7 @@ def test_openqasm3_transport_roundtrip_phase_waveform(square_coords: list) -> No
 
     qc = QuantumCircuit(len(square_coords))
     qc.append(gate, qc.qubits)
-    restored = loads_qpp_openqasm3(
-        dumps_qpp_openqasm3(qc)
-    )
+    restored = loads_qpp_openqasm3(dumps_qpp_openqasm3(qc))
     restored_gate = restored.data[0].operation
     assert isinstance(restored_gate, HamiltonianGate)
     assert isinstance(restored_gate.phase, InterpolatePoints)
@@ -193,7 +191,9 @@ def test_openqasm3_transport_rejects_parametric_phase(square_coords: list) -> No
     p = Parameter("p")
     gate = HamiltonianGate(
         InterpolatePoints(values=[0.0, 4.0, 4.0, 0.0], times=[0.0, 0.2, 0.8, 1.0]),
-        InterpolatePoints(values=[-10.0, -10.0, -5.0, -5.0], times=[0.0, 0.2, 0.8, 1.0]),
+        InterpolatePoints(
+            values=[-10.0, -10.0, -5.0, -5.0], times=[0.0, 0.2, 0.8, 1.0]
+        ),
         p,
         coords=square_coords,
     )
