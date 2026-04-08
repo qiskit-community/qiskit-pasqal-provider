@@ -19,7 +19,6 @@ from .layouts import PasqalLayout
 from .target import PasqalTarget
 from ..utils import PasqalExecutor
 
-
 # check whether python version is equal or greater than 3.12 to decide which
 #   StrEnum version to import from
 if sys.version_info >= (3, 12):

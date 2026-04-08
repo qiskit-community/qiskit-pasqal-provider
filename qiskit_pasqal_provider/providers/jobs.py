@@ -13,7 +13,6 @@ from qiskit_pasqal_provider.providers.abstract_base import PasqalBackend, Pasqal
 from qiskit_pasqal_provider.providers.result import build_primitive_result
 from qiskit_pasqal_provider.utils import PasqalExecutor
 
-
 JOB_EXECUTION_FINISHED = {"DONE", "CANCELED", "TIMED_OUT", "ERROR"}
 
 

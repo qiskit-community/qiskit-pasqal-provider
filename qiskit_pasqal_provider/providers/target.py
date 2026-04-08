@@ -13,7 +13,6 @@ from pulser_pasqal import PasqalCloud
 
 from .layouts import PasqalLayout
 
-
 AVAILABLE_DEVICES = {
     "analog": replace(AnalogDevice, name="PasqalDevice1"),
     "hybrid": replace(DigitalAnalogDevice, name="HybridDevice"),

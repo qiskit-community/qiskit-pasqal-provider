@@ -165,13 +165,17 @@ class HamiltonianGate(Gate):
 
         num_qubits = len(coords)  # type: ignore [arg-type]
         phase_params = (
-            list(phase.parameters) if isinstance(phase, ParameterExpression) else []
+            sorted(phase.parameters, key=lambda param: param.name)
+            if isinstance(phase, ParameterExpression)
+            else []
         )
 
         super().__init__(
             name="HG",
             num_qubits=num_qubits,
-            params=list(set(amplitude.parameters + detuning.parameters + phase_params)),
+            params=list(
+                dict.fromkeys(amplitude.parameters + detuning.parameters + phase_params)
+            ),
             label="",
         )
 
@@ -235,7 +239,7 @@ class HamiltonianGate(Gate):
         raise AttributeError("Cannot have a control on an analog gate.")
 
     def to_openqasm3_transport_params(self) -> list[float]:
-        """Encode this gate as a numeric payload for OpenQASM3 transport."""
+        """Encode this gate as a numeric payload for an OpenQASM3-compatible transport format."""
 
         amp_values, amp_times, amp_duration = _encode_interpolate_points(
             self.amplitude, "amplitude"
@@ -260,6 +264,10 @@ class HamiltonianGate(Gate):
         else:
             phase_scalar = _to_float(self.phase, "phase")
 
+        # Header layout (12 scalars):
+        # [schema, num_qubits, grid_code, phase_mode, phase_scalar, duration,
+        #  amp_size, det_size, phase_size, amp_times_size, det_times_size,
+        #  phase_times_size]
         payload = [
             _QASM3_TRANSPORT_SCHEMA_VERSION,
             float(self.num_qubits),
@@ -283,6 +291,9 @@ class HamiltonianGate(Gate):
                 ]
             )
 
+        # Variable-size sections in order:
+        # coords_flat(2*num_qubits), amp_values, amp_times,
+        # det_values, det_times, phase_values, phase_times.
         payload.extend(amp_values)
         payload.extend(amp_times)
         payload.extend(det_values)
@@ -293,13 +304,14 @@ class HamiltonianGate(Gate):
 
     @classmethod
     def from_openqasm3_transport_params(cls, params: list[float]) -> "HamiltonianGate":
-        """Build a HamiltonianGate from an OpenQASM3 numeric payload."""
+        """Build a HamiltonianGate from an OpenQASM3 transport payload."""
         # pylint: disable=too-many-locals,too-many-statements
 
         numeric_params = [_to_float(value, "transport parameter") for value in params]
         if len(numeric_params) < 12:
             raise ValueError("OpenQASM3 transport payload is too short.")
 
+        # Decode fields from the 12-value header in the same order as encoding.
         idx = 0
         schema = int(round(numeric_params[idx]))
         idx += 1
@@ -342,6 +354,7 @@ class HamiltonianGate(Gate):
                 "OpenQASM3 transport payload requires non-empty waveforms."
             )
 
+        # Decode variable-size sections in the same fixed order used at encode time.
         coords_flat, idx = _take_slice(
             numeric_params, idx, 2 * num_qubits, "coordinates"
         )
@@ -400,7 +413,13 @@ class HamiltonianGate(Gate):
 
 
 def dumps_qpp_openqasm3(circuit: QuantumCircuit, gate_name: str = "HG") -> str:
-    """Serialize a one-gate Hamiltonian circuit to OpenQASM3 transport format."""
+    """Serialize a one-gate Hamiltonian circuit to an OpenQASM3 transport format."""
+    # Example of generated OpenQASM3 for this transport format (shape only):
+    # OPENQASM 3.0;
+    # include "stdgates.inc";
+    # gate HG(p0, p1, ..., pN) q0, q1, ..., qM {}
+    # qubit[M+1] q;
+    # HG(<transport-payload...>) q[0], q[1], ..., q[M];
 
     if len(circuit.data) != 1:
         raise ValueError("OpenQASM3 transport expects a circuit with exactly one gate.")

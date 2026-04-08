@@ -162,6 +162,56 @@ def test_openqasm3_transport_roundtrip_scalar_phase(square_coords: list) -> None
     assert isinstance(result, PrimitiveResult)
 
 
+@pytest.mark.parametrize("num_points", [2, 3, 5, 8])
+@pytest.mark.parametrize("with_times", [False, True])
+def test_openqasm3_transport_roundtrip_scalar_phase_varying_points(
+    square_coords: list, num_points: int, with_times: bool
+) -> None:
+    """testing OpenQASM3 transport scalar-phase roundtrip with varying points."""
+
+    pytest.importorskip("qiskit_qasm3_import")
+
+    times = np.linspace(0.0, 1.0, num=num_points).tolist() if with_times else None
+    ampl = InterpolatePoints(
+        values=np.linspace(0.0, 4.0, num=num_points).tolist(), times=times
+    )
+    det = InterpolatePoints(
+        values=np.linspace(-10.0, -5.0, num=num_points).tolist(), times=times
+    )
+    gate = HamiltonianGate(ampl, det, 0.25, coords=square_coords)
+
+    qc = QuantumCircuit(len(square_coords))
+    qc.append(gate, qc.qubits)
+    restored = loads_qpp_openqasm3(dumps_qpp_openqasm3(qc))
+    restored_gate = restored.data[0].operation
+    assert isinstance(restored_gate, HamiltonianGate)
+    assert np.allclose(restored_gate.amplitude.values, ampl.values)
+    assert np.allclose(restored_gate.detuning.values, det.values)
+    assert restored_gate.phase == 0.25
+
+    if with_times:
+        assert np.allclose(restored_gate.amplitude.times, ampl.times)
+        assert np.allclose(restored_gate.detuning.times, det.times)
+    else:
+        assert restored_gate.amplitude.times is None
+        assert restored_gate.detuning.times is None
+
+
+def test_hamiltonian_gate_parameter_order_is_deterministic(square_coords: list) -> None:
+    """testing HamiltonianGate parameter order is deterministic."""
+
+    a = Parameter("a")
+    b = Parameter("b")
+    c = Parameter("c")
+    gate = HamiltonianGate(
+        InterpolatePoints(values=[0.0, a], duration=1000),
+        InterpolatePoints(values=[0.0, b], duration=1000),
+        c + a,
+        coords=square_coords,
+    )
+    assert [param.name for param in gate.params] == ["a", "b", "c"]
+
+
 def test_openqasm3_transport_roundtrip_phase_waveform(square_coords: list) -> None:
     """testing OpenQASM3 transport roundtrip with phase waveform."""
 
@@ -183,6 +233,88 @@ def test_openqasm3_transport_roundtrip_phase_waveform(square_coords: list) -> No
     assert isinstance(restored_gate.phase, InterpolatePoints)
     assert np.allclose(restored_gate.phase.values, phase.values)
     assert np.allclose(restored_gate.phase.times, phase.times)
+
+
+@pytest.mark.parametrize("num_points", [2, 4, 7])
+@pytest.mark.parametrize("with_times", [False, True])
+def test_openqasm3_transport_roundtrip_phase_waveform_varying_points(
+    square_coords: list, num_points: int, with_times: bool
+) -> None:
+    """testing OpenQASM3 transport phase-waveform roundtrip with varying points."""
+
+    pytest.importorskip("qiskit_qasm3_import")
+
+    times = np.linspace(0.0, 1.0, num=num_points).tolist() if with_times else None
+    ampl = InterpolatePoints(
+        values=np.linspace(0.0, 4.0, num=num_points).tolist(), times=times
+    )
+    det = InterpolatePoints(
+        values=np.linspace(-10.0, -5.0, num=num_points).tolist(), times=times
+    )
+    phase = InterpolatePoints(
+        values=np.linspace(0.0, 0.4, num=num_points).tolist(), times=times
+    )
+
+    qc = QuantumCircuit(len(square_coords))
+    qc.append(HamiltonianGate(ampl, det, phase, coords=square_coords), qc.qubits)
+    restored = loads_qpp_openqasm3(dumps_qpp_openqasm3(qc))
+    restored_gate = restored.data[0].operation
+    assert isinstance(restored_gate, HamiltonianGate)
+    assert isinstance(restored_gate.phase, InterpolatePoints)
+    assert np.allclose(restored_gate.amplitude.values, ampl.values)
+    assert np.allclose(restored_gate.detuning.values, det.values)
+    assert np.allclose(restored_gate.phase.values, phase.values)
+
+    if with_times:
+        assert np.allclose(restored_gate.amplitude.times, ampl.times)
+        assert np.allclose(restored_gate.detuning.times, det.times)
+        assert np.allclose(restored_gate.phase.times, phase.times)
+    else:
+        assert restored_gate.amplitude.times is None
+        assert restored_gate.detuning.times is None
+        assert restored_gate.phase.times is None
+
+
+@pytest.mark.parametrize(
+    "ampl_values,det_values,times",
+    [
+        ([0.0, 4.0], [-10.0, -5.0], None),
+        ([0.0, 1.2, 3.7], [-10.0, -8.3, -5.1], [0.0, 0.35, 1.0]),
+        ([0.0, 2.0, 4.0, 1.5, 0.0], [-10.0, -9.0, -7.0, -6.0, -5.0], None),
+        (
+            [0.0, 0.8, 2.4, 4.0, 2.9, 1.1, 0.0],
+            [-10.0, -9.6, -9.0, -8.2, -7.4, -6.2, -5.0],
+            [0.0, 0.1, 0.25, 0.45, 0.65, 0.85, 1.0],
+        ),
+    ],
+)
+def test_openqasm3_transport_roundtrip_varying_amp_det_profiles(
+    square_coords: list,
+    ampl_values: list[float],
+    det_values: list[float],
+    times: list[float] | None,
+) -> None:
+    """testing OpenQASM3 transport roundtrip with varying amplitude and detuning."""
+
+    pytest.importorskip("qiskit_qasm3_import")
+
+    ampl = InterpolatePoints(values=ampl_values, times=times)
+    det = InterpolatePoints(values=det_values, times=times)
+    qc = QuantumCircuit(len(square_coords))
+    qc.append(HamiltonianGate(ampl, det, 0.125, coords=square_coords), qc.qubits)
+
+    restored = loads_qpp_openqasm3(dumps_qpp_openqasm3(qc))
+    restored_gate = restored.data[0].operation
+    assert isinstance(restored_gate, HamiltonianGate)
+    assert np.allclose(restored_gate.amplitude.values, ampl_values)
+    assert np.allclose(restored_gate.detuning.values, det_values)
+    assert restored_gate.phase == 0.125
+    if times is None:
+        assert restored_gate.amplitude.times is None
+        assert restored_gate.detuning.times is None
+    else:
+        assert np.allclose(restored_gate.amplitude.times, times)
+        assert np.allclose(restored_gate.detuning.times, times)
 
 
 def test_openqasm3_transport_rejects_parametric_phase(square_coords: list) -> None:

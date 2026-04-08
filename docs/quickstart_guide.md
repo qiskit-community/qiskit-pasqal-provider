@@ -133,9 +133,9 @@ QRMI provides queue and scheduler integrations around Qiskit workloads, and can 
 used with this provider in those environments.
 
 
-### OpenQASM3 Serialization
+### OpenQASM3-Compatible Transport Serialization
 
-For serializing Qiskit programs we can use the OpenQASM3 format.
+For serializing Qiskit programs with the custom Pasqal analog gate, we use an OpenQASM3-compatible transport format.
 Since we have a custom gate, we need custom serialize and deserialize methods.
 
 ```python

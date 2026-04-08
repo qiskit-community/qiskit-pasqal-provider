@@ -17,7 +17,6 @@ from sympy import lambdify
 
 from qiskit_pasqal_provider.providers.target import PasqalDevice
 
-
 # defining handy type aliases
 GridLiteralType = Literal["linear", "triangular", "square"]
 CoordsType = list | tuple | np.ndarray | tuple[tuple[int | float], ...]
@@ -152,10 +151,10 @@ class InterpolatePoints:
         values_params = []
         for k in self.values:
             if isinstance(k, Parameter | ParameterExpression):
-                values_params.extend(k.parameters)
+                values_params.extend(sorted(k.parameters, key=lambda param: param.name))
 
         duration_params = (
-            list(self.duration.parameters)
+            sorted(self.duration.parameters, key=lambda param: param.name)
             if isinstance(self.duration, ParameterExpression)
             else []
         )
@@ -165,9 +164,11 @@ class InterpolatePoints:
         if self.times is not None:
             for k in self.times:
                 if isinstance(k, Parameter | ParameterExpression):
-                    times_params.extend(k.parameters)
+                    times_params.extend(
+                        sorted(k.parameters, key=lambda param: param.name)
+                    )
 
-        return list(set(values_params + duration_params + times_params))
+        return list(dict.fromkeys(values_params + duration_params + times_params))
 
     def __len__(self) -> int:
         """InterpolatePoints length is equal to its values' length."""
