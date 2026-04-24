@@ -18,6 +18,7 @@
       ~HamiltonianGate.broadcast_arguments
       ~HamiltonianGate.control
       ~HamiltonianGate.copy
+      ~HamiltonianGate.from_openqasm3_transport_params
       ~HamiltonianGate.inverse
       ~HamiltonianGate.is_parameterized
       ~HamiltonianGate.power
@@ -26,6 +27,7 @@
       ~HamiltonianGate.soft_compare
       ~HamiltonianGate.to_matrix
       ~HamiltonianGate.to_mutable
+      ~HamiltonianGate.to_openqasm3_transport_params
       ~HamiltonianGate.validate_parameter
    
    

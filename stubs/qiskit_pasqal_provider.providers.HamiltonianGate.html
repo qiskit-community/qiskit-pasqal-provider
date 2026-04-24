@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="qiskit_pasqal_provider.providers.PasqalProvider" href="qiskit_pasqal_provider.providers.PasqalProvider.html" /><link rel="prev" title="Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)" href="../apidocs/qpp.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="qiskit_pasqal_provider.providers.dumps_qpp_openqasm3" href="qiskit_pasqal_provider.providers.dumps_qpp_openqasm3.html" /><link rel="prev" title="Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)" href="../apidocs/qpp.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>qiskit_pasqal_provider.providers.HamiltonianGate - Qiskit Pasqal Provider 0.2.1</title>
+        <title>qiskit_pasqal_provider.providers.HamiltonianGate - Qiskit Pasqal Provider 0.3.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -143,7 +143,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.2.1</div></a>
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.3.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -170,7 +170,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.2.1</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.3.0</span>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -183,10 +183,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/introduction_to_qpp.html">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/introduction_to_qpp.html#QPP">QPP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/openqasm3_transport_roundtrip.html">OpenQASM3 Transport Roundtrip</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/qubo_with_qpp.html">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../apidocs/index.html">API References</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API References</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.dumps_qpp_openqasm3.html">qiskit_pasqal_provider.providers.dumps_qpp_openqasm3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.loads_qpp_openqasm3.html">qiskit_pasqal_provider.providers.loads_qpp_openqasm3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
 <li class="toctree-l3"><a class="reference internal" href="qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
 </ul>
@@ -290,29 +293,35 @@ Default to False.</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code>([name])</p></td>
 <td><p>Copy of the instruction.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse</span></code>([annotated])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_openqasm3_transport_params</span></code>(params)</p></td>
+<td><p>Build a HamiltonianGate from an OpenQASM3 transport payload.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse</span></code>([annotated])</p></td>
 <td><p>Invert this instruction.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_parameterized</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_parameterized</span></code>()</p></td>
 <td><p>Return whether the <code class="xref py py-class docutils literal notranslate"><span class="pre">Instruction</span></code> contains <a class="reference internal" href="../apidocs/qpp.html#circuit-compile-time-parameters"><span class="std std-ref">compile-time parameters</span></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code>(exponent[, annotated])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">power</span></code>(exponent[, annotated])</p></td>
 <td><p>Raise this gate to the power of <code class="docutils literal notranslate"><span class="pre">exponent</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">repeat</span></code>(n)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">repeat</span></code>(n)</p></td>
 <td><p>Creates an instruction with <code class="docutils literal notranslate"><span class="pre">self</span></code> repeated <span class="math notranslate nohighlight">\(n\)</span> times.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse_ops</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reverse_ops</span></code>()</p></td>
 <td><p>For a composite instruction, reverse the order of sub-instructions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">soft_compare</span></code>(other)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">soft_compare</span></code>(other)</p></td>
 <td><p>Soft comparison between gates.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_matrix</span></code>()</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_matrix</span></code>()</p></td>
 <td><p>Return a Numpy.array for the gate unitary matrix.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_mutable</span></code>()</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_mutable</span></code>()</p></td>
 <td><p>Return a mutable copy of this gate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_openqasm3_transport_params</span></code>()</p></td>
+<td><p>Encode this gate as a numeric payload for an OpenQASM3-compatible transport format.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_parameter</span></code>(parameter)</p></td>
 <td><p>Gate parameters should be int, float, or ParameterExpression</p></td>
@@ -377,12 +386,12 @@ Default to False.</p></li>
       </div>
       <footer>
         <div class="related-pages">
-          <a class="next-page" href="qiskit_pasqal_provider.providers.PasqalProvider.html">
+          <a class="next-page" href="qiskit_pasqal_provider.providers.dumps_qpp_openqasm3.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">qiskit_pasqal_provider.providers.PasqalProvider</div>
+                <div class="title">qiskit_pasqal_provider.providers.dumps_qpp_openqasm3</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -445,7 +454,7 @@ Default to False.</p></li>
   </div>
 </div><script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=37f418d5"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>

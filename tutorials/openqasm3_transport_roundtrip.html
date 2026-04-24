@@ -1,0 +1,460 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="QAA to Solve a QUBO Problem with qiskit-pasqal-provider" href="qubo_with_qpp.html" /><link rel="prev" title="Introduction to qiskit-pasqal-provider" href="introduction_to_qpp.html" />
+
+    <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
+        <title>OpenQASM3 Transport Roundtrip - Qiskit Pasqal Provider 0.3.0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-ecosystem.css?v=745c5aa7" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<script src="../_static/js/web-components/top-nav-bar.js"></script></head>
+  <body>
+    
+    <script>document.body.dataset.theme = "light";</script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs><style>.cls-1{fill:none;}</style></defs>
+      <path d="M28,4H4A2,2,0,0,0,2,6V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V6A2,2,0,0,0,28,4ZM4,6H20V26H4ZM28,26H22V6h6Z"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+      <defs><style>.cls-1{fill:none;}</style></defs>
+      <rect x="4" y="6" width="24" height="2"/>
+      <rect x="4" y="24" width="24" height="2"/>
+      <rect x="4" y="12" width="24" height="2"/>
+      <rect x="4" y="18" width="24" height="2"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+         viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><polygon points="22,16 12,26 10.6,24.6 19.2,16 10.6,7.4 12,6 " stroke="currentColor"/>
+      <rect id="_x3C_Transparent_Rectangle_x3E_" fill="none" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-new-tab" viewBox="0 0 32 32">
+    <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+      <defs>
+        <style>
+          .cls-1 {
+            fill: none;
+          }
+        </style>
+      </defs>
+      <path fill="#6929C4" d="M26,28H6a2.0027,2.0027,0,0,1-2-2V6A2.0027,2.0027,0,0,1,6,4H16V6H6V26H26V16h2V26A2.0027,2.0027,0,0,1,26,28Z"/>
+      <polygon fill="#6929C4" points="20 2 20 4 26.586 4 18 12.586 19.414 14 28 5.414 28 12 30 12 30 2 20 2"/>
+      <rect id="_Transparent_Rectangle_" data-name="&lt;Transparent Rectangle&gt;" class="cls-1" width="32" height="32"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.3.0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-brand">
+  <a href="https://www.qiskit.org/ecosystem">
+    <div class="sidebar-logo-container">
+      <img class="sidebar-logo" src="../_static/images/ecosystem-logo.svg" alt="Qiskit Ecosystem logo"/>
+    </div>
+  </a>
+  
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.3.0</span>
+</div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_qpp.html">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction_to_qpp.html#QPP">QPP</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">OpenQASM3 Transport Roundtrip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qubo_with_qpp.html">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../apidocs/index.html">API References</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API References</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../apidocs/qpp.html">Qiskit Pasqal Provider (<code class="xref py py-mod docutils literal notranslate"><span class="pre">qiskit_pasqal_provider.providers</span></code>)</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Qiskit Pasqal Provider (qiskit_pasqal_provider.providers)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html">qiskit_pasqal_provider.providers.HamiltonianGate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.dumps_qpp_openqasm3.html">qiskit_pasqal_provider.providers.dumps_qpp_openqasm3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.loads_qpp_openqasm3.html">qiskit_pasqal_provider.providers.loads_qpp_openqasm3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.PasqalProvider.html">qiskit_pasqal_provider.providers.PasqalProvider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stubs/qiskit_pasqal_provider.providers.SamplerV2.html">qiskit_pasqal_provider.providers.SamplerV2</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../apidocs/qpp.html#compile-time-parameters">Compile-time parameters</a></li>
+</ul>
+</li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="OpenQASM3-Transport-Roundtrip">
+<h1>OpenQASM3 Transport Roundtrip<a class="headerlink" href="#OpenQASM3-Transport-Roundtrip" title="Link to this heading">¶</a></h1>
+<p>This tutorial shows how to serialize a QPP <code class="docutils literal notranslate"><span class="pre">HamiltonianGate</span></code> circuit to an OpenQASM3-compatible transport format and load it back into an executable QPP circuit.</p>
+<p>The transport helpers are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dumps_qpp_openqasm3</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loads_qpp_openqasm3</span></code></p></li>
+</ul>
+<section id="Imports">
+<h2>Imports<a class="headerlink" href="#Imports" title="Link to this heading">¶</a></h2>
+<p>We import the QPP gate classes, OpenQASM3 transport helpers, and a local sampler backend.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;OpenQASM3 transport roundtrip tutorial.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.gate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HamiltonianGate</span><span class="p">,</span>
+    <span class="n">InterpolatePoints</span><span class="p">,</span>
+    <span class="n">dumps_qpp_openqasm3</span><span class="p">,</span>
+    <span class="n">loads_qpp_openqasm3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.provider</span><span class="w"> </span><span class="kn">import</span> <span class="n">PasqalProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_pasqal_provider.providers.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerV2</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Build-The-Original-Program">
+<h2>Build The Original Program<a class="headerlink" href="#Build-The-Original-Program" title="Link to this heading">¶</a></h2>
+<p>Create a circuit with one Pasqal analog <code class="docutils literal notranslate"><span class="pre">HamiltonianGate</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+<span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">ampl</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+<span class="n">det</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
+
+<span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
+<span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">ampl</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">coords</span><span class="p">),</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+     ┌─────┐
+q_0: ┤0    ├
+     │     │
+q_1: ┤1    ├
+     │     │
+q_2: ┤2    ├
+     │  Hg │
+q_3: ┤3    ├
+     │     │
+q_4: ┤4    ├
+     │     │
+q_5: ┤5    ├
+     └─────┘
+</pre></div></div>
+</div>
+</section>
+<section id="Run-Original-Program">
+<h2>Run Original Program<a class="headerlink" href="#Run-Original-Program" title="Link to this heading">¶</a></h2>
+<p>Run the original circuit first so we have a baseline before conversion.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">PasqalProvider</span><span class="p">()</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">))</span>
+<span class="n">original_result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">original_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Counter({&#39;000000&#39;: 31, &#39;001000&#39;: 17, &#39;000010&#39;: 12, &#39;000001&#39;: 9, &#39;100000&#39;: 9, &#39;000100&#39;: 7, &#39;010000&#39;: 7, &#39;010001&#39;: 4, &#39;100100&#39;: 1, &#39;100010&#39;: 1, &#39;001010&#39;: 1, &#39;010100&#39;: 1})
+</pre></div></div>
+</div>
+</section>
+<section id="Serialize-The-Sequence-To-OpenQASM3-Transport-Format">
+<h2>Serialize The Sequence To OpenQASM3 Transport Format<a class="headerlink" href="#Serialize-The-Sequence-To-OpenQASM3-Transport-Format" title="Link to this heading">¶</a></h2>
+<p>Serialize the circuit to OpenQASM3 transport format and inspect the content.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">QASM_PROGRAM</span> <span class="o">=</span> <span class="n">dumps_qpp_openqasm3</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">QASM_PROGRAM</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[:</span><span class="mi">8</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OPENQASM 3.0;
+include &#34;stdgates.inc&#34;;
+gate HG(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39) q0, q1, q2, q3, q4, q5 {}
+qubit[6] q;
+HG(1.0, 6.0, 1.0, 0, 0, 1000.0, 4.0, 4.0, 0, 4.0, 4.0, 0, -6.5, -0.8666666666666667, -3.5, 4.333333333333334, -0.5, -0.8666666666666667, 2.5, -6.066666666666666, 2.5, 4.333333333333334, 5.5, -0.8666666666666667, 0, 4.0, 4.0, 0, 0, 0.2, 0.8, 1.0, -10.0, -10.0, -5.0, -5.0, 0, 0.2, 0.8, 1.0) q[0], q[1], q[2], q[3], q[4], q[5];
+</pre></div></div>
+</div>
+</section>
+<section id="Run-Restored-Program">
+<h2>Run Restored Program<a class="headerlink" href="#Run-Restored-Program" title="Link to this heading">¶</a></h2>
+<p>Run the restored circuit. Both circuits should execute, and should have the same probability distribution.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">restored</span> <span class="o">=</span> <span class="n">loads_qpp_openqasm3</span><span class="p">(</span><span class="n">QASM_PROGRAM</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;original:&quot;</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">count_ops</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;restored:&quot;</span><span class="p">,</span> <span class="n">restored</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">restored</span><span class="o">.</span><span class="n">count_ops</span><span class="p">())</span>
+<span class="n">restored_result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">restored</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">restored_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+original: 6 OrderedDict({&#39;HG&#39;: 1})
+restored: 6 OrderedDict({&#39;HG&#39;: 1})
+Counter({&#39;000000&#39;: 33, &#39;001000&#39;: 16, &#39;000001&#39;: 9, &#39;000010&#39;: 9, &#39;100000&#39;: 8, &#39;000100&#39;: 7, &#39;010000&#39;: 7, &#39;100001&#39;: 3, &#39;010001&#39;: 3, &#39;100010&#39;: 2, &#39;010100&#39;: 1, &#39;000110&#39;: 1, &#39;100110&#39;: 1})
+</pre></div></div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        <div class="related-pages">
+          <a class="next-page" href="qubo_with_qpp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">QAA to Solve a QUBO Problem with <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="introduction_to_qpp.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Introduction to <code class="docutils literal notranslate"><span class="pre">qiskit-pasqal-provider</span></code></div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">OpenQASM3 Transport Roundtrip</a><ul>
+<li><a class="reference internal" href="#Imports">Imports</a></li>
+<li><a class="reference internal" href="#Build-The-Original-Program">Build The Original Program</a></li>
+<li><a class="reference internal" href="#Run-Original-Program">Run Original Program</a></li>
+<li><a class="reference internal" href="#Serialize-The-Sequence-To-OpenQASM3-Transport-Format">Serialize The Sequence To OpenQASM3 Transport Format</a></li>
+<li><a class="reference internal" href="#Run-Restored-Program">Run Restored Program</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>

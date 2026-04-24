@@ -1,0 +1,213 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "d72becf7",
+   "metadata": {},
+   "source": [
+    "# OpenQASM3 Transport Roundtrip\n",
+    "\n",
+    "This tutorial shows how to serialize a QPP `HamiltonianGate` circuit to an OpenQASM3-compatible transport format and load it back into an executable QPP circuit.\n",
+    "\n",
+    "The transport helpers are:\n",
+    "- `dumps_qpp_openqasm3`\n",
+    "- `loads_qpp_openqasm3`\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "666afdee",
+   "metadata": {},
+   "source": [
+    "## Imports\n",
+    "\n",
+    "We import the QPP gate classes, OpenQASM3 transport helpers, and a local sampler backend."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "892f044f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\"\"\"OpenQASM3 transport roundtrip tutorial.\"\"\"\n",
+    "\n",
+    "from qiskit.circuit import QuantumCircuit\n",
+    "from qiskit_pasqal_provider.providers.gate import (\n",
+    "    HamiltonianGate,\n",
+    "    InterpolatePoints,\n",
+    "    dumps_qpp_openqasm3,\n",
+    "    loads_qpp_openqasm3,\n",
+    ")\n",
+    "from qiskit_pasqal_provider.providers.provider import PasqalProvider\n",
+    "from qiskit_pasqal_provider.providers.sampler import SamplerV2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "214b2f46",
+   "metadata": {},
+   "source": [
+    "## Build The Original Program\n",
+    "\n",
+    "Create a circuit with one Pasqal analog `HamiltonianGate`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "b999e78e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     ┌─────┐\n",
+      "q_0: ┤0    ├\n",
+      "     │     │\n",
+      "q_1: ┤1    ├\n",
+      "     │     │\n",
+      "q_2: ┤2    ├\n",
+      "     │  Hg │\n",
+      "q_3: ┤3    ├\n",
+      "     │     │\n",
+      "q_4: ┤4    ├\n",
+      "     │     │\n",
+      "q_5: ┤5    ├\n",
+      "     └─────┘\n"
+     ]
+    }
+   ],
+   "source": [
+    "coords = [[0, 0], [3, 5.2], [6, 0], [9, -5.2], [9, 5.2], [12, 0]]\n",
+    "times = [0, 0.2, 0.8, 1]\n",
+    "ampl = InterpolatePoints(values=[0, 4, 4, 0], times=times)\n",
+    "det = InterpolatePoints(values=[-10, -10, -5, -5], times=times)\n",
+    "\n",
+    "qc = QuantumCircuit(len(coords))\n",
+    "qc.append(HamiltonianGate(ampl, det, 0.0, coords), qc.qubits)\n",
+    "print(qc)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "53646479",
+   "metadata": {},
+   "source": [
+    "## Run Original Program\n",
+    "\n",
+    "Run the original circuit first so we have a baseline before conversion."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "74f6ee19",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Counter({'000000': 32, '001000': 14, '000010': 13, '100000': 12, '010000': 10, '000110': 5, '000001': 4, '000100': 4, '010001': 2, '100010': 1, '100100': 1, '100001': 1, '011000': 1})\n"
+     ]
+    }
+   ],
+   "source": [
+    "sampler = SamplerV2(PasqalProvider().get_backend(\"qutip\"))\n",
+    "original_result = sampler.run([qc], shots=100).result()\n",
+    "print(original_result[0].data.counts)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7b024589",
+   "metadata": {},
+   "source": [
+    "## Serialize The Sequence To OpenQASM3 Transport Format\n",
+    "\n",
+    "Serialize the circuit to OpenQASM3 transport format and inspect the content."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "0ca6cb2a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OPENQASM 3.0;\n",
+      "include \"stdgates.inc\";\n",
+      "gate HG(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26, p27, p28, p29, p30, p31, p32, p33, p34, p35, p36, p37, p38, p39) q0, q1, q2, q3, q4, q5 {}\n",
+      "qubit[6] q;\n",
+      "HG(1.0, 6.0, 1.0, 0, 0, 1000.0, 4.0, 4.0, 0, 4.0, 4.0, 0, -6.5, -0.8666666666666667, -3.5, 4.333333333333334, -0.5, -0.8666666666666667, 2.5, -6.066666666666666, 2.5, 4.333333333333334, 5.5, -0.8666666666666667, 0, 4.0, 4.0, 0, 0, 0.2, 0.8, 1.0, -10.0, -10.0, -5.0, -5.0, 0, 0.2, 0.8, 1.0) q[0], q[1], q[2], q[3], q[4], q[5];\n"
+     ]
+    }
+   ],
+   "source": [
+    "QASM_PROGRAM = dumps_qpp_openqasm3(qc)\n",
+    "print(\"\\n\".join(QASM_PROGRAM.splitlines()[:8]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d0ec9146",
+   "metadata": {},
+   "source": [
+    "## Run Restored Program\n",
+    "\n",
+    "Run the restored circuit. Both circuits should execute, and should have the same probability distribution."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5581f898",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "original: 6 OrderedDict({'HG': 1})\n",
+      "restored: 6 OrderedDict({'HG': 1})\n",
+      "Counter({'000000': 29, '001000': 19, '100000': 11, '000100': 7, '010000': 6, '000001': 6, '100010': 6, '000010': 5, '010001': 4, '100100': 3, '100001': 2, '001001': 1, '010100': 1})\n"
+     ]
+    }
+   ],
+   "source": [
+    "restored = loads_qpp_openqasm3(QASM_PROGRAM)\n",
+    "print(\"original:\", qc.num_qubits, qc.count_ops())\n",
+    "print(\"restored:\", restored.num_qubits, restored.count_ops())\n",
+    "restored_result = sampler.run([restored], shots=100).result()\n",
+    "print(restored_result[0].data.counts)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": ".venv",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -1,0 +1,6 @@
+﻿qiskit\_pasqal\_provider.providers.loads\_qpp\_openqasm3
+========================================================
+
+.. currentmodule:: qiskit_pasqal_provider.providers
+
+.. autofunction:: loads_qpp_openqasm3
