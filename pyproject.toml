@@ -2,7 +2,7 @@
 
 [project]
 name = "qiskit_pasqal_provider"
-version = "0.2.1"
+version = "0.3.0"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {file = "LICENSE.txt"}
@@ -22,6 +22,8 @@ dependencies = [
     "pulser-pasqal>=0.20,<1",
     "pasqal-cloud>=0.20,<1",
     "sympy",
+    "openqasm3>=1,<2",
+    "qiskit_qasm3_import>=0.6,<1",
 ]
 
 [project.optional-dependencies]

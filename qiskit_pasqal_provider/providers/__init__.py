@@ -13,10 +13,20 @@ Qiskit Pasqal Provider classes and functions
     :toctree: ../stubs/
 
     HamiltonianGate
+    dumps_qpp_openqasm3
+    loads_qpp_openqasm3
     PasqalProvider
     SamplerV2
 """
 
-from .gate import HamiltonianGate
+from .gate import HamiltonianGate, dumps_qpp_openqasm3, loads_qpp_openqasm3
 from .provider import PasqalProvider
 from .sampler import SamplerV2
+
+__all__ = [
+    "HamiltonianGate",
+    "dumps_qpp_openqasm3",
+    "loads_qpp_openqasm3",
+    "PasqalProvider",
+    "SamplerV2",
+]
