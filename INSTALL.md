@@ -19,12 +19,26 @@ Install the project from PyPi:
 python3 -m pip install qiskit-pasqal-provider
 ```
 
-## Installing tensor network emulators
+## Installing local emulators
 
 Note that since the analog paradigm is different from the digital paradigm usually programmed with Qiskit, this provider cannot use the normal Qiskit numerical simulators.
-Built in we support a [QuTiP](https://qutip.org/) based backend, known as `pulser-simulator` in the Pasqal's Pulser.
-For running larger local simulations we recommend installing [emu-mps](https://pasqal-io.github.io/emulators/latest/emu_mps/), a tensor network backend.
-You can install this together with qiskit-pasqal-provider as:
+The [QuTiP](https://qutip.org/) based backend is available through the `qutip` extra:
 ```bash
-python3 -m pip install qiskit-pasqal-provider[mps]
+python3 -m pip install qiskit-pasqal-provider[qutip]
+```
+
+For running larger local simulations, [emu-mps](https://pasqal-io.github.io/emulators/latest/emu_mps/) is also available.
+Install both local emulator backends without OpenQASM3 transport dependencies with:
+```bash
+python3 -m pip install qiskit-pasqal-provider[emulators]
+```
+
+OpenQASM3 transport helpers are available through the `qasm3` extra:
+```bash
+python3 -m pip install qiskit-pasqal-provider[qasm3]
+```
+
+Install all optional dependencies with:
+```bash
+python3 -m pip install qiskit-pasqal-provider[all]
 ```
