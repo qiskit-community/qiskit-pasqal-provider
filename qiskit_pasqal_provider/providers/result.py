@@ -10,15 +10,19 @@ from pasqal_cloud.batch import Batch as PasqalBatchData
 from pasqal_cloud.job import Job as PasqalJobData
 from pulser.backend import Results
 from pulser.backend.remote import BatchStatus, RemoteResults
-from pulser_simulation.simresults import SimulationResults
 from qiskit.primitives import DataBin, PrimitiveResult, SamplerPubResult
+
+try:
+    from pulser_simulation.simresults import SimulationResults as _SimulationResults
+except ImportError:
+    _SimulationResults = None
 
 
 def _get_counts(
-    results: SimulationResults | Results, metadata: dict[str, Any]
+    results: Any, metadata: dict[str, Any]
 ) -> Counter | dict[str, int | float]:
     """Get counts from pulser simulation results."""
-    if isinstance(results, SimulationResults):
+    if _SimulationResults is not None and isinstance(results, _SimulationResults):
         if metadata["shots"] is None:
             return results.sample_final_state()
         return results.sample_final_state(N_samples=metadata["shots"])
@@ -121,14 +125,22 @@ def _fetch_legacy_payload_results(results: list[Any] | tuple[Any, ...]) -> DataB
 def build_primitive_result(
     backend_name: str,
     job_id: str | list[str],
-    results: SimulationResults | RemoteResults | dict | list | tuple | None,
+    results: Any,
     metadata: dict[str, Any] | None = None,
 ) -> PrimitiveResult[SamplerPubResult]:
     """Build a Qiskit PrimitiveResult from Pasqal backend outputs."""
     metadata = {} if metadata is None else dict(metadata)
 
+    if _SimulationResults is not None and isinstance(results, _SimulationResults):
+        counts = _get_counts(results, metadata)
+        data = DataBin(counts=counts)
+        metadata["shots"] = int(sum(data.counts.values()))  # pylint: disable=E1101
+        metadata["backend_name"] = backend_name
+        metadata["job_id"] = job_id
+        return PrimitiveResult([SamplerPubResult(data=data)], metadata)
+
     match results:
-        case SimulationResults() | Results():
+        case Results():
             counts = _get_counts(results, metadata)
             data = DataBin(counts=counts)
             metadata["shots"] = int(sum(data.counts.values()))  # pylint: disable=E1101
