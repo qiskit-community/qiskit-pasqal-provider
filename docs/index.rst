@@ -34,6 +34,14 @@ Qiskit Pasqal Provider can be installed with pip
 python3 -m pip install qiskit-pasqal-provider
 ``
 
+Install local emulator backends with extras:
+``
+python3 -m pip install qiskit-pasqal-provider[qutip]
+python3 -m pip install qiskit-pasqal-provider[emulators]
+python3 -m pip install qiskit-pasqal-provider[qasm3]
+python3 -m pip install qiskit-pasqal-provider[all]
+``
+
 Usage
 ######
 

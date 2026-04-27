@@ -12,7 +12,6 @@ from qiskit_pasqal_provider.providers.abstract_base import (
     PasqalBackendType,
     PasqalJob,
 )
-from qiskit_pasqal_provider.providers.backends.qutip import QutipEmulatorBackend
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 
 
@@ -32,6 +31,10 @@ class PasqalLocalBackend(PasqalBackend):
 
         match backend:
             case "qutip":
+                from qiskit_pasqal_provider.providers.backends.qutip import (
+                    QutipEmulatorBackend,
+                )
+
                 return QutipEmulatorBackend(target=target, **options)
 
             case "emu-mps":

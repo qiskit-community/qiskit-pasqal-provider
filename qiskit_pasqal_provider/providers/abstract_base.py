@@ -3,7 +3,7 @@
 import sys
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from qiskit import QuantumCircuit
 from qiskit.primitives import BasePrimitiveJob, PrimitiveResult, SamplerPubResult
@@ -13,11 +13,13 @@ from pasqal_cloud import SDK as PasqalSDK
 from pasqal_cloud.device import DeviceTypeName
 from pulser.backend.remote import JobParams, RemoteResults
 from pulser.register.register_layout import RegisterLayout
-from pulser_simulation.simresults import SimulationResults
 
 from .layouts import PasqalLayout
 from .target import PasqalTarget
 from ..utils import PasqalExecutor
+
+if TYPE_CHECKING:
+    from pulser_simulation.simresults import SimulationResults
 
 # check whether python version is equal or greater than 3.12 to decide which
 #   StrEnum version to import from
@@ -139,7 +141,7 @@ class PasqalJob(BasePrimitiveJob[PrimitiveResult[SamplerPubResult], JobStatus], 
         self,
         job_params: list[JobParams] | None = None,
         wait: bool | None = None,
-    ) -> SimulationResults | RemoteResults:
+    ) -> "SimulationResults | RemoteResults":
         """
         Check the self._executor run method signature;
         Only compatible with local run.
