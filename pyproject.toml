@@ -5,7 +5,7 @@ name = "qiskit_pasqal_provider"
 version = "0.3.0"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {file = "LICENSE.txt"}
+license = "Apache-2.0"
 description = "Qiskit provider for Pasqal's analog neutral atom QPUs"
 authors = [
    { name = "Eduardo Maschio", email = "eduardo.maschio@pasqal.com"},
