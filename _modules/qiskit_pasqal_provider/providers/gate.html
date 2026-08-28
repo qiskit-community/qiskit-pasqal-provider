@@ -229,7 +229,7 @@
         </div>
         <article role="main">
           <h1>Source code for qiskit_pasqal_provider.providers.gate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Pasqal analog gate&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Pasqal analog gate"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -251,9 +251,9 @@
 <span class="n">GridCodeType</span> <span class="o">=</span> <span class="nb">float</span>
 <span class="n">_QASM3_TRANSPORT_SCHEMA_VERSION</span> <span class="o">=</span> <span class="mf">1.0</span>
 <span class="n">_GRID_TO_CODE</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">GridLiteralType</span><span class="p">,</span> <span class="n">GridCodeType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">&quot;triangular&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="s2">&quot;square&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="s2">"linear"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s2">"triangular"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">"square"</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">_CODE_TO_GRID</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">GridCodeType</span><span class="p">,</span> <span class="n">GridLiteralType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">code</span><span class="p">:</span> <span class="n">grid</span> <span class="k">for</span> <span class="n">grid</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">_GRID_TO_CODE</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -264,43 +264,43 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ParameterExpression</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric for OpenQASM3 transport serialization.&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric for OpenQASM3 transport serialization."</span>
             <span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">numeric</span><span class="p">()</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_to_float_list</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">ParameterExpression</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric for OpenQASM3 transport serialization.&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be numeric for OpenQASM3 transport serialization."</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be an array-like sequence.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be an array-like sequence."</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be an array-like sequence.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> must be an array-like sequence."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">)]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_encode_interpolate_points</span><span class="p">(</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">InterpolatePoints</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.values&quot;</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.values"</span><span class="p">)</span>
     <span class="n">times</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[]</span> <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">times</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.times&quot;</span><span class="p">)</span>
+        <span class="p">[]</span> <span class="k">if</span> <span class="n">points</span><span class="o">.</span><span class="n">times</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_to_float_list</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">times</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.times"</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">times</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.times must have the same length as </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.values.&quot;</span><span class="p">)</span>
-    <span class="n">duration</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.duration&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.times must have the same length as </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.values."</span><span class="p">)</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="n">points</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.duration"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">values</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">duration</span>
 
 
@@ -310,7 +310,7 @@
     <span class="n">end</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">size</span>
     <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;OpenQASM3 transport payload is truncated while reading </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"OpenQASM3 transport payload is truncated while reading </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">end</span>
 
@@ -319,20 +319,20 @@
     <span class="n">program</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num_params</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_qubits</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-    <span class="n">declaration_params</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_params</span><span class="p">))</span>
-    <span class="n">declaration_qubits</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;q</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">))</span>
-    <span class="n">declaration</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;gate </span><span class="si">{</span><span class="n">gate_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">declaration_params</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">declaration_qubits</span><span class="si">}</span><span class="s2"> </span><span class="se">{{}}</span><span class="s2">&quot;</span>
+    <span class="n">declaration_params</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"p</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_params</span><span class="p">))</span>
+    <span class="n">declaration_qubits</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"q</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">))</span>
+    <span class="n">declaration</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"gate </span><span class="si">{</span><span class="n">gate_name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">declaration_params</span><span class="si">}</span><span class="s2">) </span><span class="si">{</span><span class="n">declaration_qubits</span><span class="si">}</span><span class="s2"> </span><span class="se">{{}}</span><span class="s2">"</span>
     <span class="n">insert_idx</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;qubit[&quot;</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"qubit["</span><span class="p">)),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">insert_idx</span><span class="p">,</span> <span class="n">declaration</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
 
 
 <div class="viewcode-block" id="HamiltonianGate">
 <a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html#qiskit_pasqal_provider.providers.HamiltonianGate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HamiltonianGate</span><span class="p">(</span><span class="n">Gate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hamiltonian gate, an analog gate.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Hamiltonian gate, an analog gate."""</span>
 
 <div class="viewcode-block" id="HamiltonianGate.__init__">
 <a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.HamiltonianGate.html#qiskit_pasqal_provider.providers.HamiltonianGate.__init__">[docs]</a>
@@ -342,11 +342,11 @@
         <span class="n">detuning</span><span class="p">:</span> <span class="n">InterpolatePoints</span><span class="p">,</span>
         <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">InterpolatePoints</span> <span class="o">|</span> <span class="n">ParameterExpression</span><span class="p">,</span>
         <span class="n">coords</span><span class="p">:</span> <span class="n">ArrayLike</span><span class="p">,</span>
-        <span class="n">grid_transform</span><span class="p">:</span> <span class="n">GridLiteralType</span> <span class="o">=</span> <span class="s2">&quot;triangular&quot;</span><span class="p">,</span>
+        <span class="n">grid_transform</span><span class="p">:</span> <span class="n">GridLiteralType</span> <span class="o">=</span> <span class="s2">"triangular"</span><span class="p">,</span>
         <span class="n">composed_wf</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transform</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Hamiltonian gate is an analog gate that provides the relevant functionalities</span>
 <span class="sd">        to use analog quantum computing in a circuit-like environment.</span>
 
@@ -355,47 +355,47 @@
 <span class="sd">            detuning: an InterpolatePoints instance to represent a detuning waveform.</span>
 <span class="sd">            phase: a float, InterpolatePoints or qiskit ParameterExpression value.</span>
 <span class="sd">            coords: an array-like containing (x, y) coordinates of the qubits.</span>
-<span class="sd">            grid_transform: a string of which grid transform to use. Default to &quot;triangular&quot;.</span>
+<span class="sd">            grid_transform: a string of which grid transform to use. Default to "triangular".</span>
 <span class="sd">            composed_wf: alternative approach to generate a sequence of waveforms</span>
 <span class="sd">                instead of amplitude, detuning and phase. Default to None.</span>
 <span class="sd">            transform: whether the coordinates need to be transformed into atoms coordinates.</span>
 <span class="sd">                Default to False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># perform some checks</span>
 
         <span class="k">if</span> <span class="n">composed_wf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># implement it later as alternative to `InterpolatePoints`</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;&#39;composed_wf&#39; argument is not available yet.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"'composed_wf' argument is not available yet."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">InterpolatePoints</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The amplitude parameter must be `InterpolatePoints` type, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The amplitude parameter must be `InterpolatePoints` type, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detuning</span><span class="p">,</span> <span class="n">InterpolatePoints</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;detuning must be InterpolatePoints, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">detuning</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"detuning must be InterpolatePoints, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">detuning</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">InterpolatePoints</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">ParameterExpression</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;phase must be either InterpolatePoints, float or ParameterExpression, not &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"phase must be either InterpolatePoints, float or ParameterExpression, not "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">duration</span> <span class="o">!=</span> <span class="n">detuning</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;amplitude and detuning must have the same duration times; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;amplitude duration: </span><span class="si">{</span><span class="n">amplitude</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;detuning duration: </span><span class="si">{</span><span class="n">detuning</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"amplitude and detuning must have the same duration times; "</span>
+                <span class="sa">f</span><span class="s2">"amplitude duration: </span><span class="si">{</span><span class="n">amplitude</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"detuning duration: </span><span class="si">{</span><span class="n">detuning</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">detuning</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;amplitude and detuning must have the same values&#39; length; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;amplitude length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;detuning length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">detuning</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"amplitude and detuning must have the same values' length; "</span>
+                <span class="sa">f</span><span class="s2">"amplitude length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+                <span class="sa">f</span><span class="s2">"detuning length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">detuning</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="n">num_qubits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>  <span class="c1"># type: ignore [arg-type]</span>
@@ -406,12 +406,12 @@
         <span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;HG&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">"HG"</span><span class="p">,</span>
             <span class="n">num_qubits</span><span class="o">=</span><span class="n">num_qubits</span><span class="p">,</span>
             <span class="n">params</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span>
                 <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">amplitude</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+</span> <span class="n">detuning</span><span class="o">.</span><span class="n">parameters</span> <span class="o">+</span> <span class="n">phase_params</span><span class="p">)</span>
             <span class="p">),</span>
-            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">amplitude</span><span class="o">.</span><span class="n">duration</span>
@@ -429,41 +429,41 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_analog_register</span> <span class="o">=</span> <span class="n">PasqalRegister</span><span class="o">.</span><span class="n">from_coordinates</span><span class="p">(</span>
-            <span class="n">coords</span><span class="o">=</span><span class="n">new_coords</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;q&quot;</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">new_coords</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"q"</span>
         <span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">amplitude</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatePoints</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Amplitude waveform-like data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Amplitude waveform-like data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_amplitude</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">detuning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InterpolatePoints</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Detuning waveform-like data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Detuning waveform-like data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detuning</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">phase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">InterpolatePoints</span> <span class="o">|</span> <span class="n">ParameterExpression</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Phase of the pulse as float.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Phase of the pulse as float."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phase</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AbstractArray</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;coordinates as a dictionary where the keys are the qubits ids and values</span>
-<span class="sd">        are their (x, y) coordinates.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""coordinates as a dictionary where the keys are the qubits ids and values</span>
+<span class="sd">        are their (x, y) coordinates."""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analog_register</span><span class="o">.</span><span class="n">qubits</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">analog_register</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasqalRegister</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Analog register as a `PasqalRegister` instance. Not related to `qiskit`&#39;s</span>
-<span class="sd">        `QuantumRegister`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Analog register as a `PasqalRegister` instance. Not related to `qiskit`'s</span>
+<span class="sd">        `QuantumRegister`."""</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analog_register</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exponent</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">annotated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot raise this gate to the power of `exponent`.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Cannot raise this gate to the power of `exponent`."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">control</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -472,20 +472,20 @@
         <span class="n">ctrl_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">annotated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot have a control on an analog gate.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"Cannot have a control on an analog gate."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">to_openqasm3_transport_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode this gate as a numeric payload for an OpenQASM3-compatible transport format.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Encode this gate as a numeric payload for an OpenQASM3-compatible transport format."""</span>
 
         <span class="n">amp_values</span><span class="p">,</span> <span class="n">amp_times</span><span class="p">,</span> <span class="n">amp_duration</span> <span class="o">=</span> <span class="n">_encode_interpolate_points</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span><span class="p">,</span> <span class="s2">&quot;amplitude&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span><span class="p">,</span> <span class="s2">"amplitude"</span>
         <span class="p">)</span>
         <span class="n">det_values</span><span class="p">,</span> <span class="n">det_times</span><span class="p">,</span> <span class="n">det_duration</span> <span class="o">=</span> <span class="n">_encode_interpolate_points</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">detuning</span><span class="p">,</span> <span class="s2">&quot;detuning&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">detuning</span><span class="p">,</span> <span class="s2">"detuning"</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">amp_duration</span> <span class="o">-</span> <span class="n">det_duration</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Amplitude and detuning duration must match for OpenQASM3 transport.&quot;</span>
+                <span class="s2">"Amplitude and detuning duration must match for OpenQASM3 transport."</span>
             <span class="p">)</span>
 
         <span class="n">phase_mode</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -495,10 +495,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="n">InterpolatePoints</span><span class="p">):</span>
             <span class="n">phase_mode</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="n">phase_values</span><span class="p">,</span> <span class="n">phase_times</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_encode_interpolate_points</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="s2">"phase"</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">phase_scalar</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+            <span class="n">phase_scalar</span> <span class="o">=</span> <span class="n">_to_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="s2">"phase"</span><span class="p">)</span>
 
         <span class="c1"># Header layout (12 scalars):</span>
         <span class="c1"># [schema, num_qubits, grid_code, phase_mode, phase_scalar, duration,</span>
@@ -522,8 +522,8 @@
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_register</span><span class="o">.</span><span class="n">qubits</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="n">payload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                 <span class="p">[</span>
-                    <span class="n">_to_float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;coords[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].x&quot;</span><span class="p">),</span>
-                    <span class="n">_to_float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;coords[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].y&quot;</span><span class="p">),</span>
+                    <span class="n">_to_float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s2">"coords[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].x"</span><span class="p">),</span>
+                    <span class="n">_to_float</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="sa">f</span><span class="s2">"coords[</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">].y"</span><span class="p">),</span>
                 <span class="p">]</span>
             <span class="p">)</span>
 
@@ -539,13 +539,13 @@
         <span class="k">return</span> <span class="n">payload</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_openqasm3_transport_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;HamiltonianGate&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a HamiltonianGate from an OpenQASM3 transport payload.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_openqasm3_transport_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"HamiltonianGate"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Build a HamiltonianGate from an OpenQASM3 transport payload."""</span>
         <span class="c1"># pylint: disable=too-many-locals,too-many-statements</span>
 
-        <span class="n">numeric_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;transport parameter&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
+        <span class="n">numeric_params</span> <span class="o">=</span> <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"transport parameter"</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OpenQASM3 transport payload is too short.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OpenQASM3 transport payload is too short."</span><span class="p">)</span>
 
         <span class="c1"># Decode fields from the 12-value header in the same order as encoding.</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
@@ -553,7 +553,7 @@
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">schema</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">_QASM3_TRANSPORT_SCHEMA_VERSION</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unsupported OpenQASM3 transport schema version: </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unsupported OpenQASM3 transport schema version: </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="n">num_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
@@ -562,7 +562,7 @@
         <span class="n">grid_code</span> <span class="o">=</span> <span class="n">numeric_params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">grid_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_CODE_TO_GRID</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown grid code in OpenQASM3 payload: </span><span class="si">{</span><span class="n">grid_code</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown grid code in OpenQASM3 payload: </span><span class="si">{</span><span class="n">grid_code</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="n">_CODE_TO_GRID</span><span class="p">[</span><span class="n">grid_code</span><span class="p">]</span>
 
         <span class="n">phase_mode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
@@ -587,33 +587,33 @@
 
         <span class="k">if</span> <span class="n">amp_size</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">det_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;OpenQASM3 transport payload requires non-empty waveforms.&quot;</span>
+                <span class="s2">"OpenQASM3 transport payload requires non-empty waveforms."</span>
             <span class="p">)</span>
 
         <span class="c1"># Decode variable-size sections in the same fixed order used at encode time.</span>
         <span class="n">coords_flat</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span>
-            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_qubits</span><span class="p">,</span> <span class="s2">&quot;coordinates&quot;</span>
+            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_qubits</span><span class="p">,</span> <span class="s2">"coordinates"</span>
         <span class="p">)</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span><span class="n">coords_flat</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">atom_idx</span><span class="p">],</span> <span class="n">coords_flat</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">atom_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
             <span class="k">for</span> <span class="n">atom_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_qubits</span><span class="p">)</span>
         <span class="p">]</span>
 
-        <span class="n">amp_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">amp_size</span><span class="p">,</span> <span class="s2">&quot;amplitude values&quot;</span><span class="p">)</span>
+        <span class="n">amp_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">amp_size</span><span class="p">,</span> <span class="s2">"amplitude values"</span><span class="p">)</span>
         <span class="n">amp_times</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span>
-            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">amp_times_size</span><span class="p">,</span> <span class="s2">&quot;amplitude times&quot;</span>
+            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">amp_times_size</span><span class="p">,</span> <span class="s2">"amplitude times"</span>
         <span class="p">)</span>
-        <span class="n">det_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">det_size</span><span class="p">,</span> <span class="s2">&quot;detuning values&quot;</span><span class="p">)</span>
+        <span class="n">det_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">det_size</span><span class="p">,</span> <span class="s2">"detuning values"</span><span class="p">)</span>
         <span class="n">det_times</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span>
-            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">det_times_size</span><span class="p">,</span> <span class="s2">&quot;detuning times&quot;</span>
+            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">det_times_size</span><span class="p">,</span> <span class="s2">"detuning times"</span>
         <span class="p">)</span>
-        <span class="n">phase_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase_size</span><span class="p">,</span> <span class="s2">&quot;phase values&quot;</span><span class="p">)</span>
+        <span class="n">phase_values</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase_size</span><span class="p">,</span> <span class="s2">"phase values"</span><span class="p">)</span>
         <span class="n">phase_times</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">_take_slice</span><span class="p">(</span>
-            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase_times_size</span><span class="p">,</span> <span class="s2">&quot;phase times&quot;</span>
+            <span class="n">numeric_params</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase_times_size</span><span class="p">,</span> <span class="s2">"phase times"</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numeric_params</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OpenQASM3 transport payload has extra trailing values.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OpenQASM3 transport payload has extra trailing values."</span><span class="p">)</span>
 
         <span class="n">amplitude</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span>
             <span class="n">values</span><span class="o">=</span><span class="n">amp_values</span><span class="p">,</span>
@@ -636,7 +636,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unsupported phase mode in OpenQASM3 payload: </span><span class="si">{</span><span class="n">phase_mode</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unsupported phase mode in OpenQASM3 payload: </span><span class="si">{</span><span class="n">phase_mode</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
@@ -651,22 +651,22 @@
 
 <div class="viewcode-block" id="dumps_qpp_openqasm3">
 <a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.dumps_qpp_openqasm3.html#qiskit_pasqal_provider.providers.dumps_qpp_openqasm3">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">dumps_qpp_openqasm3</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialize a one-gate Hamiltonian circuit to an OpenQASM3 transport format.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dumps_qpp_openqasm3</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Serialize a one-gate Hamiltonian circuit to an OpenQASM3 transport format."""</span>
     <span class="c1"># Example of generated OpenQASM3 for this transport format (shape only):</span>
     <span class="c1"># OPENQASM 3.0;</span>
-    <span class="c1"># include &quot;stdgates.inc&quot;;</span>
+    <span class="c1"># include "stdgates.inc";</span>
     <span class="c1"># gate HG(p0, p1, ..., pN) q0, q1, ..., qM {}</span>
     <span class="c1"># qubit[M+1] q;</span>
     <span class="c1"># HG(&lt;transport-payload...&gt;) q[0], q[1], ..., q[M];</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OpenQASM3 transport expects a circuit with exactly one gate.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OpenQASM3 transport expects a circuit with exactly one gate."</span><span class="p">)</span>
 
     <span class="n">operation</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">operation</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">HamiltonianGate</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;OpenQASM3 transport expects a circuit with one HamiltonianGate.&quot;</span>
+            <span class="s2">"OpenQASM3 transport expects a circuit with one HamiltonianGate."</span>
         <span class="p">)</span>
 
     <span class="n">payload</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">to_openqasm3_transport_params</span><span class="p">()</span>
@@ -674,7 +674,7 @@
     <span class="n">transport_circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
         <span class="n">Gate</span><span class="p">(</span><span class="n">gate_name</span><span class="p">,</span> <span class="n">operation</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">,</span> <span class="n">payload</span><span class="p">),</span> <span class="n">transport_circuit</span><span class="o">.</span><span class="n">qubits</span>
     <span class="p">)</span>
-    <span class="n">program</span> <span class="o">=</span> <span class="n">qasm3</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">transport_circuit</span><span class="p">,</span> <span class="n">basis_gates</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">))</span>
+    <span class="n">program</span> <span class="o">=</span> <span class="n">qasm3</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">transport_circuit</span><span class="p">,</span> <span class="n">basis_gates</span><span class="o">=</span><span class="p">(</span><span class="s2">"U"</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">_insert_gate_declaration</span><span class="p">(</span>
         <span class="n">program</span><span class="p">,</span>
         <span class="n">gate_name</span><span class="o">=</span><span class="n">gate_name</span><span class="p">,</span>
@@ -686,21 +686,21 @@
 
 <div class="viewcode-block" id="loads_qpp_openqasm3">
 <a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.loads_qpp_openqasm3.html#qiskit_pasqal_provider.providers.loads_qpp_openqasm3">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">loads_qpp_openqasm3</span><span class="p">(</span><span class="n">program</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HG&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deserialize an OpenQASM3 transport program into a Hamiltonian circuit.&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">loads_qpp_openqasm3</span><span class="p">(</span><span class="n">program</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HG"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QuantumCircuit</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Deserialize an OpenQASM3 transport program into a Hamiltonian circuit."""</span>
 
     <span class="n">transport_circuit</span> <span class="o">=</span> <span class="n">qasm3</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">program</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transport_circuit</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OpenQASM3 transport expects exactly one gate call.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"OpenQASM3 transport expects exactly one gate call."</span><span class="p">)</span>
 
     <span class="n">operation</span> <span class="o">=</span> <span class="n">transport_circuit</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">operation</span>
     <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">gate_name</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;OpenQASM3 transport expected gate &#39;</span><span class="si">{</span><span class="n">gate_name</span><span class="si">}</span><span class="s2">&#39;, found &#39;</span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">"OpenQASM3 transport expected gate '</span><span class="si">{</span><span class="n">gate_name</span><span class="si">}</span><span class="s2">', found '</span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">'."</span>
         <span class="p">)</span>
 
     <span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="o">.</span><span class="n">from_openqasm3_transport_params</span><span class="p">(</span>
-        <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;transport parameter&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
+        <span class="p">[</span><span class="n">_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"transport parameter"</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)</span>
     <span class="n">circuit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">circuit</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>

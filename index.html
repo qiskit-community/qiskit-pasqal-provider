@@ -284,20 +284,20 @@ Use <code class="docutils literal notranslate"><span class="pre">[qc]</span></co
 <span class="n">phase</span> <span class="o">=</span> <span class="mf">0.0</span>
 
 <span class="c1"># analog gate</span>
-<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">ampl</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">)</span>
+<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">ampl</span><span class="p">,</span> <span class="n">det</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">"triangular"</span><span class="p">)</span>
 
 <span class="c1"># Qiskit circuit with analog gate</span>
 <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
 
 <span class="n">provider_qutip</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
-<span class="n">backend_qutip</span> <span class="o">=</span> <span class="n">provider_qutip</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">)</span>
+<span class="n">backend_qutip</span> <span class="o">=</span> <span class="n">provider_qutip</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">"qutip"</span><span class="p">)</span>
 <span class="n">sampler_qutip</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend_qutip</span><span class="p">)</span>
 <span class="n">results_qutip</span> <span class="o">=</span> <span class="n">sampler_qutip</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">qc</span><span class="p">],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">results_qutip</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">counts</span><span class="p">)</span>
 
-<span class="c1"># Counter({&#39;100110&#39;: 139, &#39;010001&#39;: 127, &#39;010100&#39;: 111, &#39;001000&#39;: 92, &#39;100001&#39;: 92, ... })</span>
+<span class="c1"># Counter({'100110': 139, '010001': 127, '010100': 111, '001000': 92, '100001': 92, ... })</span>
 </pre></div>
 </div>
 </section>
@@ -315,15 +315,15 @@ This includes scalar phase expressions and waveform duration expressions.</p>
 <span class="n">times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="n">amplitude</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
 <span class="n">detuning</span> <span class="o">=</span> <span class="n">InterpolatePoints</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">times</span><span class="o">=</span><span class="n">times</span><span class="p">)</span>
-<span class="n">phase</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s2">&quot;phase&quot;</span><span class="p">)</span>
+<span class="n">phase</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s2">"phase"</span><span class="p">)</span>
 
-<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">detuning</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">)</span>
+<span class="n">gate</span> <span class="o">=</span> <span class="n">HamiltonianGate</span><span class="p">(</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">detuning</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">grid_transform</span><span class="o">=</span><span class="s2">"triangular"</span><span class="p">)</span>
 
 <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
 <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">qc</span><span class="o">.</span><span class="n">qubits</span><span class="p">)</span>
 
 <span class="n">provider</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">()</span>
-<span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;qutip&quot;</span><span class="p">))</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">"qutip"</span><span class="p">))</span>
 
 <span class="c1"># Exactly one pub: [(circuit, parameter_values)]</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">([(</span><span class="n">qc</span><span class="p">,</span> <span class="p">{</span><span class="n">phase</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})],</span> <span class="n">shots</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
@@ -341,13 +341,13 @@ This includes scalar phase expressions and waveform duration expressions.</p>
 
 <span class="c1"># Use your Pasqal Cloud credentials</span>
 <span class="n">remote_config</span> <span class="o">=</span> <span class="n">RemoteConfig</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_USERNAME&quot;</span><span class="p">],</span>
-    <span class="n">password</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_PASSWORD&quot;</span><span class="p">],</span>
-    <span class="n">project_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PASQAL_PROJECT_ID&quot;</span><span class="p">],</span>
+    <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PASQAL_USERNAME"</span><span class="p">],</span>
+    <span class="n">password</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PASQAL_PASSWORD"</span><span class="p">],</span>
+    <span class="n">project_id</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PASQAL_PROJECT_ID"</span><span class="p">],</span>
 <span class="p">)</span>
 
 <span class="n">provider</span> <span class="o">=</span> <span class="n">PasqalProvider</span><span class="p">(</span><span class="n">remote_config</span><span class="o">=</span><span class="n">remote_config</span><span class="p">)</span>
-<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;remote-emu-fresnel&quot;</span><span class="p">)</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">"remote-emu-fresnel"</span><span class="p">)</span>
 <span class="n">sampler</span> <span class="o">=</span> <span class="n">SamplerV2</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
 
 <span class="c1"># Reuse `qc` from the local example (or build a new circuit in the same way).</span>

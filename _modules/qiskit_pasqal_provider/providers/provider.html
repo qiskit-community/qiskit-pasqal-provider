@@ -229,7 +229,7 @@
         </div>
         <article role="main">
           <h1>Source code for qiskit_pasqal_provider.providers.provider</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Provider implementation&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Provider implementation"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
@@ -246,7 +246,7 @@
 <div class="viewcode-block" id="PasqalProvider">
 <a class="viewcode-back" href="../../../stubs/qiskit_pasqal_provider.providers.PasqalProvider.html#qiskit_pasqal_provider.providers.PasqalProvider">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PasqalProvider</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pasqal provider class&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Pasqal provider class"""</span>
 
     <span class="n">remote_config</span><span class="p">:</span> <span class="n">RemoteConfig</span> <span class="o">|</span> <span class="kc">None</span>
 
@@ -257,14 +257,14 @@
         <span class="n">remote_config</span><span class="p">:</span> <span class="n">RemoteConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">options</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Defines a Pasqal provider that provides access to a backend. It can be</span>
 <span class="sd">        either local or remote.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            remote_config: RemoteConfig instance for remote backends only. Optional.</span>
 <span class="sd">            **options: any other relevant optional parameters that a backend may use.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">remote_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">remote_config</span> <span class="o">=</span> <span class="kc">None</span>
@@ -278,7 +278,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_backend</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">backend_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">PasqalTarget</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PasqalBackend</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves a backend instance from a given backend name string. It will</span>
 <span class="sd">        try to look for it on the local backends first, then on remote backends.</span>
 <span class="sd">        If nothing is found, an exception is raised. For remote backends,</span>
@@ -294,7 +294,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A PasqalBackend instance. It will be a local or remote backend</span>
 <span class="sd">                depending on the specifications of the backend.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">backend_name</span> <span class="ow">in</span> <span class="n">PasqalBackendType</span><span class="p">:</span>
 
@@ -309,7 +309,7 @@
 
                     <span class="k">assert</span> <span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">remote_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="p">),</span> <span class="s2">&quot;&#39;remote_config&#39; must be provided to access remote backends.&quot;</span>
+                    <span class="p">),</span> <span class="s2">"'remote_config' must be provided to access remote backends."</span>
 
                     <span class="n">_backend</span> <span class="o">=</span> <span class="n">PasqalRemoteBackend</span><span class="p">(</span>
                         <span class="n">backend</span><span class="o">=</span><span class="n">backend_name</span><span class="p">,</span>
@@ -319,11 +319,11 @@
                     <span class="p">)</span>
 
                 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2"> is not a valid backend&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2"> is not a valid backend"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
             <span class="k">return</span> <span class="n">_backend</span>
 
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2"> is not a valid backend&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">backend_name</span><span class="si">}</span><span class="s2"> is not a valid backend"</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
