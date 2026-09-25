@@ -10,24 +10,36 @@ from pasqal_cloud.batch import Batch as PasqalBatchData
 from pasqal_cloud.job import Job as PasqalJobData
 from pulser.backend import Results
 from pulser.backend.remote import BatchStatus, RemoteResults
-from pulser_simulation.simresults import SimulationResults
 from qiskit.primitives import DataBin, PrimitiveResult, SamplerPubResult
+
+# `SimulationResults` is only available with the optional `qutip` extra.
+try:
+    from pulser_simulation.simresults import SimulationResults
+
+    _SIMULATION_RESULT_TYPES: tuple[type, ...] = (SimulationResults,)
+except ImportError:
+    _SIMULATION_RESULT_TYPES = ()
+
+
+def _is_simulation_results(results: Any) -> bool:
+    """Check whether `results` come from the local qutip emulator."""
+    return isinstance(results, _SIMULATION_RESULT_TYPES)
 
 
 def _get_counts(
-    results: SimulationResults | Results, metadata: dict[str, Any]
+    results: Any, metadata: dict[str, Any]
 ) -> Counter | dict[str, int | float]:
     """Get counts from pulser simulation results."""
-    if isinstance(results, SimulationResults):
-        if metadata["shots"] is None:
-            return results.sample_final_state()
-        return results.sample_final_state(N_samples=metadata["shots"])
-
     if isinstance(results, Results):
         if metadata.get("config"):
             obs = metadata["config"].observables[0]
             times = results.get_result_times(obs)
             return results.get_result(obs, times[-1])
+
+    elif _is_simulation_results(results):
+        if metadata["shots"] is None:
+            return results.sample_final_state()
+        return results.sample_final_state(N_samples=metadata["shots"])
 
     raise ValueError("results must be a SimulationResults or Results.")
 
@@ -121,14 +133,14 @@ def _fetch_legacy_payload_results(results: list[Any] | tuple[Any, ...]) -> DataB
 def build_primitive_result(
     backend_name: str,
     job_id: str | list[str],
-    results: SimulationResults | RemoteResults | dict | list | tuple | None,
+    results: Any,
     metadata: dict[str, Any] | None = None,
 ) -> PrimitiveResult[SamplerPubResult]:
     """Build a Qiskit PrimitiveResult from Pasqal backend outputs."""
     metadata = {} if metadata is None else dict(metadata)
 
     match results:
-        case SimulationResults() | Results():
+        case _ if isinstance(results, Results) or _is_simulation_results(results):
             counts = _get_counts(results, metadata)
             data = DataBin(counts=counts)
             metadata["shots"] = int(sum(data.counts.values()))  # pylint: disable=E1101
