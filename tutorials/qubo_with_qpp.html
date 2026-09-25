@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="QPP API References" href="../apidocs/index.html" /><link rel="prev" title="OpenQASM3 Transport Roundtrip" href="openqasm3_transport_roundtrip.html" />
 
     <!-- Generated with Sphinx 7.4.7 and Furo 2024.01.29 -->
-        <title>QAA to Solve a QUBO Problem with qiskit-pasqal-provider - Qiskit Pasqal Provider 0.3.0</title>
+        <title>QAA to Solve a QUBO Problem with qiskit-pasqal-provider - Qiskit Pasqal Provider 0.4.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=3ee1c6c6" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/qiskit-sphinx-theme.css?v=fe84956c" />
@@ -144,7 +144,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.3.0</div></a>
+      <a href="../index.html"><div class="brand">Qiskit Pasqal Provider 0.4.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -171,7 +171,7 @@
     </div>
   </a>
   
-  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.3.0</span>
+  <span class="sidebar-brand-text">Qiskit Pasqal Provider 0.4.0</span>
 </div><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
@@ -518,6 +518,15 @@ array([[ 5.76641233,  1.78759731],
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -525,11 +534,11 @@ array([[ 5.76641233,  1.78759731],
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 [(&#39;00111&#39;, 501),
- (&#39;01011&#39;, 460),
+ (&#39;01011&#39;, 461),
  (&#39;00011&#39;, 19),
- (&#39;01010&#39;, 4),
  (&#39;00100&#39;, 3),
  (&#39;10000&#39;, 3),
+ (&#39;01010&#39;, 3),
  (&#39;10001&#39;, 2),
  (&#39;00101&#39;, 2),
  (&#39;10010&#39;, 2),
@@ -590,19 +599,46 @@ array([[ 5.76641233,  1.78759731],
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
+  return self._executor.run()
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[-19.12089133596,
- -22.793285317686667,
- -24.571298612039996,
+[-19.131608665146665,
+ -22.78706970604667,
+ -24.570630375993332,
  -26.881121687826667,
  -26.63299402847333,
  -26.828419586613332,
- -27.071356436253332,
+ -27.074571930946664,
  -27.118395128466663,
  -27.15414386206,
  -27.141983153293335]
@@ -718,7 +754,7 @@ array([[ 5.76641233,  1.78759731],
   </div>
 </div><script src="../_static/jquery.js?v=5d32c60e"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../_static/documentation_options.js?v=e259d695"></script>
+    <script src="../_static/documentation_options.js?v=6c02275b"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/qiskit-sphinx-theme.js?v=4d77b8ca"></script>
