@@ -4,6 +4,7 @@ from typing import Any, Union
 
 from numpy.typing import ArrayLike
 from pulser.math import AbstractArray
+from qiskit import qasm3
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit import ParameterExpression
 from qiskit.circuit.gate import Gate
@@ -26,17 +27,6 @@ _GRID_TO_CODE: dict[GridLiteralType, GridCodeType] = {
 _CODE_TO_GRID: dict[GridCodeType, GridLiteralType] = {
     code: grid for grid, code in _GRID_TO_CODE.items()
 }
-
-
-def _qasm3():
-    try:
-        from qiskit import qasm3
-    except ImportError as exc:
-        raise ImportError(
-            "OpenQASM3 transport requires the 'qasm3' extra. Install "
-            "qiskit-pasqal-provider[qasm3] or qiskit-pasqal-provider[all]."
-        ) from exc
-    return qasm3
 
 
 def _to_float(value: Any, label: str) -> float:
@@ -445,7 +435,7 @@ def dumps_qpp_openqasm3(circuit: QuantumCircuit, gate_name: str = "HG") -> str:
     transport_circuit.append(
         Gate(gate_name, operation.num_qubits, payload), transport_circuit.qubits
     )
-    program = _qasm3().dumps(transport_circuit, basis_gates=("U", gate_name))
+    program = qasm3.dumps(transport_circuit, basis_gates=("U", gate_name))
     return _insert_gate_declaration(
         program,
         gate_name=gate_name,
@@ -457,7 +447,13 @@ def dumps_qpp_openqasm3(circuit: QuantumCircuit, gate_name: str = "HG") -> str:
 def loads_qpp_openqasm3(program: str, gate_name: str = "HG") -> QuantumCircuit:
     """Deserialize an OpenQASM3 transport program into a Hamiltonian circuit."""
 
-    transport_circuit = _qasm3().loads(program)
+    try:
+        transport_circuit = qasm3.loads(program)
+    except ImportError as exc:
+        raise ImportError(
+            "Loading OpenQASM3 programs requires the 'qasm3' extra. Install "
+            "qiskit-pasqal-provider[qasm3] or qiskit-pasqal-provider[all]."
+        ) from exc
     if len(transport_circuit.data) != 1:
         raise ValueError("OpenQASM3 transport expects exactly one gate call.")
 

@@ -1,5 +1,7 @@
 """Pasqal base backends"""
 
+from __future__ import annotations
+
 import sys
 import logging
 from abc import ABC, abstractmethod
@@ -141,7 +143,7 @@ class PasqalJob(BasePrimitiveJob[PrimitiveResult[SamplerPubResult], JobStatus], 
         self,
         job_params: list[JobParams] | None = None,
         wait: bool | None = None,
-    ) -> "SimulationResults | RemoteResults":
+    ) -> SimulationResults | RemoteResults:
         """
         Check the self._executor run method signature;
         Only compatible with local run.

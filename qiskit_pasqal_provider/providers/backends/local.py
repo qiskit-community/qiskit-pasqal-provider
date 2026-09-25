@@ -31,9 +31,15 @@ class PasqalLocalBackend(PasqalBackend):
 
         match backend:
             case "qutip":
-                from qiskit_pasqal_provider.providers.backends.qutip import (
-                    QutipEmulatorBackend,
-                )
+                try:
+                    from qiskit_pasqal_provider.providers.backends.qutip import (
+                        QutipEmulatorBackend,
+                    )
+                except ImportError as exc:
+                    raise ImportError(
+                        "The qutip backend requires the 'qutip' extra. Install "
+                        "qiskit-pasqal-provider[qutip] or qiskit-pasqal-provider[all]."
+                    ) from exc
 
                 return QutipEmulatorBackend(target=target, **options)
 
