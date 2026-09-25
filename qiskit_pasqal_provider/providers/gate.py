@@ -447,7 +447,13 @@ def dumps_qpp_openqasm3(circuit: QuantumCircuit, gate_name: str = "HG") -> str:
 def loads_qpp_openqasm3(program: str, gate_name: str = "HG") -> QuantumCircuit:
     """Deserialize an OpenQASM3 transport program into a Hamiltonian circuit."""
 
-    transport_circuit = qasm3.loads(program)
+    try:
+        transport_circuit = qasm3.loads(program)
+    except ImportError as exc:
+        raise ImportError(
+            "Loading OpenQASM3 programs requires the 'qasm3' extra. Install "
+            "qiskit-pasqal-provider[qasm3] or qiskit-pasqal-provider[all]."
+        ) from exc
     if len(transport_circuit.data) != 1:
         raise ValueError("OpenQASM3 transport expects exactly one gate call.")
 

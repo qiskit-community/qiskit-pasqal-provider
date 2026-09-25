@@ -19,11 +19,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qiskit-track: ["qiskit1", "qiskit2"]
+        qiskit-track: ["qiskit1", "qiskit2", "no-emulators"]
     steps:
       - uses: actions/checkout@v7
       - name: Set up Python 3.12
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Install dependencies
@@ -33,7 +33,7 @@ jobs:
           python -m venv test-job
           source test-job/bin/activate
           python -m pip install -U pip setuptools wheel tox
-          python -m pip install -U -e .[mps]
+          python -m pip install -U -e .[all]
           pip check
       - name: Run Tests
         shell: bash

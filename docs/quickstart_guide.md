@@ -4,7 +4,7 @@
 
 First you have to do the [Installation](../INSTALL.md).
 ```bash
-python3 -m pip install qiskit-pasqal-provider
+python3 -m pip install qiskit-pasqal-provider[qutip]
 ```
 
 ## Usage
@@ -137,6 +137,7 @@ used with this provider in those environments.
 
 For serializing Qiskit programs with the custom Pasqal analog gate, we use an OpenQASM3-compatible transport format.
 Since we have a custom gate, we need custom serialize and deserialize methods.
+Install `qiskit-pasqal-provider[qasm3]` to use these helpers.
 
 ```python
 from qiskit.circuit import QuantumCircuit
