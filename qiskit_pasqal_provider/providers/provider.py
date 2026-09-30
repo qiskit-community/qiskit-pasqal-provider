@@ -60,7 +60,7 @@ class PasqalProvider:
                 depending on the specifications of the backend.
         """
 
-        if backend_name in PasqalBackendType:
+        if backend_name in list(PasqalBackendType):
 
             try:
                 _backend = PasqalLocalBackend(
