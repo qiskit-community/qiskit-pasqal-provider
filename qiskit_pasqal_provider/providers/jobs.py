@@ -4,7 +4,7 @@ from typing import Any, cast
 
 from qiskit.primitives import PrimitiveResult, SamplerPubResult
 from qiskit.providers.jobstatus import JobStatus
-from pasqal_cloud import SDK as PasqalSDK
+from pasqal_cloud.pasqal_cloud_client import PasqalCloudClient as PasqalSDK
 from pasqal_cloud.batch import Batch as PasqalBatch
 from pasqal_cloud.job import CreateJob
 from pulser.backend.remote import Sequence

@@ -78,7 +78,10 @@ disable=raw-checker-failed,
         useless-suppression,
         deprecated-pragma,
         use-symbolic-message-instead,
-        duplicate-code
+        duplicate-code,
+        # pylint 4 flags optional upstream hooks that raise NotImplementedError,
+        # e.g. qiskit's BackendV2.dtm/meas_map and pulser's Result.get_state
+        abstract-method
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

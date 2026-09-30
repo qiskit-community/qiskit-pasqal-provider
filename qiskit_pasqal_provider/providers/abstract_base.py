@@ -11,7 +11,7 @@ from qiskit import QuantumCircuit
 from qiskit.primitives import BasePrimitiveJob, PrimitiveResult, SamplerPubResult
 from qiskit.providers import BackendV2, JobStatus
 from qiskit.providers.jobstatus import JOB_FINAL_STATES
-from pasqal_cloud import SDK as PasqalSDK
+from pasqal_cloud.pasqal_cloud_client import PasqalCloudClient as PasqalSDK
 from pasqal_cloud.device import DeviceTypeName
 from pulser.backend.remote import JobParams, RemoteResults
 from pulser.register.register_layout import RegisterLayout
