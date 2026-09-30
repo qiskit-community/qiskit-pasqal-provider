@@ -125,6 +125,41 @@ print(job.status())
 print(job.result()[0].data.counts)
 ```
 
+### Choosing the register layout
+
+On a QPU, atoms can only sit on the traps of a register layout, and every new layout
+has to be calibrated first, which takes time. Reusing one of the device's pre-calibrated
+layouts avoids that. See Pulser's
+[Register Layouts & Mappable Registers](https://pulser.readthedocs.io/en/stable/tutorials/reg_layouts.html)
+tutorial for the details.
+
+By default, the provider places the atoms on the device's first pre-calibrated layout
+when they fit on its traps (up to a translation), and otherwise generates a new layout
+if the device accepts one. To choose the layout yourself, pick atom coordinates from its
+traps and pass it through a `PasqalTarget`:
+
+```python
+from pasqal_cloud import PasqalCloudConnection
+
+from qiskit_pasqal_provider.providers.target import PasqalTarget
+
+cloud = PasqalCloudConnection(
+    username=remote_config.username,
+    password=remote_config.password,
+    project_id=remote_config.project_id,
+)
+device = cloud.fetch_available_devices()["FRESNEL"]
+layout = device.pre_calibrated_layouts[0]
+
+# place the atoms on traps 0-3 of the chosen layout
+coords = [list(c) for c in layout.define_register(0, 1, 2, 3).qubits.values()]
+qc = QuantumCircuit(len(coords))
+qc.append(HamiltonianGate(ampl, det, phase, coords), qc.qubits)
+
+target = PasqalTarget(device=device, layout=layout)
+sampler = SamplerV2(provider.get_backend("fresnel", target=target))
+```
+
 ### QRMI integration
 
 To run this provider through a workload manager (for example in HPC environments),

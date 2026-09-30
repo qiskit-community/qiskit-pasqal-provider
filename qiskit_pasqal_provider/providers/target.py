@@ -9,7 +9,7 @@ from dataclasses import replace
 
 from pulser.devices import Device, AnalogDevice, DigitalAnalogDevice
 from pulser.register import RegisterLayout
-from pulser_pasqal import PasqalCloud
+from pasqal_cloud import PasqalCloudConnection
 
 from .layouts import PasqalLayout
 
@@ -19,12 +19,12 @@ AVAILABLE_DEVICES = {
 }
 
 
-def fetch_remote_device(cloud: PasqalCloud) -> Device:
+def fetch_remote_device(cloud: PasqalCloudConnection) -> Device:
     """
     Get the QPU device with current valid specs.
 
     Args:
-        cloud: A `PasqalCloud` instance
+        cloud: A `PasqalCloudConnection` instance
 
     Returns:
         A `Device` object for the available QPU
@@ -60,13 +60,13 @@ class PasqalTarget:
     _accepts_new_layouts: bool
     _pre_calibrated_layouts: tuple
     _layout: PasqalLayout | RegisterLayout
-    _cloud: PasqalCloud | None
+    _cloud: PasqalCloudConnection | None
 
     def __init__(
         self,
         device: PasqalDeviceType | PasqalDevice | Device | str = "analog",
         layout: PasqalLayout | RegisterLayout | None = None,
-        cloud: PasqalCloud | None = None,
+        cloud: PasqalCloudConnection | None = None,
     ):
         """
         Define the device and register layout used by Pasqal backends.
@@ -77,7 +77,7 @@ class PasqalTarget:
                 or pass a `PasqalTarget` originating from integrations such as QRMI.
             layout (PasqalLayout | RegisterLayout, optional): Optional layout to use
                 when the selected device does not expose one.
-            cloud (PasqalCloud): Optional cloud object that retrieves the available QPU.
+            cloud (PasqalCloudConnection): Optional cloud object that retrieves the available QPU.
                 Default to `None`.
         """
 
@@ -133,18 +133,16 @@ class PasqalTarget:
                 f"a layout needs to be provided for device '{self.device.name}'"
             )
 
-        if self._accepts_new_layouts:
-
-            if self._pre_calibrated_layouts:
-
-                if self.device.is_calibrated_layout(layout):  # type: ignore [arg-type]
-                    return layout
-
-                raise ValueError("layout does not match the pre-calibrated layouts.")
-
+        if self.device.is_calibrated_layout(layout):  # type: ignore [arg-type]
             return layout
 
-        raise ValueError(f"device '{self.device.name}' does not accept new layouts")
+        if not self._accepts_new_layouts:
+            raise ValueError(f"device '{self.device.name}' does not accept new layouts")
+
+        if self._pre_calibrated_layouts:
+            raise ValueError("layout does not match the pre-calibrated layouts.")
+
+        return layout
 
     @property
     def device(self) -> PasqalDevice | Device:

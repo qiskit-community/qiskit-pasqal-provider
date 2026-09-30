@@ -4,9 +4,9 @@ from copy import deepcopy
 from typing import Any
 
 from pasqal_cloud.device import DeviceTypeName
+from pasqal_cloud import PasqalCloudConnection
 from pasqal_cloud.job import CreateJob
 from pulser.register import Register
-from pulser_pasqal import PasqalCloud
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
@@ -16,6 +16,7 @@ from qiskit_pasqal_provider.providers.pulse_utils import (
     PasqalRegister,
     gen_seq,
     get_register_from_circuit,
+    place_register,
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
@@ -31,19 +32,19 @@ class EmuRemoteBackend(PasqalBackend):
         remote_config: RemoteConfig,
         target: PasqalTarget | None = None,
     ):
-        """initialize and instantiate PasqalCloud."""
+        """initialize and instantiate PasqalCloudConnection."""
 
         super().__init__()
 
         self._backend_name = backend_name
         self._device_type = device_type
-        self._cloud = PasqalCloud(
+        self._cloud = PasqalCloudConnection(
             username=remote_config.username,
             password=remote_config.password,
             project_id=remote_config.project_id,
         )
 
-        self._executor = self._cloud._sdk_connection
+        self._executor = self._cloud.cloud_client
         self._target = target if target is not None else PasqalTarget(cloud=self._cloud)
 
     @property
@@ -89,13 +90,9 @@ class EmuRemoteBackend(PasqalBackend):
         )
 
         if self._device_type == DeviceTypeName.EMU_FRESNEL:
-            # define automatic layout based on register (limited functionality)
-            analog_register = analog_register.with_automatic_layout(
-                device=self.target.device
+            analog_register = place_register(
+                analog_register, self.target.device, self.target.layout
             )
-
-            # validate register from device layout; will throw an error if not compatible
-            self.target.device.validate_register(analog_register)
 
         seq = gen_seq(
             analog_register=analog_register,

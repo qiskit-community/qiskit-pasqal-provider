@@ -3,18 +3,19 @@
 from dataclasses import dataclass
 from functools import reduce
 
-from typing import Any, Literal
+from typing import Any, Literal, cast
 import numpy as np
 import pulser
 from pulser import Pulse, Sequence
 from pulser.devices._device_datacls import BaseDevice
 from pulser.parametrized import ParamObj, Variable
 from pulser.parametrized.variable import VariableItem
-from pulser.register import Register
+from pulser.register import Register, RegisterLayout
 from pulser.waveforms import CustomWaveform, InterpolatedWaveform, Waveform
 from qiskit.circuit import Parameter, ParameterExpression, QuantumCircuit
 from sympy import lambdify
 
+from qiskit_pasqal_provider.providers.layouts import PasqalLayout
 from qiskit_pasqal_provider.providers.target import PasqalDevice
 
 # defining handy type aliases
@@ -603,6 +604,57 @@ def get_register_from_circuit(run_input: QuantumCircuit) -> PasqalRegister:
         )
 
     return registers[0]
+
+
+def place_register(
+    register: Register,
+    device: pulser.devices.Device,
+    layout: PasqalLayout | RegisterLayout | None = None,
+) -> Register:
+    """
+    Place the register on a layout when the device requires one.
+
+    The atoms are mapped, up to a translation, onto the traps of `layout`, or of
+    the device's first pre-calibrated layout if `layout` is not given. If they do
+    not fit, a new layout is generated when the device accepts new layouts.
+
+    Args:
+        register: the register to place.
+        device: the device the register will run on.
+        layout: the layout to place the register on. Optional.
+
+    Returns:
+        The register, bound to a layout if the device requires one.
+    """
+
+    if register.layout is not None or not device.requires_layout:
+        return register
+
+    layout = cast(
+        RegisterLayout | None, layout or next(iter(device.pre_calibrated_layouts), None)
+    )
+    if layout is not None:
+        # registers are centered on creation, so try every trap as the first atom
+        coords = np.array(list(register.qubits.values()), dtype=float)
+        for trap in layout.coords:
+            try:
+                trap_ids = layout.get_traps_from_coordinates(
+                    *(coords - coords[0] + trap)
+                )
+            except ValueError:
+                continue
+            return cast(
+                Register,
+                layout.define_register(*trap_ids, qubit_ids=register.qubit_ids),
+            )
+
+        if not device.accepts_new_layouts:
+            raise ValueError(
+                f"the register does not fit on layout '{layout}' and device "
+                f"'{device.name}' does not accept new layouts."
+            )
+
+    return register.with_automatic_layout(device=device)
 
 
 class RegisterTransform:

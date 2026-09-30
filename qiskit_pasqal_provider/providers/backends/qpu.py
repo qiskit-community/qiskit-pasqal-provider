@@ -1,10 +1,10 @@
-"""PasqalCloud remote backend"""
+"""Pasqal Cloud QPU backend"""
 
 from copy import deepcopy
 from typing import Any
 
+from pasqal_cloud import PasqalCloudConnection
 from pasqal_cloud.job import CreateJob
-from pulser_pasqal import PasqalCloud
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
@@ -17,6 +17,7 @@ from qiskit_pasqal_provider.providers.jobs import PasqalRemoteJob
 from qiskit_pasqal_provider.providers.pulse_utils import (
     gen_seq,
     get_register_from_circuit,
+    place_register,
 )
 from qiskit_pasqal_provider.providers.target import PasqalTarget
 from qiskit_pasqal_provider.utils import RemoteConfig
@@ -28,12 +29,12 @@ class QPUBackend(PasqalBackend):
     _version: str = "0.1.0"
     _backend_name = PasqalBackendType.FRESNEL
 
-    def __init__(self, remote_config: RemoteConfig):
-        """initialize and instantiate PasqalCloud."""
+    def __init__(self, remote_config: RemoteConfig, target: PasqalTarget | None = None):
+        """initialize and instantiate PasqalCloudConnection."""
 
         super().__init__()
 
-        self._cloud = PasqalCloud(
+        self._cloud = PasqalCloudConnection(
             username=remote_config.username,
             password=remote_config.password,
             project_id=remote_config.project_id,
@@ -43,8 +44,8 @@ class QPUBackend(PasqalBackend):
             webhook=remote_config.webhook,
         )
 
-        self._executor = self._cloud._sdk_connection
-        self._target = PasqalTarget(cloud=self._cloud)
+        self._executor = self._cloud.cloud_client
+        self._target = target if target is not None else PasqalTarget(cloud=self._cloud)
 
     @property
     def target(self) -> PasqalTarget:
@@ -86,17 +87,15 @@ class QPUBackend(PasqalBackend):
         if shots is None:
             raise ValueError("shots must not be None. Choose an integer value.")
 
-        analog_register = get_register_from_circuit(run_input)
-
-        # define automatic layout based on register (limited functionality)
-        new_register = analog_register.with_automatic_layout(device=self.target.device)
-
-        # validate register from device layout; will throw an error if not compatible
-        self.target.device.validate_register(new_register)
+        analog_register = place_register(
+            get_register_from_circuit(run_input),
+            self.target.device,
+            self.target.layout,
+        )
 
         # get a sequence
         seq = gen_seq(
-            analog_register=new_register,
+            analog_register=analog_register,
             device=self.target.device,
             circuit=run_input,
         )

@@ -26,7 +26,6 @@ class PasqalRemoteBackend(PasqalBackend):
         target: PasqalTarget | None = None,
         **_options: Any,
     ):
-        # cloud = PasqalCloud
         match backend:
             case "remote-emu-free":
                 return EmuRemoteBackend(
@@ -44,7 +43,7 @@ class PasqalRemoteBackend(PasqalBackend):
                 )
 
             case "fresnel":
-                return QPUBackend(remote_config)
+                return QPUBackend(remote_config, target)
 
             case _:
                 raise NotImplementedError()
