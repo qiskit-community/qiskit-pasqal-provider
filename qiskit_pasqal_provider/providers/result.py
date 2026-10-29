@@ -12,19 +12,6 @@ from pulser.backend import Results
 from pulser.backend.remote import BatchStatus, RemoteResults
 from qiskit.primitives import DataBin, PrimitiveResult, SamplerPubResult
 
-# `SimulationResults` is only available with the optional `qutip` extra.
-try:
-    from pulser_simulation.simresults import SimulationResults
-
-    _SIMULATION_RESULT_TYPES: tuple[type, ...] = (SimulationResults,)
-except ImportError:
-    _SIMULATION_RESULT_TYPES = ()
-
-
-def _is_simulation_results(results: Any) -> bool:
-    """Check whether `results` come from the local qutip emulator."""
-    return isinstance(results, _SIMULATION_RESULT_TYPES)
-
 
 def _get_counts(
     results: Any, metadata: dict[str, Any]
@@ -36,12 +23,7 @@ def _get_counts(
             times = results.get_result_times(obs)
             return results.get_result(obs, times[-1])
 
-    elif _is_simulation_results(results):
-        if metadata["shots"] is None:
-            return results.sample_final_state()
-        return results.sample_final_state(N_samples=metadata["shots"])
-
-    raise ValueError("results must be a SimulationResults or Results.")
+    raise ValueError("results must be a Results with a config.")
 
 
 def _fetch_remote_pulser_sim_results(
@@ -55,7 +37,7 @@ def _fetch_remote_pulser_sim_results(
     def get_result() -> DataBin:
         match results.get_batch_status():
             case BatchStatus.DONE:
-                return DataBin(counts=results.results[0].sampling_dist)
+                return DataBin(counts=results.results[0].final_bitstrings)
             case BatchStatus.CANCELED:
                 raise ValueError("Remote execution was canceled.")
             case BatchStatus.TIMED_OUT:
@@ -140,7 +122,7 @@ def build_primitive_result(
     metadata = {} if metadata is None else dict(metadata)
 
     match results:
-        case _ if isinstance(results, Results) or _is_simulation_results(results):
+        case Results():
             counts = _get_counts(results, metadata)
             data = DataBin(counts=counts)
             metadata["shots"] = int(sum(data.counts.values()))  # pylint: disable=E1101

@@ -8,7 +8,7 @@ from typing import Any, cast
 import pytest
 from pasqal_cloud.job import CreateJob, Job
 from pulser.backend.remote import RemoteConnection, RemoteResults
-from pulser.result import Result
+from pulser.backend import Results
 from qiskit.primitives import PrimitiveResult
 from qiskit.providers.jobstatus import JobStatus
 
@@ -19,7 +19,7 @@ from tests.conftest import MockSDK
 
 
 def test_mock_remote_sim_result(
-    mock_conn: RemoteConnection, mock_sdk: MockSDK, mock_result: Result
+    mock_conn: RemoteConnection, mock_sdk: MockSDK, mock_result: Results
 ) -> None:
     """Test a mock remote setting to evaluate the result pipeline."""
 
@@ -32,10 +32,10 @@ def test_mock_remote_sim_result(
     assert isinstance(result, PrimitiveResult)
     counts = result[0].data.counts
 
-    assert counts == mock_result.sampling_dist
+    assert counts == mock_result.final_bitstrings
 
 
-def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Result) -> None:
+def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Results) -> None:
     """Test a mock remote setting to evaluate the result pipeline."""
 
     batch = mock_sdk.create_batch("", [CreateJob(runs=1000, variables={})])
@@ -67,10 +67,10 @@ def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Result) -> None:
     )
     counts = result[0].data.counts
 
-    assert counts == mock_result.sampling_dist
+    assert counts == mock_result.final_bitstrings
 
 
-def test_counter_result_without_batch_metadata(mock_result: Result) -> None:
+def test_counter_result_without_batch_metadata(mock_result: Results) -> None:
     """Test that direct counter payloads produce a PrimitiveResult."""
     result = build_primitive_result(
         backend_name="MockBackend",
@@ -80,10 +80,10 @@ def test_counter_result_without_batch_metadata(mock_result: Result) -> None:
     )
     counts = result[0].data.counts
 
-    assert counts == mock_result.sampling_dist
+    assert counts == mock_result.final_bitstrings
 
 
-def test_legacy_wait_true_payload_list_is_supported(mock_result: Result) -> None:
+def test_legacy_wait_true_payload_list_is_supported(mock_result: Results) -> None:
     """Test that legacy wait=True payload lists produce a PrimitiveResult."""
 
     payload = json.dumps({"counter": deepcopy(DEFAULT_DICT_RESULT)})
@@ -95,7 +95,7 @@ def test_legacy_wait_true_payload_list_is_supported(mock_result: Result) -> None
     )
     counts = result[0].data.counts
 
-    assert counts == mock_result.sampling_dist
+    assert counts == mock_result.final_bitstrings
 
 
 def test_mock_cloud_result_rejects_malformed_counter(mock_sdk: MockSDK) -> None:

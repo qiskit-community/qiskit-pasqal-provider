@@ -1,10 +1,10 @@
 """QuTiP backend"""
 
-import copy
 import uuid
 from typing import Any
 
-from pulser_simulation import QutipEmulator
+from pulser.backend import BitStrings
+from pulser_simulation import QutipBackendV2, QutipConfig
 from qiskit import QuantumCircuit
 from qiskit.providers import Options
 
@@ -91,12 +91,13 @@ class QutipEmulatorBackend(PasqalBackend):
         # initialise the backend from sequence.
         # In the sequence the register and device is encoded
         # we can imagine moving that to the Qiskit Backend
-        self._executor = QutipEmulator.from_sequence(seq)
-        backend = copy.deepcopy(self)
+        bitstrings = BitStrings() if shots is None else BitStrings(num_shots=shots)
+        config = QutipConfig(observables=[bitstrings])
+        self._executor = QutipBackendV2(seq, config=config)
         job_id = str(uuid.uuid4())
 
         job = PasqalLocalJob(
-            backend=backend,
+            backend=self,
             job_id=job_id,
             shots=shots,
             qobj_id=job_id,

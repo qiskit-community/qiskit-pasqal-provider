@@ -10,7 +10,6 @@ from typing import Any, Mapping
 from unittest.mock import MagicMock
 from collections import defaultdict
 
-import numpy as np
 import pytest
 
 from pasqal_cloud.batch import Batch
@@ -19,7 +18,6 @@ from pasqal_cloud.job import CreateJob, Job
 from pasqal_cloud.utils.responses import PaginatedResponse
 from pasqal_cloud.utils.filters import JobFilters
 from pulser import Register as PasqalRegister, Sequence
-from pulser.result import Result
 from pulser.backend import Results
 from pulser.backend.remote import (
     RemoteConnection,
@@ -38,7 +36,7 @@ from qiskit_pasqal_provider.providers.target import (
     AVAILABLE_DEVICES,
     PasqalTarget,
 )
-from tests import DEFAULT_DICT_RESULT, ATOM_ORDER, NUM_ATOMS
+from tests import DEFAULT_DICT_RESULT, ATOM_ORDER
 
 
 @pytest.fixture
@@ -273,7 +271,7 @@ class MockConnection(RemoteConnection):
 
     def __init__(self):
         """Define MockConnection"""
-        self.results = [MockResult()]
+        self.results = [mock_results()]
         self._job_id = lambda batch_id: str(uuid.uuid3(uuid.NAMESPACE_OID, batch_id))
 
     def submit(
@@ -312,25 +310,9 @@ class MockConnection(RemoteConnection):
         return [self._job_id(batch_id)]
 
 
-class MockResult(Result):
-    """MockResult to emulate pulser Result"""
-
-    def __init__(self):
-        """"""
-        atom_order = ATOM_ORDER
-        super().__init__(meas_basis="", atom_order=atom_order)
-
-    @property
-    def sampling_errors(self) -> dict[str, float]:
-        return {}
-
-    def _weights(self) -> np.ndarray:
-        """Get weights as numpy array"""
-
-        weights = np.zeros(NUM_ATOMS)
-        weights[9] = 50
-        weights[11] = 25
-        return weights
+def mock_results() -> Results:
+    """Pulser Results holding DEFAULT_DICT_RESULT as final bitstrings"""
+    return Results.from_final_bitstrings(ATOM_ORDER, 1000, DEFAULT_DICT_RESULT)
 
 
 @pytest.fixture
@@ -346,6 +328,6 @@ def mock_sdk() -> MockSDK:
 
 
 @pytest.fixture
-def mock_result() -> Result:
-    """Fixture for MockResult instance"""
-    return MockResult()
+def mock_result() -> Results:
+    """Fixture for a mock pulser Results instance"""
+    return mock_results()
