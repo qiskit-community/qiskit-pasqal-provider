@@ -2,7 +2,7 @@
 
 import json
 import time
-from collections import Counter
+import warnings
 from collections.abc import Mapping
 from typing import Any
 
@@ -10,12 +10,34 @@ from pasqal_cloud.batch import Batch as PasqalBatchData
 from pasqal_cloud.job import Job as PasqalJobData
 from pulser.backend import Results
 from pulser.backend.remote import BatchStatus, RemoteResults
-from qiskit.primitives import DataBin, PrimitiveResult, SamplerPubResult
+from qiskit.primitives import BitArray, DataBin, PrimitiveResult, SamplerPubResult
 
 
-def _get_counts(
-    results: Any, metadata: dict[str, Any]
-) -> Counter | dict[str, int | float]:
+class PasqalDataBin(DataBin):
+    """Sampler data with the bitstrings in `meas`, a BitArray in Qiskit's bit order."""
+
+    __slots__ = ()
+
+    @property
+    def counts(self) -> dict[str, int]:
+        """Deprecated: the counts in Pulser's bit order (atom 0 leftmost)."""
+        warnings.warn(
+            "'data.counts' is deprecated, use 'data.meas.get_counts()', whose bitstrings are "
+            "in Qiskit's order: qubit 0 is the rightmost bit.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return {k[::-1]: v for k, v in self["meas"].get_counts().items()}
+
+
+def _data_bin(counts: Mapping[str, int]) -> DataBin:
+    """Build sampler data from Pulser counts, whose leftmost bit is atom 0."""
+    num_bits = len(next(iter(counts)))
+    qiskit_counts = {k[::-1]: v for k, v in counts.items()}
+    return PasqalDataBin(meas=BitArray.from_counts(qiskit_counts, num_bits=num_bits))
+
+
+def _get_counts(results: Any, metadata: dict[str, Any]) -> Mapping[str, int]:
     """Get counts from pulser simulation results."""
     if isinstance(results, Results):
         if metadata.get("config"):
@@ -37,7 +59,7 @@ def _fetch_remote_pulser_sim_results(
     def get_result() -> DataBin:
         match results.get_batch_status():
             case BatchStatus.DONE:
-                return DataBin(counts=results.results[0].final_bitstrings)
+                return _data_bin(results.results[0].final_bitstrings)
             case BatchStatus.CANCELED:
                 raise ValueError("Remote execution was canceled.")
             case BatchStatus.TIMED_OUT:
@@ -91,7 +113,7 @@ def _fetch_counter_results(results: Mapping[str, Any] | Any) -> DataBin:
     counts = results.get("counter", results.get("counts", results))
     if not isinstance(counts, dict):
         raise ValueError("results must include a dictionary of counts.")
-    return DataBin(counts=Counter(counts))
+    return _data_bin(counts)
 
 
 def _fetch_legacy_payload_results(results: list[Any] | tuple[Any, ...]) -> DataBin:
@@ -123,9 +145,8 @@ def build_primitive_result(
 
     match results:
         case Results():
-            counts = _get_counts(results, metadata)
-            data = DataBin(counts=counts)
-            metadata["shots"] = int(sum(data.counts.values()))  # pylint: disable=E1101
+            data = _data_bin(_get_counts(results, metadata))
+            metadata["shots"] = data["meas"].num_shots
         case RemoteResults():
             if backend_name == "qpu":
                 raise NotImplementedError()
