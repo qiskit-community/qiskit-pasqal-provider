@@ -20,6 +20,9 @@ Qiskit Pasqal Provider supports both Qiskit 1.x and Qiskit 2.x.
 `SamplerV2.run(...)` accepts exactly one pub per call.
 For example, use `[qc]` or `[(qc, parameter_values)]`.
 
+As with other Qiskit samplers, the sampled bitstrings are a `BitArray` in `data.meas`,
+and qubit 0 is the rightmost bit.
+
 ### Local emulator example (`qutip`)
 
 ```python
@@ -61,10 +64,10 @@ backend_qutip = provider_qutip.get_backend("qutip")
 sampler_qutip = SamplerV2(backend_qutip)
 results_qutip = sampler_qutip.run([qc], shots=1000).result()
 
-print(results_qutip[0].data.counts)
+print(results_qutip[0].data.meas.get_counts())
 ```
 ```bash
-Counter({'100110': 139, '010001': 127, '010100': 111, '001000': 92, '100001': 92, ... })
+{'011001': 139, '100010': 127, '001010': 111, '000100': 92, '100001': 92, ... }
 ```
 
 ### Parameterized example (single pub)
@@ -95,7 +98,7 @@ sampler = SamplerV2(provider.get_backend("qutip"))
 
 # Exactly one pub: [(circuit, parameter_values)]
 result = sampler.run([(qc, {phase: 0.2})], shots=500).result()
-print(result[0].data.counts)
+print(result[0].data.meas.get_counts())
 ```
 
 ### Remote cloud emulator example
@@ -122,7 +125,7 @@ sampler = SamplerV2(backend)
 job = sampler.run([qc], shots=1000)
 print(job.job_id())
 print(job.status())
-print(job.result()[0].data.counts)
+print(job.result()[0].data.meas.get_counts())
 ```
 
 ### Choosing the register layout

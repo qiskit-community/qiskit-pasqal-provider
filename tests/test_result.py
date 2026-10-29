@@ -18,6 +18,27 @@ from tests import DEFAULT_DICT_RESULT
 from tests.conftest import MockSDK
 
 
+def qiskit_counts(results: Results) -> dict[str, int]:
+    """Pulser's final bitstrings in Qiskit's bit order (qubit 0 rightmost)."""
+    return {b[::-1]: n for b, n in results.final_bitstrings.items()}
+
+
+def test_result_is_a_bit_array_in_qiskit_order() -> None:
+    """Test that results are a BitArray with qubit 0 as the rightmost bit."""
+    result = build_primitive_result(
+        backend_name="MockBackend",
+        job_id="",
+        results={"counter": {"100": 3, "110": 1}},
+        metadata={"status": "DONE"},
+    )
+
+    data = result[0].join_data()
+    assert data.get_counts() == {"001": 3, "011": 1}
+    assert data.slice_bits([0]).get_counts() == {"1": 4}
+    with pytest.warns(DeprecationWarning, match="data.meas.get_counts"):
+        assert result[0].data.counts == {"100": 3, "110": 1}
+
+
 def test_mock_remote_sim_result(
     mock_conn: RemoteConnection, mock_sdk: MockSDK, mock_result: Results
 ) -> None:
@@ -30,9 +51,7 @@ def test_mock_remote_sim_result(
         backend_name="MockBackend", job_id="", results=results, metadata=metadata
     )
     assert isinstance(result, PrimitiveResult)
-    counts = result[0].data.counts
-
-    assert counts == mock_result.final_bitstrings
+    assert result[0].data.meas.get_counts() == qiskit_counts(mock_result)
 
 
 def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Results) -> None:
@@ -65,9 +84,7 @@ def test_mock_cloud_sim_result(mock_sdk: MockSDK, mock_result: Results) -> None:
         results=deepcopy(DEFAULT_DICT_RESULT),
         metadata=metadata,
     )
-    counts = result[0].data.counts
-
-    assert counts == mock_result.final_bitstrings
+    assert result[0].data.meas.get_counts() == qiskit_counts(mock_result)
 
 
 def test_counter_result_without_batch_metadata(mock_result: Results) -> None:
@@ -78,9 +95,7 @@ def test_counter_result_without_batch_metadata(mock_result: Results) -> None:
         results={"counter": deepcopy(DEFAULT_DICT_RESULT)},
         metadata={"status": "DONE"},
     )
-    counts = result[0].data.counts
-
-    assert counts == mock_result.final_bitstrings
+    assert result[0].data.meas.get_counts() == qiskit_counts(mock_result)
 
 
 def test_legacy_wait_true_payload_list_is_supported(mock_result: Results) -> None:
@@ -93,9 +108,7 @@ def test_legacy_wait_true_payload_list_is_supported(mock_result: Results) -> Non
         results=[payload],
         metadata={"status": "DONE"},
     )
-    counts = result[0].data.counts
-
-    assert counts == mock_result.final_bitstrings
+    assert result[0].data.meas.get_counts() == qiskit_counts(mock_result)
 
 
 def test_mock_cloud_result_rejects_malformed_counter(mock_sdk: MockSDK) -> None:
