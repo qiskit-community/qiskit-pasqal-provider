@@ -435,11 +435,11 @@ Max sequence duration (ns): None
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[ 2.31281516, -0.23002871],
-       [-2.93655481, -6.36935057],
-       [-5.62649393,  1.15594212],
-       [ 8.49894067, -8.25563437],
-       [ 3.34198769,  9.94592252]])
+array([[ 5.76641233,  1.78759731],
+       [ 5.86029738, -6.27411376],
+       [-1.13139709, -2.38615701],
+       [ 1.69068637, 10.91932542],
+       [15.67407476,  3.1434091 ]])
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -518,31 +518,22 @@ array([[ 2.31281516, -0.23002871],
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[(&#39;00111&#39;, 566),
- (&#39;01011&#39;, 321),
- (&#39;00011&#39;, 83),
- (&#39;01001&#39;, 14),
- (&#39;00110&#39;, 7),
- (&#39;10000&#39;, 3),
- (&#39;10010&#39;, 2),
+[(&#39;01011&#39;, 507),
+ (&#39;00111&#39;, 455),
+ (&#39;00011&#39;, 14),
+ (&#39;00101&#39;, 7),
+ (&#39;10000&#39;, 5),
+ (&#39;01010&#39;, 4),
+ (&#39;00100&#39;, 2),
  (&#39;00001&#39;, 2),
- (&#39;10001&#39;, 1),
- (&#39;10011&#39;, 1)]
+ (&#39;00010&#39;, 1),
+ (&#39;10001&#39;, 1)]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -599,49 +590,22 @@ array([[ 2.31281516, -0.23002871],
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-/home/runner/work/qiskit-pasqal-provider/qiskit-pasqal-provider/qiskit_pasqal_provider/providers/abstract_base.py:167: DeprecationWarning: QutipEmulator is deprecated as of pulser 1.9. Please use QutipBackendV2 instead.
-  return self._executor.run()
-</pre></div></div>
-</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[-18.772569557873332,
- -21.6092782189,
- -23.411780745606666,
- -26.16512850107333,
- -25.87211013744666,
- -26.345930553426665,
- -26.734600752413332,
- -26.860708759186664,
- -26.929201589659996,
- -27.07459319509333]
+[-19.404125120906667,
+ -22.84829292766667,
+ -24.450766327759997,
+ -26.880931758846664,
+ -26.727140052253336,
+ -26.879697561933334,
+ -27.113536100233333,
+ -27.063711923733333,
+ -27.196278262240003,
+ -27.15028470578]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
