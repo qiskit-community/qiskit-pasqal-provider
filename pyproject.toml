@@ -18,20 +18,20 @@ dependencies = [
     "certifi>=2021.5.30",
     "importlib_metadata>=4.8.1",
     "qiskit>=1.0,<3",
-    "pulser-core>=1.8,<2",
+    "pulser-core>=1.9,<2",
     "pasqal-cloud>=0.23,<1",
     "sympy",
 ]
 
 [project.optional-dependencies]
-mps = ["emu-mps>=2"]
-qutip = ["pulser-simulation>=1.6,<2"]
+mps = ["emu-mps>=2.8"]
+qutip = ["pulser-simulation>=1.9,<2"]
 qasm3 = ["openqasm3>=1,<2", "qiskit_qasm3_import>=0.6,<1"]
-emulators = ["emu-mps>=2", "pulser-simulation>=1.6,<2"]
+emulators = ["emu-mps>=2.8", "pulser-simulation>=1.9,<2"]
 all = [
-    "emu-mps>=2",
+    "emu-mps>=2.8",
     "openqasm3>=1,<2",
-    "pulser-simulation>=1.6,<2",
+    "pulser-simulation>=1.9,<2",
     "qiskit_qasm3_import>=0.6,<1",
 ]
 
